@@ -5,7 +5,6 @@
 ### Authors
 
 Jed Rosen
-
 Scott Magnuson
 
 Emily Pitts
