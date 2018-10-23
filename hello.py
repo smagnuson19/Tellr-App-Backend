@@ -1,10 +1,17 @@
-from flask import Flask
+from flask import Flask, request, jsonify
 app = Flask(__name__)
 
-@app.route("/")
+@app.route("/api/", methods =['GET'])
 def hello():
-    return "Hello World!"
-// main area
+    if request.method == 'GET':
+        #here we would need to get items
+        response = jsonify({
+        'id': '2332',
+        'name': 'Barbra',
+        })
+        response.status_code = 200
+    return response
+# main area
 
 if __name__ == "__main__":
     app.run()
