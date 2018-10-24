@@ -12,7 +12,6 @@ def main():
         'Name': 'John Smith',
         'Adult': True,
         'Children': ['Johnny Smith, John Jr. Smith'],
-        'Email': 'jsmith@example.com'
         'ID': '00001'
     }
     result = people.insert_one(people_data)
@@ -24,18 +23,18 @@ def main():
         response = jsonify([{
         'Name': str(bills_post['Name']),
         'Children': str(bills_post['Children']),
-        'Email': str(bills_post['Email']),
         }])
+        print("Method 1")
         response.status_code = 200
     # main area
 
     if request.method == 'POST':
+        print("Method 2")
         request_json = request.get_json()
         #here we would need to get items
         value1 = request_json.get('id')
         value2= request_json.get('name')
-        print(value1)
-        print(value2)
+
         response = jsonify([{'status':'done'}])
         response.status_code=200
     return response
