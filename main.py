@@ -15,8 +15,12 @@ KEY_ID_COUNTER= {
     'Name': 'KEY_ID_COUNTER',
     'Value': 100000
 }
+TEST_GOAL={
+    'Name': 'Test',
+    'ID': 100001
+}
 people.insert_one(KEY_ID_COUNTER)
-
+goals.insert_one(TEST_GOAL)
 
 @app.route("/api/tasks/<int:famId>", methods =['POST','GET'])
 def task_handler():
@@ -34,10 +38,6 @@ def task_handler():
     }])
     response.status_code = 200
     return response
-        
-
-
-
 
 @app.route("/api/users", methods =['POST'])
 def add_users():
@@ -77,7 +77,7 @@ def get_user(id):
 def check_credentials(username, password):
     if request.method == 'GET':
         user = credentials.find_one({'Username': username}, {'_id': False})
-        if user['password'] == Password:
+        if user['Password'] == password:
             response = jsonify([{
             'Success': True,
             'ID': user['ID']
@@ -89,6 +89,27 @@ def check_credentials(username, password):
             }])
         response.status_code = 200
         return response
+
+@app.route("/api/goals/<int:id>", methods =['GET', 'POST'])
+def handleGoals(id):
+    if request.method == 'GET':
+        goalList = goals.find({'ID': id},{'_id': False})
+        dictresponse = {}
+        i = 0
+        for goal in goalList:
+            dictresponse[i]=goal
+            i = i+1
+        response = jsonify(dictresponse)
+        response.status_code = 200
+        return response
+    if request.method == 'POST':
+        request_json = request.get_json()
+        new_goal = {
+            'Name': request_json['goalInfo']['Name'],
+            'Prize': request_json['goalInfo']['Prize'],
+            'ID': id,
+            'Description': request_json['goalInfo']['Description']
+        }
 
 @app.route("/api/", methods =['GET', 'POST'])
 def main():
