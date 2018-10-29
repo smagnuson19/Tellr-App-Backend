@@ -36,6 +36,7 @@ def add_users():
             'ID': current_id
         }
         result2 = credentials.insert_one(creds)
+        print(creds)
     response = jsonify([{
     }])
     response.status_code = 200
@@ -54,16 +55,18 @@ def get_user(id):
 def check_credentials(username, password):
     if request.method == 'GET':
         user = credentials.find_one({'Username': username}, {'_id': False})
-        if user['password'] == Password:
+        if user['Password'] == password:
             response = jsonify([{
             'Success': True,
             'ID': user['ID']
             }])
+            print('1')
         else:
             response = jsonify([{
             'Success': False,
             'ID': None
             }])
+            print('2')
         response.status_code = 200
         return response
 
