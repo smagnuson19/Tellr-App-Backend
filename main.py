@@ -8,6 +8,7 @@ client1 = MongoClient('localhost', 27017)
 db = client1.exampledb
 credentials = db.credentials
 people = db.people
+families = db.families
 tasks = db.tasks
 goals = db.goals
 KEY_ID_COUNTER= {
@@ -15,6 +16,28 @@ KEY_ID_COUNTER= {
     'Value': 100000
 }
 people.insert_one(KEY_ID_COUNTER)
+
+
+@app.route("/api/tasks/<int:famId>", methods =['POST','GET'])
+def task_handler():
+    if request.method == 'GET':
+        tasks = tasks.find({'famId':'famID'})
+        print(tasks)
+        response = jsonify(tasks)
+        response.status_code = 200
+        return response
+
+    if request.method == 'POST':
+        request_json = request.get_json()
+        result1 = tasks.insert_one(request_json)
+    response = jsonify([{
+    }])
+    response.status_code = 200
+    return response
+        
+
+
+
 
 @app.route("/api/users", methods =['POST'])
 def add_users():
