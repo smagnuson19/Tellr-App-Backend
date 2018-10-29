@@ -17,6 +17,7 @@ KEY_ID_COUNTER= {
 }
 people.insert_one(KEY_ID_COUNTER)
 
+
 @app.route("/api/tasks/<int:famId>", methods =['POST','GET'])
 def task_handler():
     if request.method == 'GET':
