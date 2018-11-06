@@ -11,6 +11,7 @@ people = db.people
 families = db.families
 tasks = db.tasks
 goals = db.goals
+
 KEY_ID_COUNTER= {
     'Name': 'KEY_ID_COUNTER',
     'Value': 100000
@@ -22,78 +23,98 @@ TEST_GOAL={
 people.insert_one(KEY_ID_COUNTER)
 goals.insert_one(TEST_GOAL)
 
-@app.route("/api/tasks/<int:famId>", methods =['POST','GET'])
-def task_handler():
+@app.route("/api/childtasks/<email>", methods =['GET'])
+def childtask_handler(email):
     if request.method == 'GET':
-        tasks = tasks.find({'famId':'famID'})
-        print(tasks)
-        response = jsonify(tasks)
+        tasksList = tasks.find({'recEmail':email},{'_id': False})
+        dictresponse = {}
+        i = 0
+        for task in tasksList:
+            dictresponse[i]=task
+            i = i+1
+        response = jsonify(dictresponse)
+        response.status_code = 200
+        return response
+
+@app.route("/api/parenttasks/<familyName>", methods =['POST','GET'])
+def adulttask_handler(familyName):
+    if request.method == 'GET':
+        tasksList = tasks.find({'familyName':familyName},{'_id': False})
+        dictresponse = {}
+        i = 0
+        for task in tasksList:
+            dictresponse[i]=task
+            i = i+1
+        response = jsonify(dictresponse)
         response.status_code = 200
         return response
 
     if request.method == 'POST':
         request_json = request.get_json()
-        result1 = tasks.insert_one(request_json)
-    response = jsonify([{
-    }])
-    response.status_code = 200
+        new_task = {
+            'name': request_json['taskInfo']['name'],
+            'value': request_json['taskInfo']['value'],
+            'deadline': request_json['taskInfo']['deadline'],
+            'description': request_json['taskInfo']['description'],
+            'recEmail': request_json['taskInfo']['recEmail'],
+            'complete': request_json['taskInfo']['complete'],
+            'dateCompleted': request_json['taskInfo']['dateCompleted'],
+            'familyName':request_json['taskInfo']['familyName']
+        }
+        result1 = tasks.insert_one(new_task)
+        response = jsonify([{
+        }])
+        response.status_code = 200
     return response
 
 @app.route("/api/users", methods =['POST'])
 def add_users():
     if request.method == 'POST':
         request_json = request.get_json()
-        id_counter = people.find_one({'Name': 'KEY_ID_COUNTER'})
-        current_id = id_counter['Value']
-        people.update_one({'Name': 'KEY_ID_COUNTER'}, {"$set":{'Value': current_id+1}},upsert = False)
+        # people.update_one({'Name': 'KEY_ID_COUNTER'}, {"$set":{'Value': current_id+1}},upsert = False)
         new_person = {
-            'Name': request_json['loginInfo']['Name'],
-            'Email': request_json['loginInfo']['Email'],
-            'ID': current_id
+            'name': request_json['loginInfo']['Name'],
+            'email': request_json['loginInfo']['Email'],
+            'balance': 0,
+            'familyName': None
         }
-        print(new_person)
         result1 = people.insert_one(new_person)
         creds = {
-            'Username': request_json['loginInfo']['Username'],
-            'Password': request_json['loginInfo']['Password'],
-            'ID': current_id
+            'email': request_json['loginInfo']['Email'],
+            'password': request_json['loginInfo']['Password'],
         }
-        result2 = credentials.insert_one(creds)
     response = jsonify([{
     }])
     response.status_code = 200
     return response
 
-@app.route("/api/users/<int:id>", methods =['GET'])
-def get_user(id):
+@app.route("/api/users/<email>", methods =['GET'])
+def get_user(email):
     if request.method == 'GET':
-        user = people.find_one({'ID': id},{'_id': False})
-    print(user)
+        user = people.find_one({'email': email},{'_id': False})
     response = jsonify(user)
     response.status_code = 200
     return response
 
-@app.route("/api/<username>/credentials/<password>", methods =['GET'])
-def check_credentials(username, password):
+@app.route("/api/<email>/credentials/<password>", methods =['GET'])
+def check_credentials(email, password):
     if request.method == 'GET':
-        user = credentials.find_one({'Username': username}, {'_id': False})
-        if user['Password'] == password:
+        user = credentials.find_one({'email': email}, {'_id': False})
+        if user['password'] == password:
             response = jsonify([{
             'Success': True,
-            'ID': user['ID']
             }])
         else:
             response = jsonify([{
             'Success': False,
-            'ID': None
             }])
         response.status_code = 200
         return response
 
-@app.route("/api/goals/<int:id>", methods =['GET', 'POST'])
-def handleGoals(id):
+@app.route("/api/goals/<email>", methods =['GET', 'POST'])
+def handleGoals(email):
     if request.method == 'GET':
-        goalList = goals.find({'ID': id},{'_id': False})
+        goalList = goals.find({'email': email},{'_id': False})
         dictresponse = {}
         i = 0
         for goal in goalList:
@@ -110,6 +131,7 @@ def handleGoals(id):
             'ID': id,
             'Description': request_json['goalInfo']['Description']
         }
+        result = goals.insert_one(new_goal)
 
 @app.route("/api/", methods =['GET', 'POST'])
 def main():
