@@ -8,7 +8,6 @@ client1 = MongoClient('localhost', 27017)
 db = client1.exampledb
 credentials = db.credentials
 people = db.people
-families = db.families
 tasks = db.tasks
 goals = db.goals
 
@@ -65,7 +64,7 @@ def adulttask_handler(familyName):
         response = jsonify([{
         }])
         response.status_code = 200
-    return response
+        return response
 
 @app.route("/api/users", methods =['POST'])
 def add_users():
@@ -73,16 +72,20 @@ def add_users():
         request_json = request.get_json()
         # people.update_one({'Name': 'KEY_ID_COUNTER'}, {"$set":{'Value': current_id+1}},upsert = False)
         new_person = {
-            'name': request_json['loginInfo']['Name'],
-            'email': request_json['loginInfo']['Email'],
-            'balance': 0,
-            'familyName': None
+            'firstName': request_json['payLoad']['firstName'],
+            'lastName': request_json['payLoad']['lastName'],
+            'email': request_json['payLoad']['email'],
+            'password': request_json['payLoad']['password'],
+            'familyName': request_json['payLoad']['familyName'],
+            'accountType': request_json['payLoad']['accountType'],
+            'balance': 0
         }
         result1 = people.insert_one(new_person)
         creds = {
-            'email': request_json['loginInfo']['Email'],
-            'password': request_json['loginInfo']['Password'],
+            'email': request_json['payLoad']['email'],
+            'password': request_json['payLoad']['password']
         }
+    print(new_person)
     response = jsonify([{
     }])
     response.status_code = 200
@@ -92,23 +95,34 @@ def add_users():
 def get_user(email):
     if request.method == 'GET':
         user = people.find_one({'email': email},{'_id': False})
-    response = jsonify(user)
-    response.status_code = 200
+    if user == None:
+        response = jsonify([{
+        }])
+        response.status_code = 202
+    else:
+        response = jsonify(user)
+        response.status_code = 200
     return response
 
 @app.route("/api/<email>/credentials/<password>", methods =['GET'])
 def check_credentials(email, password):
     if request.method == 'GET':
         user = credentials.find_one({'email': email}, {'_id': False})
-        if user['password'] == password:
-            response = jsonify([{
-            'Success': True,
-            }])
-        else:
+        if user == None:
             response = jsonify([{
             'Success': False,
             }])
-        response.status_code = 200
+            response.status_code = 201
+        else:
+            if user['password'] == password:
+                response = jsonify([{
+                'Success': True,
+                }])
+            else:
+                response = jsonify([{
+                'Success': False,
+                }])
+            response.status_code = 200
         return response
 
 @app.route("/api/goals/<email>", methods =['GET', 'POST'])
@@ -133,6 +147,42 @@ def handleGoals(email):
         }
         result = goals.insert_one(new_goal)
 
+@app.route("/api/children/<email>", methods =['GET'])
+def getChildren(email):
+    if request.method == 'GET':
+        user = people.find_one({'email': email}, {'_id': False})
+        if user == None:
+            response = jsonify([{
+            }])
+            response.status_code=201
+        else:
+            childrenList = people.find({'familyName':user['familyName']},{'accountType':'Child'},{'_id': False})
+            dictresponse = {}
+            i = 0
+            for child in childrenList:
+                dictresponse[i]=child
+                i = i+1
+            response = jsonify(dictresponse)
+            response.status_code = 200
+        return response
+
+@app.route("/api/balance", methods =['POST'])
+def updateBalance():
+    if request.method == 'POST':
+        request_json = request.get_json()
+        user = people.find_one({'email': request_json['payLoad']['email']}, {'_id': False})
+        if user == None:
+            response = jsonify([{
+            }])
+            response.status_code=201
+        else:
+            lastbal = user['balance']
+            people.update_one({'email': user['email']}, {"$set":{'balance': lastbal + request_json['payLoad']['increment']}},upsert = False)
+            response = jsonify([{
+            }])
+            response.status_code=201
+        return response 
+
 @app.route("/api/", methods =['GET', 'POST'])
 def main():
     if request.method == 'POST':
@@ -144,9 +194,6 @@ def main():
         }])
         response.status_code = 200
     if request.method == 'GET':
-        bills_post = people.find_one({'Name': 'John Smith'})
-        print("hi")
-        #here we would need to get items
         response = jsonify([{
         'Name': str(bills_post['Name']),
         'Children': str(bills_post['Children']),
