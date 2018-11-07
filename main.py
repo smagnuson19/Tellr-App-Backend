@@ -181,7 +181,7 @@ def updateBalance():
             response = jsonify([{
             }])
             response.status_code=201
-        return response 
+        return response
 
 @app.route("/api/", methods =['GET', 'POST'])
 def main():
@@ -195,8 +195,8 @@ def main():
         response.status_code = 200
     if request.method == 'GET':
         response = jsonify([{
-        'Name': str(bills_post['Name']),
-        'Children': str(bills_post['Children']),
+        # 'Name': str(bills_post['Name']),
+        # 'Children': str(bills_post['Children']),
         }])
         response.status_code = 200
     return response
