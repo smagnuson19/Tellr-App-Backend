@@ -1,7 +1,7 @@
 from flask import Flask, request, jsonify
 
 def getGoals(email, goals):
-    goalList = goals.find({'email': email},{'_id': False})
+    goalList = goals.find({'email': str.lower(email)},{'_id': False})
     dictresponse = {}
     i = 0
     for goal in goalList:
@@ -16,7 +16,7 @@ def postGoals(request, email, goals):
     new_goal = {
         'Name': request_json['goalInfo']['Name'],
         'Prize': request_json['goalInfo']['Prize'],
-        'email': email,
+        'email': str.lower(email),
         'Description': request_json['goalInfo']['Description']
     }
     result = goals.insert_one(new_goal)
