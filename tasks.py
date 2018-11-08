@@ -11,7 +11,7 @@ def getTasks(familyName,tasks):
     response.status_code = 200
     return response
 
-def postTask(request,familyName,tasks):
+def postTask(request,tasks):
     request_json = request.get_json()
     new_task = {
         'taskName': request_json['payLoad']['taskName'],
