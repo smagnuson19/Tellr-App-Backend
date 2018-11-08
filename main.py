@@ -4,6 +4,7 @@ from users import *
 from tasks import *
 from credentials import *
 from goals import *
+import string
 
 app = Flask(__name__)
 
@@ -30,11 +31,13 @@ def childtask_handler(email):
     if request.method == 'GET':
         return getTasksChild(email,tasks)
 
-@app.route("/api/parenttasks/<familyName>", methods =['POST','GET'])
+@app.route("/api/parenttasks/<familyName>", methods =['GET'])
 def adulttask_handler(familyName):
     if request.method == 'GET':
         return getTasks(familyName,tasks)
 
+@app.route("/api/tasks", methods =['POST'])
+def postTasks():
     if request.method == 'POST':
         return postTask(request, familyName, tasks)
 
@@ -55,9 +58,9 @@ def get_user(email):
         response.status_code = 200
     return response
 
-@app.route("/api/<email>/credentials/<password>", methods =['GET'])
+@app.route("/api/<email>/credentials/<password>", methods =['POST'])
 def check_credentials(email, password):
-    if request.method == 'GET':
+    if request.method == 'POST':
         return handleCredentials(email, password, credentials)
 
 @app.route("/api/goals/<email>", methods =['GET', 'POST'])

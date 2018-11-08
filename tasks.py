@@ -1,7 +1,7 @@
 from flask import Flask, request, jsonify
 
 def getTasks(familyName,tasks):
-    tasksList = tasks.find({'familyName':familyName},{'_id': False})
+    tasksList = tasks.find({'familyName':str.lower(familyName)},{'_id': False})
     dictresponse = {}
     i = 0
     for task in tasksList:
@@ -14,14 +14,14 @@ def getTasks(familyName,tasks):
 def postTask(request,familyName,tasks):
     request_json = request.get_json()
     new_task = {
-        'name': request_json['payLoad']['name'],
-        'value': request_json['payLoad']['value'],
-        'deadline': request_json['payLoad']['deadline'],
-        'description': request_json['payLoad']['description'],
-        'recEmail': request_json['payLoad']['recEmail'],
+        'taskName': request_json['payLoad']['taskName'],
+        'reward': request_json['payLoad']['reward'],
+        'taskDeadline': request_json['payLoad']['taskDeadline'],
+        'taskDescription': request_json['payLoad']['taskDescription'],
+        'childEmail': str.lower(request_json['payLoad']['childEmail']),
         'complete': False,
         'dateCompleted': None,
-        'familyName':request_json['payLoad']['familyName']
+        'familyName':str.lower(request_json['payLoad']['familyName'])
     }
     result1 = tasks.insert_one(new_task)
     response = jsonify([{
@@ -30,7 +30,7 @@ def postTask(request,familyName,tasks):
     return response
 
 def getTasksChild(email, tasks):
-    tasksList = tasks.find({'recEmail':email},{'_id': False})
+    tasksList = tasks.find({'recEmail':str.lower(email)},{'_id': False})
     dictresponse = {}
     i = 0
     for task in tasksList:
