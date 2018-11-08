@@ -39,7 +39,7 @@ def adulttask_handler(familyName):
 @app.route("/api/tasks", methods =['POST'])
 def postTasks():
     if request.method == 'POST':
-        return postTask(request, familyName, tasks)
+        return postTask(request, tasks)
 
 @app.route("/api/users", methods =['POST'])
 def add_users():
