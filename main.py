@@ -73,7 +73,7 @@ def handleGoals(email):
 @app.route("/api/children/<email>", methods =['GET'])
 def getChildren(email):
     if request.method == 'GET':
-        return getChildren(email, people)
+        return findChildren(email, people)
 
 @app.route("/api/balance", methods =['POST'])
 def updateBalance():

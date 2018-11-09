@@ -34,17 +34,20 @@ def add_user(request, people, credentials):
 
 def findChildren(email, people):
     user = people.find_one({'email': str.lower(email)}, {'_id': False})
+    print(user)
     if user == None:
         response = jsonify([{
         }])
         response.status_code=201
     else:
-        childrenList = people.find({'familyName':str.lower(user['familyName'])},{'accountType':'Child'},{'_id': False})
+        childrenList = people.find({'familyName':str.lower(user['familyName'])},{'_id': False})
         dictresponse = {}
         i = 0
         for child in childrenList:
-            dictresponse[i]=child
-            i = i+1
+            if child['accountType']=='Child':
+                dictresponse[i]=child
+                i = i+1
+        print(dictresponse)
         response = jsonify(dictresponse)
         response.status_code = 200
     return response
