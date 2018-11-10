@@ -20,6 +20,7 @@ def postTask(request,tasks):
         'taskDescription': request_json['payLoad']['taskDescription'],
         'childEmail': str.lower(request_json['payLoad']['childEmail']),
         'complete': False,
+        'verified': False,
         'dateCompleted': None,
         'familyName':str.lower(request_json['payLoad']['familyName'])
     }
@@ -39,3 +40,7 @@ def getTasksChild(email, tasks):
     response = jsonify(dictresponse)
     response.status_code = 200
     return response
+
+def completeTasks(request, tasks):
+    request_json = request.get_json()
+    
