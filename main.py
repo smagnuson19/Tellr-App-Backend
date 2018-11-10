@@ -15,9 +15,6 @@ people = db.people
 tasks = db.tasks
 goals = db.goals
 
-people.insert_one(KEY_ID_COUNTER)
-goals.insert_one(TEST_GOAL)
-
 @app.route("/api/childtasks/<email>", methods =['GET'])
 def childtask_handler(email):
     if request.method == 'GET':
