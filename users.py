@@ -1,15 +1,17 @@
 from flask import Flask, request, jsonify
 
+#Adding a user to the database
 def add_user(request, people, credentials):
     if request.method == 'POST':
         request_json = request.get_json()
-        # people.update_one({'Name': 'KEY_ID_COUNTER'}, {"$set":{'Value': current_id+1}},upsert = False)
+        #Check to see whether user is already in databse; if so, return empty json with 201 status
         if not people.find_one({'email':str.lower(request_json['payLoad']['email'])},{'_id': False}) == None:
             response = jsonify([{
             }])
             response.status_code = 201
-            print("duplicate")
             return response
+
+        #If not in databse, add to user and credentials database and return a 200 status code
         else:
             new_person = {
                 'firstName': request_json['payLoad']['firstName'],
@@ -26,19 +28,21 @@ def add_user(request, people, credentials):
                 'password': request_json['payLoad']['password']
             }
             result2= credentials.insert_one(creds)
-            print(new_person)
             response = jsonify([{
             }])
             response.status_code = 200
             return response
 
+#Function that returns dictionary of all children of parent with given email
 def findChildren(email, people):
+    #First find the parent
     user = people.find_one({'email': str.lower(email)}, {'_id': False})
-    print(user)
+    #If invalid email, return empty json with 201 status
     if user == None:
         response = jsonify([{
         }])
         response.status_code=201
+    #Else, find all children with the same family name
     else:
         childrenList = people.find({'familyName':str.lower(user['familyName'])},{'_id': False})
         dictresponse = {}
@@ -52,17 +56,21 @@ def findChildren(email, people):
         response.status_code = 200
     return response
 
+#Function that updates balance
 def upBalance(request,people):
     request_json = request.get_json()
     user = people.find_one({'email': str.lower(request_json['payLoad']['email'])}, {'_id': False})
+    #If email given isn't in the database, make an empty json and return status code 201
     if user == None:
         response = jsonify([{
         }])
         response.status_code=201
+
+    #If email is found, update the balance and return 200 status code
     else:
         lastbal = user['balance']
         people.update_one({'email': str.lower(user['email'])}, {"$set":{'balance': lastbal + request_json['payLoad']['increment']}},upsert = False)
         response = jsonify([{
         }])
-        response.status_code=201
+        response.status_code=200
     return response

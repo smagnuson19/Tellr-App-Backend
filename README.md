@@ -24,13 +24,14 @@ Methods: GET
 
 Returns list of tasks assigned to child with email <email> in the format of a dictionary keyed on integers (0, 1, ...) to a dictionary with the following values:
 
-`task: {
+`{
   taskName,
   reward,
   taskDeadline,
   taskDescription,
   childEmail,
   complete,
+  verified,
   dateCompleted,
   familyName
 }`
@@ -40,13 +41,14 @@ Methods: GET
 
 Returns list of tasks assigned to all children in given familyName <familyName> in the format of a dictionary keyed on integers (0, 1, ...) to a dictionary with the following values:
 
-`task: {
+`{
   taskName,
   reward,
   taskDeadline,
   taskDescription,
   childEmail,
   complete,
+  verified,
   dateCompleted,
   familyName
 }`
@@ -56,13 +58,14 @@ Methods: POST
 
 Post a new task to this address with a json file named payLoad and the following values in the dictionary:
 
-`task: {
+`{
   taskName,
   reward,
   taskDeadline,
   taskDescription,
   childEmail,
   complete,
+  verified,
   dateCompleted,
   familyName
 }`
@@ -72,7 +75,7 @@ Methods: POST
 
 Add new users to the database by posting to this address with a json file named payLoad and the following values in its dictionary:
 
-`user: {
+`{
   firstName,
   lastName,
   email,
@@ -86,7 +89,7 @@ Methods: GET
 
 Returns info on the user with email <email> including the following fields:
 
-`user: {
+`{
   firstName,
   lastName,
   email,
@@ -101,7 +104,7 @@ Methods: POST
 
 Asserts whether the <email> <password> combination is valid. Returns a json file with field:
 
-`status: {
+`{
   Success
 }`
 
@@ -112,19 +115,19 @@ Methods: POST, GET
 
 GET: Returns list of goals assigned to child with email <email> in the format of a dictionary keyed on integers (0, 1, ...) to a dictionary with the following values (can be changed):
 
-`goal: {
+`{
     Name,
     Prize,
-    email',
+    email,
     Description
 }`
 
 POST: Add new goal for user with email <email>, takes a json file with name payLoad and fields:
 
-`goal: {
+`{
     Name,
     Prize,
-    email',
+    email,
     Description
 }`
 
@@ -133,7 +136,7 @@ Methods: GET
 
 Returns list of all children to the parent with email <email> in the format of a dictionary keyed on integers (0, 1, ...) and with each mapped to smaller dictionary with the following values (each representing a child):
 
-`user: {
+`{
   firstName,
   lastName,
   email,
@@ -148,7 +151,7 @@ Methods: POST
 
 Updates balance of any user. Takes a json file named payLoad with following fields:
 
-`user: {
+`{
   email,
   increment
 }`

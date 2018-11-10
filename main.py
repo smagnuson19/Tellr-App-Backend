@@ -15,14 +15,6 @@ people = db.people
 tasks = db.tasks
 goals = db.goals
 
-KEY_ID_COUNTER= {
-    'Name': 'KEY_ID_COUNTER',
-    'Value': 100000
-}
-TEST_GOAL={
-    'Name': 'Test',
-    'ID': 100001
-}
 people.insert_one(KEY_ID_COUNTER)
 goals.insert_one(TEST_GOAL)
 
@@ -40,6 +32,11 @@ def adulttask_handler(familyName):
 def postTasks():
     if request.method == 'POST':
         return postTask(request, tasks)
+
+@app.route("/api/tasks/completed", methods = ['POST'])
+def completeTasks():
+    if request.method == 'POST':
+        return completeTask(request, tasks)
 
 @app.route("/api/users", methods =['POST'])
 def add_users():
@@ -72,8 +69,9 @@ def handleGoals(email):
 
 @app.route("/api/children/<email>", methods =['GET'])
 def getChildren(email):
+    realEmail = email[1:-1]
     if request.method == 'GET':
-        return findChildren(email, people)
+        return findChildren(realEmail, people)
 
 @app.route("/api/balance", methods =['POST'])
 def updateBalance():
