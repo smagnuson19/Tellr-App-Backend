@@ -4,6 +4,7 @@ from users import *
 from tasks import *
 from credentials import *
 from goals import *
+from notification import *
 import string
 
 app = Flask(__name__)
@@ -14,6 +15,7 @@ credentials = db.credentials
 people = db.people
 tasks = db.tasks
 goals = db.goals
+notifications = db.notifications
 
 @app.route("/api/childtasks/<email>", methods =['GET'])
 def childtask_handler(email):
@@ -79,6 +81,12 @@ def getChildren(email):
 def updateBalance():
     if request.method == 'POST':
         return upBalance(request,people)
+
+@app.route("/api/notifications/<email>", methods =['GET'])
+def getNotifications(email):
+    realEmail = email[1:-1]
+    if request.method == 'GET':
+        return findNotifications(realEmail,notifications,people)
 
 @app.route("/api/", methods =['GET', 'POST'])
 def main():

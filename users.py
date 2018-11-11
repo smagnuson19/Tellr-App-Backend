@@ -20,7 +20,8 @@ def add_user(request, people, credentials):
                 'password': request_json['payLoad']['password'],
                 'familyName': str.lower(request_json['payLoad']['familyName']),
                 'accountType': request_json['payLoad']['accountType'],
-                'balance': 0
+                'balance': 0,
+                'notCounter': 0
             }
             result1 = people.insert_one(new_person)
             creds = {
