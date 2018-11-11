@@ -155,3 +155,28 @@ Updates balance of any user. Takes a json file named payLoad with following fiel
   email,
   increment
 }`
+
+##### /api/tasks/completed
+Methods: POST
+
+Updates completion status of tasks. Send me a json file named payLoad with following fields:
+
+`{
+  email,
+  taskName
+}`
+
+where email is the email of the child that completed the task, and taskName is name of the task.
+
+
+##### /api/tasks/verified
+Methods: POST
+
+Updates verification status of tasks. Sends me a json file named payLoad with following fields:
+
+`{
+  email,
+  taskName,
+}`
+
+where email is the email of the child that completed the task, and taskName is name of the task.

@@ -35,8 +35,10 @@ def add_user(request, people, credentials):
 
 #Function that returns dictionary of all children of parent with given email
 def findChildren(email, people):
+    print(email)
     #First find the parent
     user = people.find_one({'email': str.lower(email)}, {'_id': False})
+    print(user)
     #If invalid email, return empty json with 201 status
     if user == None:
         response = jsonify([{
@@ -48,6 +50,7 @@ def findChildren(email, people):
         dictresponse = {}
         i = 0
         for child in childrenList:
+            print(child)
             if child['accountType']=='Child':
                 dictresponse[i]=child
                 i = i+1
