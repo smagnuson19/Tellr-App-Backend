@@ -35,12 +35,12 @@ def postTasks():
 @app.route("/api/tasks/completed", methods = ['POST'])
 def completeTasks():
     if request.method == 'POST':
-        return completeTask(request, tasks)
+        return completeTask(request, tasks, notifications)
 
 @app.route("/api/tasks/verified", methods = ['POST'])
 def verifyTasks():
     if request.method == 'POST':
-        return verifyTask(request, tasks)
+        return verifyTask(request, tasks, notifications)
 
 @app.route("/api/users", methods =['POST'])
 def add_users():

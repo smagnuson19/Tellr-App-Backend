@@ -19,10 +19,10 @@ We are using React Native for our frontend and mobile app and flask for our back
 
 Our two primary data objects are the parentUser and the childUser. We currently believe we will be using three more secondary data objects to track transactions between the parentUsers and childUsers.
 
-##### /api/childtasks/<email>
+##### /api/childtasks/\<email\>
 Methods: GET
 
-Returns list of tasks assigned to child with email <email> in the format of a dictionary keyed on integers (0, 1, ...) to a dictionary with the following values:
+Returns list of tasks assigned to child with email \<email\> in the format of a dictionary keyed on integers (0, 1, ...) to a dictionary with the following values:
 
 `{
   taskName,
@@ -36,10 +36,10 @@ Returns list of tasks assigned to child with email <email> in the format of a di
   familyName
 }`
 
-##### /api/parenttasks/<familyName>
+##### /api/parenttasks/\<familyName\>
 Methods: GET
 
-Returns list of tasks assigned to all children in given familyName <familyName> in the format of a dictionary keyed on integers (0, 1, ...) to a dictionary with the following values:
+Returns list of tasks assigned to all children in given familyName \<familyName\> in the format of a dictionary keyed on integers (0, 1, ...) to a dictionary with the following values:
 
 `{
   taskName,
@@ -84,10 +84,10 @@ Add new users to the database by posting to this address with a json file named 
   accountType
 }`
 
-##### /api/users/<email>
+##### /api/users/\<email\>
 Methods: GET
 
-Returns info on the user with email <email> including the following fields:
+Returns info on the user with email \<email\> including the following fields:
 
 `{
   firstName,
@@ -99,7 +99,7 @@ Returns info on the user with email <email> including the following fields:
   balance
 }`
 
-##### /api/<email>/credentials/<password>
+##### /api/<email>/credentials/\<password\>
 Methods: POST
 
 Asserts whether the <email> <password> combination is valid. Returns a json file with field:
@@ -108,12 +108,12 @@ Asserts whether the <email> <password> combination is valid. Returns a json file
   Success
 }`
 
-where Success is True if combination is valid and False if combination is not. Status code is 201 if no email <email> is found, and 200 if <email> exists.
+where Success is True if combination is valid and False if combination is not. Status code is 201 if no email \<email\> is found, and 200 if \<email\> exists.
 
-##### /api/goals/<email>
+##### /api/goals/\<email\>
 Methods: POST, GET
 
-GET: Returns list of goals assigned to child with email <email> in the format of a dictionary keyed on integers (0, 1, ...) to a dictionary with the following values (can be changed):
+GET: Returns list of goals assigned to child with email \<email\> in the format of a dictionary keyed on integers (0, 1, ...) to a dictionary with the following values (can be changed):
 
 `{
     Name,
@@ -122,7 +122,7 @@ GET: Returns list of goals assigned to child with email <email> in the format of
     Description
 }`
 
-POST: Add new goal for user with email <email>, takes a json file with name payLoad and fields:
+POST: Add new goal for user with email \<email\>, takes a json file with name payLoad and fields:
 
 `{
     Name,
@@ -131,10 +131,10 @@ POST: Add new goal for user with email <email>, takes a json file with name payL
     Description
 }`
 
-##### /api/children/<email>
+##### /api/children/\<email\>
 Methods: GET
 
-Returns list of all children to the parent with email <email> in the format of a dictionary keyed on integers (0, 1, ...) and with each mapped to smaller dictionary with the following values (each representing a child):
+Returns list of all children to the parent with email \<email\> in the format of a dictionary keyed on integers (0, 1, ...) and with each mapped to smaller dictionary with the following values (each representing a child):
 
 `{
   firstName,
@@ -181,10 +181,10 @@ Updates verification status of tasks. Sends me a json file named payLoad with fo
 
 where email is the email of the child that completed the task, and taskName is name of the task.
 
-##### /api/notifications/<email>
+##### /api/notifications/\<email\>
 Methods: GET
 
-Returns a dictionary keyed on integers (0, 1, ...) of notifications to be displayed for the user with email <email>. Importantly, this dictionary IS SORTED, with 0 being the most recent notification, 1 being the second most recent, and so forth. This get request is for both children and parents. Each key corresponds to a smaller dictionary with the following values:
+Returns a dictionary keyed on integers (0, 1, ...) of notifications to be displayed for the user with email \<email\>. Importantly, this dictionary IS SORTED, with 0 being the most recent notification, 1 being the second most recent, and so forth. This get request is for both children and parents. Each key corresponds to a smaller dictionary with the following values:
 
 `{
   email,
