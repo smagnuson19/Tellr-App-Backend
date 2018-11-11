@@ -30,6 +30,8 @@ Returns list of tasks assigned to child with email \<email\> in the format of a 
   taskDeadline,
   taskDescription,
   childEmail,
+  senderEmail,
+  childName,
   complete,
   verified,
   dateCompleted,
@@ -47,6 +49,8 @@ Returns list of tasks assigned to all children in given familyName \<familyName\
   taskDeadline,
   taskDescription,
   childEmail,
+  senderEmail,
+  childName,
   complete,
   verified,
   dateCompleted,
@@ -64,10 +68,7 @@ Post a new task to this address with a json file named payLoad and the following
   taskDeadline,
   taskDescription,
   childEmail,
-  complete,
-  verified,
-  dateCompleted,
-  familyName
+  senderEmail,
 }`
 
 ##### /api/users
@@ -99,7 +100,7 @@ Returns info on the user with email \<email\> including the following fields:
   balance
 }`
 
-##### /api/<email>/credentials/\<password\>
+##### /api/\<email\>/credentials/\<password\>
 Methods: POST
 
 Asserts whether the <email> <password> combination is valid. Returns a json file with field:
@@ -111,24 +112,29 @@ Asserts whether the <email> <password> combination is valid. Returns a json file
 where Success is True if combination is valid and False if combination is not. Status code is 201 if no email \<email\> is found, and 200 if \<email\> exists.
 
 ##### /api/goals/\<email\>
-Methods: POST, GET
+Methods: GET
 
 GET: Returns list of goals assigned to child with email \<email\> in the format of a dictionary keyed on integers (0, 1, ...) to a dictionary with the following values (can be changed):
 
 `{
-    Name,
-    Prize,
+    name,
+    value,
     email,
-    Description
+    description,
+    image
 }`
+
+##### /api/goals/
+Methods: POST
 
 POST: Add new goal for user with email \<email\>, takes a json file with name payLoad and fields:
 
 `{
-    Name,
-    Prize,
+    name,
+    value,
     email,
-    Description
+    description,
+    image
 }`
 
 ##### /api/children/\<email\>
@@ -193,7 +199,8 @@ Returns a dictionary keyed on integers (0, 1, ...) of notifications to be displa
   notificationName,
   description,
   senderName,
-  senderEmail
+  senderEmail,
+  priority
 }`
 
-where email is the email of the recipient, accountType is the accountType of the recipient, and notificationType describes what type of notification it is. The following are the list of all possible notificationType: newTask (for children), newGoal (for parents), taskComplete (for parents), taskVerified (for children), allowanceChange (for children), and goalComplete (for both adult and children).
+where email is the email of the recipient, accountType is the accountType of the recipient, and notificationType describes what type of notification it is. The following are the list of all possible notificationType: newTask (for children), newGoal (for parents), taskComplete (for parents), taskVerified (for children), allowanceChange (for children), and goalComplete (for both adult and children). notificationName is the name of the task for task-related notifications, name of the goal for goal-related notifications, and change in amount for balance-related notifications. Description is the description fields of the tasks/goals respectively. senderName and senderEmail are the name and email of the party that initiated the action (i.e. for a newTask notification, it would be the parent, for a goalComplete, it would be the child, etc.) - probably helpful for display on the front end, because you can go: "senderName has completed a task!" Priority, you don't have to worry about but it's just an int that I increment on the backend... the higher the int the more recent the notification.

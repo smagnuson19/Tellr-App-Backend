@@ -14,9 +14,10 @@ def getGoals(email, goals):
 def postGoals(request, email, goals):
     request_json = request.get_json()
     new_goal = {
-        'Name': request_json['goalInfo']['Name'],
-        'Prize': request_json['goalInfo']['Prize'],
+        'name': request_json['payLoad']['name'],
+        'value': request_json['payLoad']['value'],
         'email': str.lower(email),
-        'Description': request_json['goalInfo']['Description']
+        'description': request_json['payLoad']['description'],
+        'image': request_json['payLoad']['image']
     }
     result = goals.insert_one(new_goal)

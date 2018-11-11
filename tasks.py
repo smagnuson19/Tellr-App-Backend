@@ -21,6 +21,7 @@ def postTask(request,tasks):
         'taskDeadline': request_json['payLoad']['taskDeadline'],
         'taskDescription': request_json['payLoad']['taskDescription'],
         'childEmail': str.lower(request_json['payLoad']['childEmail']),
+        'senderEmail': request_json['payLoad']['senderEmail'],
         'childName': stringName,
         'complete': False,
         'verified': False,
@@ -44,23 +45,55 @@ def getTasksChild(email, tasks):
     response.status_code = 200
     return response
 
-def completeTasks(request, tasks):
+def completeTasks(request, tasks, notifications, people):
     request_json = request.get_json()
+    child = people.find_one({'email':str.lower(request_json['payLoad']['email'])})
+    stringName = child['firstName']+ ' '+ child['lastName']
     tasksList = tasks.find({'childEmail':str.lower(request_json['payLoad']['email'])})
     for task in tasksList:
         if task['taskName'] == request_json['payLoad']['taskName']:
             tasks.update_one({'_id': task['_id']}, {"$set":{'complete': True}},upsert = False)
+            parent = people.find_one({'email':str.lower(task['senderEmail'])})
+            new_notification = {
+                'email': task['senderEmail'],
+                'accountType': 'Parent',
+                'notificationType': 'taskComplete',
+                'notificationName': task['taskName'],
+                'description': task['taskDescription'],
+                'senderName': stringName,
+                'senderEmail': child['email'],
+                'priority': parent['notCounter']
+            }
+            notifications.insert_one(new_notification)
+            current_priority = parent['notCounter']
+            people.update_one({'email': parent['email']}, {"$set":{'notCounter': current_priority+1}},upsert = False)
     response = jsonify([{
     }])
     response.status_code = 200
     return response
 
-def verifyTasks(request, tasks):
+def verifyTasks(request, tasks, notifications, people):
     request_json = request.get_json()
+    child = people.find_one({'email':str.lower(request_json['payLoad']['email'])})
     tasksList = tasks.find({'childEmail':str.lower(request_json['payLoad']['email'])})
     for task in taskList:
         if task['taskName'] == request_json['payLoad']['taskName']:
             tasks.update_one({'_id': task['_id']}, {"$set":{'verified': True}},upsert = False)
+            parent = people.find_one({'email':str.lower(task['senderEmail'])})
+            stringName = parent['firstName']+ ' '+ parent['lastName']
+            new_notification={
+                'email': child['email'],
+                'accountType': 'Child',
+                'notificationType': 'taskVerified',
+                'notificationName': task['taskName'],
+                'description': task['taskDescription'],
+                'senderName': stringName,
+                'senderEmail': parent['email'],
+                'priority': child['notCounter']
+            }
+            notifications.insert_one(new_notification)
+            current_priority = child['notCounter']
+            people.update_one({'email': child['email']}, {"$set":{'notCounter': current_priority+1}},upsert = False)
     response = jsonify([{
     }])
     response.status_code = 200

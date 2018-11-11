@@ -35,12 +35,12 @@ def postTasks():
 @app.route("/api/tasks/completed", methods = ['POST'])
 def completeTasks():
     if request.method == 'POST':
-        return completeTask(request, tasks, notifications)
+        return completeTask(request, tasks, notifications, people)
 
 @app.route("/api/tasks/verified", methods = ['POST'])
 def verifyTasks():
     if request.method == 'POST':
-        return verifyTask(request, tasks, notifications)
+        return verifyTask(request, tasks, notifications, people)
 
 @app.route("/api/users", methods =['POST'])
 def add_users():
@@ -64,10 +64,13 @@ def check_credentials(email, password):
     if request.method == 'POST':
         return handleCredentials(email, password, credentials)
 
-@app.route("/api/goals/<email>", methods =['GET', 'POST'])
+@app.route("/api/goals/<email>", methods =['GET'])
 def handleGoals(email):
     if request.method == 'GET':
         return getGoals(email, goals)
+
+@app.route("/api/goals", methods =['POST'])
+def makeGoals(email):
     if request.method == 'POST':
         return postGoals(request, email, goals)
 
