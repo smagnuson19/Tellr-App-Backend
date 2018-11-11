@@ -176,7 +176,24 @@ Updates verification status of tasks. Sends me a json file named payLoad with fo
 
 `{
   email,
-  taskName,
+  taskName
 }`
 
 where email is the email of the child that completed the task, and taskName is name of the task.
+
+##### /api/notifications/<email>
+Methods: GET
+
+Returns a dictionary keyed on integers (0, 1, ...) of notifications to be displayed for the user with email <email>. Importantly, this dictionary IS SORTED, with 0 being the most recent notification, 1 being the second most recent, and so forth. This get request is for both children and parents. Each key corresponds to a smaller dictionary with the following values:
+
+`{
+  email,
+  accountType,
+  notificationType,
+  notificationName,
+  description,
+  senderName,
+  senderEmail
+}`
+
+where email is the email of the recipient, accountType is the accountType of the recipient, and notificationType describes what type of notification it is. The following are the list of all possible notificationType: newTask (for children), newGoal (for parents), taskComplete (for parents), taskVerified (for children), allowanceChange (for children), and goalComplete (for both adult and children).
