@@ -121,8 +121,11 @@ GET: Returns list of goals assigned to child with email \<email\> in the format 
     value,
     email,
     description,
-    image
+    image,
+    redeemed
 }`
+
+where name is name of goal, value is cost of goal, email is email of child, image is a string address to the image, and redeemed is a boolean.
 
 ##### /api/goals/
 Methods: POST
@@ -159,7 +162,8 @@ Updates balance of any user. Takes a json file named payLoad with following fiel
 
 `{
   email,
-  increment
+  increment,
+  senderEmail
 }`
 
 ##### /api/tasks/completed
@@ -187,6 +191,18 @@ Updates verification status of tasks. Sends me a json file named payLoad with fo
 
 where email is the email of the child that completed the task, and taskName is name of the task.
 
+##### /api/redeem
+Methods: POST
+
+Redeems a selected goal and updates balance accordingly. Post the following json named payLoad:
+
+`{
+  email,
+  goalName
+}`
+
+where email is the email of the child that is redeeming the goal, and goalName is the name of the goal that is being redeemed.
+
 ##### /api/notifications/\<email\>
 Methods: GET
 
@@ -203,4 +219,4 @@ Returns a dictionary keyed on integers (0, 1, ...) of notifications to be displa
   priority
 }`
 
-where email is the email of the recipient, \n accountType is the accountType of the recipient, \n and notificationType describes what type of notification it is. The following are the list of all possible notificationType: newTask (for children), newGoal (for parents), taskComplete (for parents), taskVerified (for children), allowanceChange (for children), and goalComplete (for both adult and children). \n notificationName is the name of the task for task-related notifications, name of the goal for goal-related notifications, and change in amount for balance-related notifications. \n description is the description fields of the tasks/goals respectively. \n senderName and senderEmail are the name and email of the party that initiated the action (i.e. for a newTask notification, it would be the parent, for a goalComplete, it would be the child, etc.) - probably helpful for display on the front end, because you can go: "senderName has completed a task!" \n Priority, you don't have to worry about but it's just an int that I increment on the backend... the higher the int the more recent the notification.
+where email is the email of the recipient, \newline accountType is the accountType of the recipient, \newline and notificationType describes what type of notification it is. The following are the list of all possible notificationType: newTask (for children), newGoal (for parents), taskComplete (for parents), taskVerified (for children), balanceChange (for children), and goalComplete (for both adult and children). \newline notificationName is the name of the task for task-related notifications, name of the goal for goal-related notifications, and change in amount for balance-related notifications. \newline description is the description fields of the tasks/goals respectively. \newline senderName and senderEmail are the name and email of the party that initiated the action (i.e. for a newTask notification, it would be the parent, for a goalComplete, it would be the child, etc.) - probably helpful for display on the front end, because you can go: "senderName has completed a task!" \newline Priority, you don't have to worry about but it's just an int that I increment on the backend... the higher the int the more recent the notification.
