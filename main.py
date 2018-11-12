@@ -18,6 +18,8 @@ tasks = db.tasks
 goals = db.goals
 notifications = db.notifications
 
+print("hi")
+
 #Passed
 @app.route("/api/childtasks/<email>", methods =['GET'])
 def childtask_handler(email):
