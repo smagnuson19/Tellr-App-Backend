@@ -5,11 +5,12 @@ def findNotifications(email,notifications):
     send_list = []
     dictresponse = {}
     for noti in all:
-        if not noti[complete]:
-            send_list.append(noti)
+        #if not noti[complete]:
+        send_list.append(noti)
     quicksort(send_list)
     for i in range(len(send_list)):
         dictresponse[i]=send_list[i]
+    print(dictresponse)
     response = jsonify(dictresponse)
     response.response_code=200
     return response
@@ -17,11 +18,11 @@ def findNotifications(email,notifications):
 def partition(the_list, p, r):
     i = p - 1              # i demarcates the end of the sublist containing values <= pivot.
     j = p                  # j demarcates end of sublist containing values > pivot.
-    pivot = the_list[r][priority]    # Pivot will store value of sublist's last item.
+    pivot = the_list[r]['priority']    # Pivot will store value of sublist's last item.
     while j < r:
-        if the_list[j][priority] < pivot:
+        if the_list[j]['priority'] < pivot:
             j += 1         # Increment j.
-        elif the_list[j][priority] >= pivot:
+        elif the_list[j]['priority'] >= pivot:
             i += 1         # Increment i.
             the_list[i], the_list[j] = the_list[j], the_list[i]
             j += 1

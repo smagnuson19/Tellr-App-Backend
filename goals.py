@@ -1,4 +1,5 @@
 from flask import Flask, request, jsonify
+from handleEmail import *
 
 def getGoals(email, goals):
     goalList = goals.find({'email': str.lower(email)},{'_id': False})
@@ -8,6 +9,7 @@ def getGoals(email, goals):
         dictresponse[i]=goal
         i = i+1
     response = jsonify(dictresponse)
+    print(dictresponse)
     response.status_code = 200
     return response
 
@@ -16,7 +18,7 @@ def postGoals(request, goals, people, notifications):
     new_goal = {
         'name': request_json['payLoad']['name'],
         'value': float(request_json['payLoad']['value']),
-        'email': str.lower(request_json['payLoad']['email']),
+        'email': fixEmail(request_json['payLoad']['email']),
         'description': request_json['payLoad']['description'],
         'image': request_json['payLoad']['image'],
         'redeemed': False
@@ -40,13 +42,16 @@ def postGoals(request, goals, people, notifications):
     notifications.insert_one(new_notification)
     current_priority = realParent['notCounter']
     people.update_one({'email': realParent['email']}, {"$set":{'notCounter': current_priority+1}},upsert = False)
-
     result = goals.insert_one(new_goal)
+    response = jsonify([{
+    }])
+    response.status_code = 200
+    return response
 
 def finishGoal(request, people, goals, notifications):
     request_json = request.get_json()
-    child = people.find_one({'email': str.lower(request_json['payLoad']['email'])})
-    goalList = goals.find({'email': str.lower(request_json['payLoad']['email'])})
+    child = people.find_one({'email': fixEmail(request_json['payLoad']['email'])})
+    goalList = goals.find({'email': fixEmail(request_json['payLoad']['email'])})
     for goal in goalList:
         if goal['name'] == request_json['payLoad']['goalName']:
             redeemedGoal = goal
@@ -86,7 +91,6 @@ def finishGoal(request, people, goals, notifications):
     }
     notifications.insert_one(new_notification2)
     current_priority1 = child['notCounter']
-    people.update_one({'email': child['email']}, {"$set":{'notCounter': current_priority1+1}},upsert = False)
     new_notification3 = {
         'email': child['email'],
         'accountType': 'Child',
@@ -95,8 +99,12 @@ def finishGoal(request, people, goals, notifications):
         'description': newBalance,
         'senderName': child['firstName'],
         'senderEmail': child['email'],
-        'priority': child['notCounter']
+        'priority': new_notification2['priority']+1
     }
     notifications.insert_one(new_notification3)
-    current_priority2 = child['notCounter']
-    people.update_one({'email': child['email']}, {"$set":{'notCounter': current_priority2+1}},upsert = False)
+    people.update_one({'email': child['email']}, {"$set":{'notCounter': current_priority1+2}},upsert = False)
+
+    response = jsonify([{
+    }])
+    response.status_code = 200
+    return response

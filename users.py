@@ -1,4 +1,5 @@
 from flask import Flask, request, jsonify
+from handleEmail import *
 
 #Adding a user to the database
 def add_user(request, people, credentials):
@@ -59,34 +60,34 @@ def findChildren(email, people):
     return response
 
 #Function that updates balance
-def upBalance(request,people):
+def upBalance(request,people,notifications):
     request_json = request.get_json()
-    user = people.find_one({'email': str.lower(request_json['payLoad']['email'])}, {'_id': False})
+    user = people.find_one({'email': fixEmail(request_json['payLoad']['email'])}, {'_id': False})
     #If email given isn't in the database, make an empty json and return status code 201
     if user == None:
         response = jsonify([{
         }])
         response.status_code=201
-
     #If email is found, update the balance and return 200 status code
     else:
         lastbal = user['balance']
-        people.update_one({'email': str.lower(user['email'])}, {"$set":{'balance': lastbal + float(request_json['payLoad']['increment'])}},upsert = False)
-        sender = people.find_one({'email': str.lower(request_json['payLoad']['senderEmail'])}, {'_id': False})
+        people.update_one({'email': fixEmail(user['email'])}, {"$set":{'balance': lastbal + float(request_json['payLoad']['increment'])}},upsert = False)
+        sender = people.find_one({'email': fixEmail(request_json['payLoad']['senderEmail'])}, {'_id': False})
         new_notification = {
             'email': user['email'],
             'accountType': 'Child',
             'notificationType': 'balanceChange',
-            'notificationName': request_json['payLoad']['increment'],
+            'notificationName': float(request_json['payLoad']['increment']),
             'description': user['balance'],
             'senderName': sender['firstName'],
             'senderEmail': sender['email'],
             'priority': user['notCounter']
         }
         notifications.insert_one(new_notification)
-        current_priority = realParent['notCounter']
+        current_priority = user['notCounter']
         people.update_one({'email': user['email']}, {"$set":{'notCounter': current_priority+1}},upsert = False)
         response = jsonify([{
         }])
         response.status_code=200
+
     return response
