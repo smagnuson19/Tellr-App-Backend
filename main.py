@@ -12,6 +12,7 @@ import string
 app = Flask(__name__)
 
 MONGO_URL = os.environ.get('MONGO_URI')
+URI = MONGO_URL
 variable = ''
 if not MONGO_URL:
     MONGO_URL = "mongodb://localhost";
@@ -133,7 +134,8 @@ def main():
         }])
         response.status_code = 200
     if request.method == 'GET':
-        response = jsonify([{'URL': MONGO_URL
+        response = jsonify([{'URL': MONGO_URL,
+        'URI': URI
         }])
         response.status_code = 200
     return response
