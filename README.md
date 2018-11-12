@@ -219,4 +219,16 @@ Returns a dictionary keyed on integers (0, 1, ...) of notifications to be displa
   priority
 }`
 
-where email is the email of the recipient, \newline accountType is the accountType of the recipient, \newline and notificationType describes what type of notification it is. The following are the list of all possible notificationType: newTask (for children), newGoal (for parents), taskComplete (for parents), taskVerified (for children), balanceChange (for children), and goalComplete (for both adult and children). \newline notificationName is the name of the task for task-related notifications, name of the goal for goal-related notifications, and change in amount for balance-related notifications. \newline description is the description fields of the tasks/goals respectively. \newline senderName and senderEmail are the name and email of the party that initiated the action (i.e. for a newTask notification, it would be the parent, for a goalComplete, it would be the child, etc.) - probably helpful for display on the front end, because you can go: "senderName has completed a task!" \newline Priority, you don't have to worry about but it's just an int that I increment on the backend... the higher the int the more recent the notification.
+where email is the email of the recipient,
+
+accountType is the accountType of the recipient, and
+
+notificationType describes what type of notification it is. The following are the list of all possible notificationType: newTask (for children), newGoal (for parents), taskComplete (for parents), taskVerified (for children), balanceChange (for children), and goalComplete (for both adult and children).
+
+notificationName is the name of the task for task-related notifications, name of the goal for goal-related notifications, and change in amount for balance-related notifications.
+
+description is the description fields of the tasks/goals respectively.
+
+senderName and senderEmail are the name and email of the party that initiated the action (i.e. for a newTask notification, it would be the parent, for a goalComplete, it would be the child, etc.) - probably helpful for display on the front end, because you can go: "senderName has completed a task!"
+
+priority, you don't have to worry about but it's just an int that I increment on the backend... the higher the int the more recent the notification.
