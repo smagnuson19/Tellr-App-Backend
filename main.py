@@ -11,7 +11,7 @@ import string
 
 app = Flask(__name__)
 
-MONGO_URL = os.environ.get('MONGO_URL')
+MONGO_URL = os.environ.get('MONGO_URI')
 variable = ''
 if not MONGO_URL:
     MONGO_URL = "mongodb://localhost";
