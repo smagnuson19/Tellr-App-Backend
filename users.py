@@ -81,7 +81,8 @@ def upBalance(request,people,notifications):
             'description': user['balance'],
             'senderName': sender['firstName'],
             'senderEmail': sender['email'],
-            'priority': user['notCounter']
+            'priority': user['notCounter'],
+            'read': False
         }
         notifications.insert_one(new_notification)
         current_priority = user['notCounter']

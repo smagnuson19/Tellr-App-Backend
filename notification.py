@@ -5,14 +5,29 @@ def findNotifications(email,notifications):
     send_list = []
     dictresponse = {}
     for noti in all:
-        #if not noti[complete]:
-        send_list.append(noti)
+        if not noti['read']:
+            send_list.append(noti)
     quicksort(send_list)
     for i in range(len(send_list)):
         dictresponse[i]=send_list[i]
     print(dictresponse)
     response = jsonify(dictresponse)
     response.response_code=200
+    return response
+
+def readNotifications(request, notifications):
+    request_json = request.get_json()
+    email = fixEmail(request_json['payLoad']['email'])
+    priority = request_json['payLoad']['priority']
+    notiList = notifications.find({'email':email})
+    for notis in notiList:
+        if notis['priority'] == priority:
+            readNoti = notis
+            break
+    notifications.update_one({'_id': readNoti['_id']}, {"$set":{'read': True}},upsert = False)
+    response = jsonify([{
+    }])
+    response.status_code = 200
     return response
 
 def partition(the_list, p, r):
