@@ -10,7 +10,7 @@ import string
 
 app = Flask(__name__)
 
-client1 = MongoClient('localhost', 27017)
+client1 = MongoClient('localhost', 27243)
 db = client1.exampledb
 credentials = db.credentials
 people = db.people
