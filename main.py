@@ -17,8 +17,6 @@ people = db.people
 tasks = db.tasks
 goals = db.goals
 notifications = db.notifications
-asdfliuasdblfbsdlufblsad;f
-sys.stdout.write("hii")
 
 #Passed
 @app.route("/api/childtasks/<email>", methods =['GET'])
