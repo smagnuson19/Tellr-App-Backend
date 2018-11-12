@@ -133,7 +133,7 @@ def main():
         }])
         response.status_code = 200
     if request.method == 'GET':
-        response = jsonify([{
+        response = jsonify([{'URL': MONGO_URL
         }])
         response.status_code = 200
     return response
