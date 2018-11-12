@@ -1,3 +1,4 @@
+import os
 from pymongo import MongoClient
 from flask import Flask, request, jsonify
 from users import *
@@ -10,7 +11,13 @@ import string
 
 app = Flask(__name__)
 
-client1 = MongoClient('localhost', 27017)
+MONGO_URL = os.environ.get('MONGO_URL')
+variable = ''
+if not MONGO_URL:
+    MONGO_URL = "mongodb://localhost";
+    variable = 27017
+
+client1 = MongoClient(MONGO_URL, variable)
 db = client1.exampledb
 credentials = db.credentials
 people = db.people
