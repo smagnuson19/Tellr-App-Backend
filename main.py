@@ -30,7 +30,7 @@ def adulttask_handler(familyName):
 @app.route("/api/tasks", methods =['POST'])
 def postTasks():
     if request.method == 'POST':
-        return postTask(request, tasks, people)
+        return postTask(request, tasks, people, notifications)
 
 @app.route("/api/tasks/completed", methods = ['POST'])
 def completeTasks():
@@ -48,8 +48,9 @@ def add_users():
 
 @app.route("/api/users/<email>", methods =['GET'])
 def get_user(email):
+    realEmail=str.lower(email)
     if request.method == 'GET':
-        user = people.find_one({'email': email},{'_id': False})
+        user = people.find_one({'email': realEmail},{'_id': False})
     if user == None:
         response = jsonify([{
         }])
@@ -70,9 +71,9 @@ def handleGoals(email):
         return getGoals(email, goals)
 
 @app.route("/api/goals", methods =['POST'])
-def makeGoals(email):
+def makeGoals():
     if request.method == 'POST':
-        return postGoals(request, email, goals)
+        return postGoals(request, goals, people, notifications)
 
 @app.route("/api/children/<email>", methods =['GET'])
 def getChildren(email):

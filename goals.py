@@ -11,7 +11,7 @@ def getGoals(email, goals):
     response.status_code = 200
     return response
 
-def postGoals(request, email, goals):
+def postGoals(request, goals, people, notifications):
     request_json = request.get_json()
     new_goal = {
         'name': request_json['payLoad']['name'],
