@@ -11,7 +11,7 @@ def getTasks(familyName,tasks):
     response.status_code = 200
     return response
 
-def postTask(request,tasks):
+def postTask(request,tasks, people, notifications):
     request_json = request.get_json()
     child = people.find_one({'email':str.lower(request_json['payLoad']['childEmail'])},{'_id': False})
     stringName = child['firstName']+ ' '+ child['lastName']
@@ -21,7 +21,7 @@ def postTask(request,tasks):
         'taskDeadline': request_json['payLoad']['taskDeadline'],
         'taskDescription': request_json['payLoad']['taskDescription'],
         'childEmail': str.lower(request_json['payLoad']['childEmail']),
-        'senderEmail': request_json['payLoad']['senderEmail'],
+        'senderEmail': str.lower(request_json['payLoad']['senderEmail']),
         'childName': stringName,
         'complete': False,
         'verified': False,
@@ -29,6 +29,21 @@ def postTask(request,tasks):
         'familyName': child['familyName']
     }
     result1 = tasks.insert_one(new_task)
+    parent = people.find_one({'email':new_task['senderEmail']},{'_id': False})
+    sName = parent['firstName']+ ' '+ parent['lastName']
+    new_notification = {
+        'email': child['email'],
+        'accountType': 'Child',
+        'notificationType': 'newTask',
+        'notificationName': new_task['taskName'],
+        'description': new_task['taskDescription'],
+        'senderName': sName,
+        'senderEmail': parent['email'],
+        'priority': child['notCounter']
+    }
+    notifications.insert_one(new_notification)
+    current_priority = child['notCounter']
+    people.update_one({'email': child['email']}, {"$set":{'notCounter': current_priority+1}},upsert = False)
     response = jsonify([{
     }])
     response.status_code = 200
