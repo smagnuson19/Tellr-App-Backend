@@ -203,6 +203,19 @@ Redeems a selected goal and updates balance accordingly. Post the following json
 
 where email is the email of the child that is redeeming the goal, and goalName is the name of the goal that is being redeemed.
 
+##### /api/notifications
+Methods: POST
+
+Alerts backend when a user reads/dismisses a notification, changing the read status from False to True. Post to me a json named payLoad with the following values:
+
+`{
+  email,
+  priority
+}`
+
+where email is the email of the notified user (also in the notification dictionary structure) and priority is the priority field of the notification dictionary. Here it's as essentially an ID to help me identify which notification it is.
+
+
 ##### /api/notifications/\<email\>
 Methods: GET
 
@@ -216,7 +229,8 @@ Returns a dictionary keyed on integers (0, 1, ...) of notifications to be displa
   description,
   senderName,
   senderEmail,
-  priority
+  priority,
+  read
 }`
 
 where email is the email of the recipient,
@@ -231,4 +245,6 @@ description is the description fields of the tasks/goals respectively.
 
 senderName and senderEmail are the name and email of the party that initiated the action (i.e. for a newTask notification, it would be the parent, for a goalComplete, it would be the child, etc.) - probably helpful for display on the front end, because you can go: "senderName has completed a task!"
 
-priority, you don't have to worry about but it's just an int that I increment on the backend... the higher the int the more recent the notification.
+priority, you don't have to worry about but it's just an int that I increment on the backend... the higher the int the more recent the notification. I also use this as its ID (since it is unique)
+
+read is whether or not the user has already seen this notification. All notifications sent to you should have a read field of False

@@ -46,7 +46,8 @@ def postTask(request,tasks, people, notifications):
         'description': new_task['taskDescription'],
         'senderName': sName,
         'senderEmail': parent['email'],
-        'priority': child['notCounter']
+        'priority': child['notCounter'],
+        'read': False
     }
     notifications.insert_one(new_notification)
     current_priority = child['notCounter']
@@ -84,7 +85,8 @@ def completeTask(request, tasks, notifications, people):
                 'description': task['taskDescription'],
                 'senderName': stringName,
                 'senderEmail': child['email'],
-                'priority': parent['notCounter']
+                'priority': parent['notCounter'],
+                'read': False
             }
             print(new_notification)
             print(task)
@@ -114,7 +116,8 @@ def verifyTask(request, tasks, notifications, people):
                 'description': task['taskDescription'],
                 'senderName': stringName,
                 'senderEmail': parent['email'],
-                'priority': child['notCounter']
+                'priority': child['notCounter'],
+                'read': False
             }
             print(new_notification)
             print(task)

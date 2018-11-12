@@ -37,7 +37,8 @@ def postGoals(request, goals, people, notifications):
         'description': new_goal['description'],
         'senderName': child['firstName'],
         'senderEmail': child['email'],
-        'priority': realParent['notCounter']
+        'priority': realParent['notCounter'],
+        'read': False
     }
     notifications.insert_one(new_notification)
     current_priority = realParent['notCounter']
@@ -74,7 +75,8 @@ def finishGoal(request, people, goals, notifications):
         'description': redeemedGoal['description'],
         'senderName': child['firstName'],
         'senderEmail': child['email'],
-        'priority': realParent['notCounter']
+        'priority': realParent['notCounter'],
+        'read': False
     }
     notifications.insert_one(new_notification1)
     current_priority = realParent['notCounter']
@@ -87,7 +89,8 @@ def finishGoal(request, people, goals, notifications):
         'description': redeemedGoal['description'],
         'senderName': child['firstName'],
         'senderEmail': child['email'],
-        'priority': child['notCounter']
+        'priority': child['notCounter'],
+        'read': False
     }
     notifications.insert_one(new_notification2)
     current_priority1 = child['notCounter']
@@ -99,7 +102,8 @@ def finishGoal(request, people, goals, notifications):
         'description': newBalance,
         'senderName': child['firstName'],
         'senderEmail': child['email'],
-        'priority': new_notification2['priority']+1
+        'priority': new_notification2['priority']+1,
+        'read': False
     }
     notifications.insert_one(new_notification3)
     people.update_one({'email': child['email']}, {"$set":{'notCounter': current_priority1+2}},upsert = False)
