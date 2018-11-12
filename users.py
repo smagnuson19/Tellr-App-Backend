@@ -20,7 +20,7 @@ def add_user(request, people, credentials):
                 'password': request_json['payLoad']['password'],
                 'familyName': str.lower(request_json['payLoad']['familyName']),
                 'accountType': request_json['payLoad']['accountType'],
-                'balance': 0,
+                'balance': 0.0,
                 'notCounter': 0
             }
             result1 = people.insert_one(new_person)
@@ -36,10 +36,8 @@ def add_user(request, people, credentials):
 
 #Function that returns dictionary of all children of parent with given email
 def findChildren(email, people):
-    print(email)
     #First find the parent
     user = people.find_one({'email': str.lower(email)}, {'_id': False})
-    print(user)
     #If invalid email, return empty json with 201 status
     if user == None:
         response = jsonify([{
@@ -73,7 +71,21 @@ def upBalance(request,people):
     #If email is found, update the balance and return 200 status code
     else:
         lastbal = user['balance']
-        people.update_one({'email': str.lower(user['email'])}, {"$set":{'balance': lastbal + request_json['payLoad']['increment']}},upsert = False)
+        people.update_one({'email': str.lower(user['email'])}, {"$set":{'balance': lastbal + float(request_json['payLoad']['increment'])}},upsert = False)
+        sender = people.find_one({'email': str.lower(request_json['payLoad']['senderEmail'])}, {'_id': False})
+        new_notification = {
+            'email': user['email'],
+            'accountType': 'Child',
+            'notificationType': 'balanceChange',
+            'notificationName': request_json['payLoad']['increment'],
+            'description': user['balance'],
+            'senderName': sender['firstName'],
+            'senderEmail': sender['email'],
+            'priority': user['notCounter']
+        }
+        notifications.insert_one(new_notification)
+        current_priority = realParent['notCounter']
+        people.update_one({'email': user['email']}, {"$set":{'notCounter': current_priority+1}},upsert = False)
         response = jsonify([{
         }])
         response.status_code=200

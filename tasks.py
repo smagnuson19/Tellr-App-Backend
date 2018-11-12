@@ -82,6 +82,7 @@ def completeTasks(request, tasks, notifications, people):
             notifications.insert_one(new_notification)
             current_priority = parent['notCounter']
             people.update_one({'email': parent['email']}, {"$set":{'notCounter': current_priority+1}},upsert = False)
+            break
     response = jsonify([{
     }])
     response.status_code = 200
@@ -109,6 +110,7 @@ def verifyTasks(request, tasks, notifications, people):
             notifications.insert_one(new_notification)
             current_priority = child['notCounter']
             people.update_one({'email': child['email']}, {"$set":{'notCounter': current_priority+1}},upsert = False)
+            break
     response = jsonify([{
     }])
     response.status_code = 200

@@ -84,7 +84,7 @@ def getChildren(email):
 @app.route("/api/balance", methods =['POST'])
 def updateBalance():
     if request.method == 'POST':
-        return upBalance(request,people)
+        return upBalance(request,people,notifications)
 
 @app.route("/api/notifications/<email>", methods =['GET'])
 def getNotifications(email):
@@ -92,20 +92,21 @@ def getNotifications(email):
     if request.method == 'GET':
         return findNotifications(realEmail,notifications,people)
 
+@app.route("/api/redeem", methods =['POST'])
+def redeemGoal():
+    if request.method == 'POST':
+        return finishGoal(request,people, goals, notification)
+
 @app.route("/api/", methods =['GET', 'POST'])
 def main():
     if request.method == 'POST':
-        # main area
         request_json = request.get_json()
-        #here we would need to get item
         print(request_json)
         response = jsonify([{
         }])
         response.status_code = 200
     if request.method == 'GET':
         response = jsonify([{
-        # 'Name': str(bills_post['Name']),
-        # 'Children': str(bills_post['Children']),
         }])
         response.status_code = 200
     return response
