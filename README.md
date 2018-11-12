@@ -127,7 +127,7 @@ GET: Returns list of goals assigned to child with email \<email\> in the format 
 
 where name is name of goal, value is cost of goal, email is email of child, image is a string address to the image, and redeemed is a boolean.
 
-##### /api/goals/
+##### /api/goals
 Methods: POST
 
 POST: Add new goal for user with email \<email\>, takes a json file with name payLoad and fields:
