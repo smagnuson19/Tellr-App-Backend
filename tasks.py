@@ -133,7 +133,7 @@ def verifyTask(request, tasks, notifications, people, mail, app):
                     'notificationType': 'taskVerified',
                     'notificationName': task['taskName'],
                     'description': task['taskDescription'],
-                    'senderName': stringName,
+                    'senderName': parent['firstName'],
                     'senderEmail': parent['email'],
                     'priority': child['notCounter'],
                     'value': task['reward'],
@@ -162,12 +162,20 @@ def verifyTask(request, tasks, notifications, people, mail, app):
                 new_notification={
                     'email': child['email'],
                     'accountType': 'Child',
-                    'notificationType': 'taskVerified',
+                    'notificationType': 'taskUnverified',
                     'notificationName': task['taskName'],
                     'description': task['taskDescription'],
-                    'senderName': stringName,
+                    'senderName': parent['firstName'],
                     'senderEmail': parent['email'],
                     'priority': child['notCounter'],
                     'value': task['reward'],
                     'read': False
                 }
+                notifications.insert_one(new_notification)
+                current_priority = child['notCounter']
+                people.update_one({'email': child['email']}, {"$set":{'notCounter': current_priority+1}},upsert = False)
+                break
+        response = jsonify([{
+        }])
+        response.status_code = 200
+        return response
