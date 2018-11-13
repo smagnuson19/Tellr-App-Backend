@@ -40,6 +40,7 @@ def postGoals(request, goals, people, notifications, mail, app):
         'senderName': child['firstName'],
         'senderEmail': child['email'],
         'priority': realParent['notCounter'],
+        'value': new_goal['value'],
         'read': False
     }
     notifications.insert_one(new_notification)
@@ -85,6 +86,7 @@ def finishGoal(request, people, goals, notifications, mail, app):
         'senderName': child['firstName'],
         'senderEmail': child['email'],
         'priority': realParent['notCounter'],
+        'value': redeemedGoal['value'],
         'read': False
     }
     notifications.insert_one(new_notification1)
@@ -99,6 +101,7 @@ def finishGoal(request, people, goals, notifications, mail, app):
         'senderName': child['firstName'],
         'senderEmail': child['email'],
         'priority': child['notCounter'],
+        'value': redeemedGoal['value'],
         'read': False
     }
     notifications.insert_one(new_notification2)
@@ -112,6 +115,7 @@ def finishGoal(request, people, goals, notifications, mail, app):
         'senderName': child['firstName'],
         'senderEmail': child['email'],
         'priority': new_notification2['priority']+1,
+        'value': balanceDeduct,
         'read': False
     }
 
@@ -155,6 +159,7 @@ def approveGoal(request, goals, people, notifications, mail, app):
         'senderName': parent['firstName'],
         'senderEmail': parent['email'],
         'priority': child['notCounter'],
+        'value': realGoal['value'],
         'read': False
     }
     notifications.insert_one(new_notification1)
