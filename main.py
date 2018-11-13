@@ -135,7 +135,7 @@ def main():
         response.status_code = 200
     if request.method == 'GET':
         response = jsonify([{'URL': MONGO_URL,
-        'URI': URI
+        'client': client1
         }])
         response.status_code = 200
     return response
