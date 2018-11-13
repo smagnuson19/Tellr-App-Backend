@@ -8,7 +8,7 @@ def add_user(request, people, credentials):
         request_json = request.get_json()
         #Check to see whether user is already in databse; if so, return empty json with 201 status
         if not people.find_one({'email':str.lower(request_json['payLoad']['email'])},{'_id': False}) == None:
-            response = jsonify([{
+            response = jsonify([{'Success': False,
             }])
             response.status_code = 201
             return response
@@ -31,7 +31,7 @@ def add_user(request, people, credentials):
                 'password': request_json['payLoad']['password']
             }
             result2= credentials.insert_one(creds)
-            response = jsonify([{
+            response = jsonify([{'Success': True,
             }])
             response.status_code = 200
             return response
