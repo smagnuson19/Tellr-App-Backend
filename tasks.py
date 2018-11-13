@@ -109,7 +109,7 @@ def completeTask(request, tasks, notifications, people, mail, app):
     with app.app_context():
         msg = Message("Task Completed",
                           sender="teller.notifications@gmail.com",
-                          recipients=parent['email'])
+                          recipients=[task['senderEmail']])
         msg.body = mstring
         mail.send(msg)
     response = jsonify([{
@@ -142,15 +142,15 @@ def verifyTask(request, tasks, notifications, people, mail, app):
                 notifications.insert_one(new_notification)
                 current_priority = child['notCounter']
                 new_balance = child['balance'] + float(task['reward'])
-                people.update_one({'email': child['email']}, {"$set":{'notCounter': new_balance}},upsert = False)
-                people.update_one({'email': child['email']}, {"$set":{'balance': current_priority+1}},upsert = False)
+                people.update_one({'email': child['email']}, {"$set":{'notCounter': current_priority+1}},upsert = False)
+                people.update_one({'email': child['email']}, {"$set":{'balance': new_balance}},upsert = False)
                 break
 
         mstring = "Awesome work " + child['firstName'] + ", your completion of the task: " + task['taskName'] + " has been verified. See your tellrApp for your updated balanc !"
         with app.app_context():
             msg = Message("Cha Ching!",
                               sender="teller.notifications@gmail.com",
-                              recipients=child['email'])
+                              recipients=[child['email']])
             msg.body = mstring
             mail.send(msg)
         response = jsonify([{

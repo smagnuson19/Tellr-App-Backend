@@ -93,7 +93,7 @@ def upBalance(request,people,notifications, mail, app):
         # with app.app_context():
         #     msg = Message("Dun dun dunnnnnn",
         #                       sender="teller.notifications@gmail.com",
-        #                       recipients=user['email'])
+        #                       recipients=[user['email']])
         #     msg.body = mstring
         #     mail.send(msg)
         response = jsonify([{
