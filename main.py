@@ -14,11 +14,11 @@ app = Flask(__name__)
 MONGO_URL = os.environ.get('MONGODB_URI')
 URI = MONGO_URL
 variable = ''
-if not False:
+if MONGO_URL == None:
     MONGO_URL = "mongodb://localhost";
     variable = 27017
 
-client1 = MongoClient("mongodb://localhost", variable)
+client1 = MongoClient(URI)
 db = client1.exampledb
 credentials = db.credentials
 people = db.people
