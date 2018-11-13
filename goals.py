@@ -7,8 +7,9 @@ def getGoals(email, goals):
     dictresponse = {}
     i = 0
     for goal in goalList:
-        dictresponse[i]=goal
-        i = i+1
+        if goal['approved']==1:
+            dictresponse[i]=goal
+            i = i+1
     response = jsonify(dictresponse)
     print(dictresponse)
     response.status_code = 200
