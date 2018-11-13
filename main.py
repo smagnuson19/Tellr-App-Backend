@@ -11,15 +11,12 @@ import string
 
 app = Flask(__name__)
 
-MONGO_URL = os.environ.get('MONGODB_URI')
-URI = MONGO_URL
-variable = ''
+MONGO_URL = 'mongodb://heroku_sxklq0jf:fvegd2q34of2qn0j5jivm9b51b@ds227243.mlab.com:27243/heroku_sxklq0jf'
 if MONGO_URL == None:
-    MONGO_URL = "mongodb://localhost";
-    variable = 27017
+    MONGO_URL = "mongodb://localhost:27017";
 
-client1 = MongoClient('mongodb://ds227243.mlab.com',27243)
-db = client1.exampledb
+client1 = MongoClient(URI)
+db = client1.heroku_sxklq0jf
 credentials = db.credentials
 people = db.people
 tasks = db.tasks
@@ -134,8 +131,7 @@ def main():
         }])
         response.status_code = 200
     if request.method == 'GET':
-        response = jsonify([{'URL': MONGO_URL,
-        'client': client1
+        response = jsonify([{'URL': MONGO_URL
         }])
         response.status_code = 200
     return response
