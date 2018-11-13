@@ -138,10 +138,16 @@ def approveGoal(request, goals, people, notifications, mail, app):
     request_json = request.get_json()
     child = people.find_one({'email': fixEmail(request_json['payLoad']['childEmail'])})
     goalList = goals.find({'email': fixEmail(request_json['payLoad']['childEmail'])})
+    realGoal=None
     for goal in goalList:
         if goal['name'] == request_json['payLoad']['goalName']:
             realGoal = goal
             break
+    if realGoal ==None:
+        response = jsonify([{'Success': False
+        }])
+        response.status_code = 200
+        return response
     goals.update_one({'_id': realGoal['_id']}, {"$set":{'approved': int(request_json['payLoad']['approved'])}},upsert = False)
     if int(request_json['payLoad']['approved']) == 1:
         status = 'Goal Approved'
@@ -166,13 +172,13 @@ def approveGoal(request, goals, people, notifications, mail, app):
     current_priority = child['notCounter']
     people.update_one({'email': child['email']}, {"$set":{'notCounter': current_priority+1}},upsert = False)
 
-    mstring = "Good news " + child['firstName'] + " ! Your goal for a " + realGoal['name'] + " has been approved! Visit your tellrApp to learn more. Remember that the quicker you do your tasks, the quicker you'll get your hands on the prize - see you soon!"
-    with app.app_context():
-        msg = Message("Goal Approved!!",
-                          sender="teller.notifications@gmail.com",
-                          recipients=[child['email']])
-        msg.body = mstring
-        mail.send(msg)
+    # mstring = "Good news " + child['firstName'] + " ! Your goal for a " + realGoal['name'] + " has been approved! Visit your tellrApp to learn more. Remember that the quicker you do your tasks, the quicker you'll get your hands on the prize - see you soon!"
+    # with app.app_context():
+    #     msg = Message("Goal Approved!!",
+    #                       sender="teller.notifications@gmail.com",
+    #                       recipients=[child['email']])
+    #     msg.body = mstring
+    #     mail.send(msg)
     response = jsonify([{
     }])
     response.status_code = 200

@@ -121,39 +121,53 @@ def verifyTask(request, tasks, notifications, people, mail, app):
     request_json = request.get_json()
     child = people.find_one({'email':fixEmail(request_json['payLoad']['email'])})
     tasksList = tasks.find({'childEmail': fixEmail(request_json['payLoad']['email'])})
-    for task in tasksList:
-        if task['taskName'] == request_json['payLoad']['taskName']:
-            tasks.update_one({'_id': task['_id']}, {"$set":{'verified': True}},upsert = False)
-            parent = people.find_one({'email':fixEmail(task['senderEmail'])})
-            stringName = parent['firstName']+ ' '+ parent['lastName']
-            new_notification={
-                'email': child['email'],
-                'accountType': 'Child',
-                'notificationType': 'taskVerified',
-                'notificationName': task['taskName'],
-                'description': task['taskDescription'],
-                'senderName': stringName,
-                'senderEmail': parent['email'],
-                'priority': child['notCounter'],
-                'value': task['reward'],
-                'read': False
-            }
-            print(new_notification)
-            print(task)
-            notifications.insert_one(new_notification)
-            current_priority = child['notCounter']
-            people.update_one({'email': child['email']}, {"$set":{'notCounter': current_priority+1}},upsert = False)
-            break
-
-    mstring = "Awesome work " + child['firstName'] + ", your completion of the task: " + task['taskName'] + " has been verified. See your tellrApp for your updated balanc !"
-    with app.app_context():
-        msg = Message("Cha Ching!",
-                          sender="teller.notifications@gmail.com",
-                          recipients=child['email'])
-        msg.body = mstring
-        mail.send(msg)
-
-    response = jsonify([{
-    }])
-    response.status_code = 200
-    return response
+    if request_json['payLoad']['verify'] == True:
+        for task in tasksList:
+            if task['taskName'] == request_json['payLoad']['taskName']:
+                tasks.update_one({'_id': task['_id']}, {"$set":{'verified': True}},upsert = False)
+                parent = people.find_one({'email':fixEmail(task['senderEmail'])})
+                stringName = parent['firstName']+ ' '+ parent['lastName']
+                new_notification={
+                    'email': child['email'],
+                    'accountType': 'Child',
+                    'notificationType': 'taskVerified',
+                    'notificationName': task['taskName'],
+                    'description': task['taskDescription'],
+                    'senderName': stringName,
+                    'senderEmail': parent['email'],
+                    'priority': child['notCounter'],
+                    'value': task['reward'],
+                    'read': False
+                }
+                notifications.insert_one(new_notification)
+                current_priority = child['notCounter']
+                people.update_one({'email': child['email']}, {"$set":{'notCounter': current_priority+1}},upsert = False)
+                break
+        mstring = "Awesome work " + child['firstName'] + ", your completion of the task: " + task['taskName'] + " has been verified. See your tellrApp for your updated balanc !"
+        with app.app_context():
+            msg = Message("Cha Ching!",
+                              sender="teller.notifications@gmail.com",
+                              recipients=child['email'])
+            msg.body = mstring
+            mail.send(msg)
+        response = jsonify([{
+        }])
+        response.status_code = 200
+        return response
+    else:
+        for task in tasksList:
+            if task['taskName'] == request_json['payLoad']['taskName']:
+                tasks.update_one({'_id': task['_id']}, {"$set":{'complete': False}},upsert = False)
+                parent = people.find_one({'email':fixEmail(task['senderEmail'])})
+                new_notification={
+                    'email': child['email'],
+                    'accountType': 'Child',
+                    'notificationType': 'taskVerified',
+                    'notificationName': task['taskName'],
+                    'description': task['taskDescription'],
+                    'senderName': stringName,
+                    'senderEmail': parent['email'],
+                    'priority': child['notCounter'],
+                    'value': task['reward'],
+                    'read': False
+                }
