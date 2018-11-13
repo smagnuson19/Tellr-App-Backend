@@ -55,12 +55,14 @@ def postTask(request,tasks, people, notifications, mail, app):
     current_priority = child['notCounter']
     people.update_one({'email': child['email']}, {"$set":{'notCounter': current_priority+1}},upsert = False)
     mstring = "You've got money! (almost...) Your parents have posted a new task: " + new_task['taskName'] + "! Make sure to check out your tellrApp for details and complete this task before the deadline passes!"
-    with app.app_context():
-        msg = Message("You've Got a New Money Maker!",
-                          sender="teller.notifications@gmail.com",
-                          recipients=[child['email']])
-        msg.body = mstring
-        mail.send(msg)
+    for char in child['email']:
+        if char == "@":
+            with app.app_context():
+                msg = Message("You've Got a New Money Maker!",
+                                  sender="teller.notifications@gmail.com",
+                                  recipients=[child['email']])
+                msg.body = mstring
+                mail.send(msg)
 
     response = jsonify([{
     }])
@@ -85,6 +87,7 @@ def completeTask(request, tasks, notifications, people, mail, app):
     tasksList = tasks.find({'childEmail':fixEmail(str.lower(request_json['payLoad']['email']))})
     for task in tasksList:
         if task['taskName'] == request_json['payLoad']['taskName']:
+            actualT = task
             tasks.update_one({'_id': task['_id']}, {"$set":{'complete': True}},upsert = False)
             parent = people.find_one({'email':str.lower(task['senderEmail'])})
             new_notification = {
@@ -106,7 +109,7 @@ def completeTask(request, tasks, notifications, people, mail, app):
             people.update_one({'email': parent['email']}, {"$set":{'notCounter': current_priority+1}},upsert = False)
             break
 
-    mstring = "Your child has completed the task: " + task['taskName'] + ". Please visit tellrApp to see details and to verify!"
+    mstring = "Your child has completed the task: " + actualT['taskName'] + ". Please visit tellrApp to see details and to verify!"
     for char in task['senderEmail']:
         if char == "@":
             with app.app_context():
@@ -128,6 +131,7 @@ def verifyTask(request, tasks, notifications, people, mail, app):
     if request_json['payLoad']['verify'] == True:
         for task in tasksList:
             if task['taskName'] == request_json['payLoad']['taskName']:
+                actualT = task
                 tasks.update_one({'_id': task['_id']}, {"$set":{'verified': True}},upsert = False)
                 parent = people.find_one({'email':fixEmail(task['senderEmail'])})
                 stringName = parent['firstName']+ ' '+ parent['lastName']
@@ -150,7 +154,7 @@ def verifyTask(request, tasks, notifications, people, mail, app):
                 people.update_one({'email': child['email']}, {"$set":{'balance': new_balance}},upsert = False)
                 break
 
-        mstring = "Awesome work " + child['firstName'] + ", your completion of the task: " + task['taskName'] + " has been verified. See your tellrApp for your updated balanc !"
+        mstring = "Awesome work " + child['firstName'] + ", your completion of the task: " + actualT['taskName'] + " has been verified. See your tellrApp for your updated balanc !"
         print("test")
         for char in child['email']:
             if char == "@":
