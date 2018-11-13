@@ -1,5 +1,6 @@
 from flask import Flask, request, jsonify
 from handleEmail import *
+from flask_mail import Mail, Message
 
 #Adding a user to the database
 def add_user(request, people, credentials):
@@ -60,7 +61,7 @@ def findChildren(email, people):
     return response
 
 #Function that updates balance
-def upBalance(request,people,notifications):
+def upBalance(request,people,notifications, mail, app):
     request_json = request.get_json()
     user = people.find_one({'email': fixEmail(request_json['payLoad']['email'])}, {'_id': False})
     #If email given isn't in the database, make an empty json and return status code 201
@@ -87,6 +88,13 @@ def upBalance(request,people,notifications):
         notifications.insert_one(new_notification)
         current_priority = user['notCounter']
         people.update_one({'email': user['email']}, {"$set":{'notCounter': current_priority+1}},upsert = False)
+        mstring = "Exciting news " + user['firstName'] + ", your balance on tellr has changed... Make sure to visit our ~app~ to find out just how close you are to your next goal!"
+        with app.app_context():
+            msg = Message("Dun dun dunnnnnn",
+                              sender="teller.notifications@gmail.com",
+                              recipients=user['email'])
+            msg.body = mstring
+            mail.send(msg)
         response = jsonify([{
         }])
         response.status_code=200

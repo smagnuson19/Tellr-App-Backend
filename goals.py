@@ -1,5 +1,6 @@
 from flask import Flask, request, jsonify
 from handleEmail import *
+from flask_mail import Mail, Message
 
 def getGoals(email, goals):
     goalList = goals.find({'email': str.lower(email)},{'_id': False})
@@ -13,7 +14,7 @@ def getGoals(email, goals):
     response.status_code = 200
     return response
 
-def postGoals(request, goals, people, notifications):
+def postGoals(request, goals, people, notifications, mail, app):
     request_json = request.get_json()
     new_goal = {
         'name': request_json['payLoad']['name'],
@@ -45,12 +46,19 @@ def postGoals(request, goals, people, notifications):
     current_priority = realParent['notCounter']
     people.update_one({'email': realParent['email']}, {"$set":{'notCounter': current_priority+1}},upsert = False)
     result = goals.insert_one(new_goal)
+    mstring = "Your child " + child['firstName'] + " has created a new goal: " + new_goal['name'] + ". Visit your tellrApp to learn more and to approve or send back their choice."
+    with app.app_context():
+        msg = Message("New Goal Created",
+                          sender="teller.notifications@gmail.com",
+                          recipients=[realParent['email']])
+        msg.body = mstring
+        mail.send(msg)
     response = jsonify([{
     }])
     response.status_code = 200
     return response
 
-def finishGoal(request, people, goals, notifications):
+def finishGoal(request, people, goals, notifications, mail, app):
     request_json = request.get_json()
     child = people.find_one({'email': fixEmail(request_json['payLoad']['email'])})
     goalList = goals.find({'email': fixEmail(request_json['payLoad']['email'])})
@@ -106,6 +114,14 @@ def finishGoal(request, people, goals, notifications):
         'priority': new_notification2['priority']+1,
         'read': False
     }
+
+    mstring = "Your child " + child['firstName'] + " has redeemed their goal: " + redeemedGoal['name'] + ". Visit your tellrApp to learn more!"
+    with app.app_context():
+        msg = Message("Goal Redeemed!",
+                          sender="teller.notifications@gmail.com",
+                          recipients=[realParent['email']])
+        msg.body = mstring
+        mail.send(msg)
     notifications.insert_one(new_notification3)
     people.update_one({'email': child['email']}, {"$set":{'notCounter': current_priority1+2}},upsert = False)
 
@@ -114,7 +130,7 @@ def finishGoal(request, people, goals, notifications):
     response.status_code = 200
     return response
 
-def approveGoal(request, goals, people, notifications):
+def approveGoal(request, goals, people, notifications, mail, app):
     request_json = request.get_json()
     child = people.find_one({'email': fixEmail(request_json['payLoad']['childEmail'])})
     goalList = goals.find({'email': fixEmail(request_json['payLoad']['childEmail'])})
@@ -145,6 +161,13 @@ def approveGoal(request, goals, people, notifications):
     current_priority = child['notCounter']
     people.update_one({'email': child['email']}, {"$set":{'notCounter': current_priority+1}},upsert = False)
 
+    mstring = "Good news " + child['firstName'] + " ! Your goal for a " + realGoal['name'] + " has been approved! Visit your tellrApp to learn more. Remember that the quicker you do your tasks, the quicker you'll get your hands on the prize - see you soon!"
+    with app.app_context():
+        msg = Message("Goal Approved!!",
+                          sender="teller.notifications@gmail.com",
+                          recipients=[child['email']])
+        msg.body = mstring
+        mail.send(msg)
     response = jsonify([{
     }])
     response.status_code = 200
