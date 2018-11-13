@@ -18,7 +18,7 @@ if MONGO_URL == None:
     MONGO_URL = "mongodb://localhost";
     variable = 27017
 
-client1 = MongoClient(URI)
+client1 = MongoClient('ds227243.mlab.com',27243)
 db = client1.exampledb
 credentials = db.credentials
 people = db.people
