@@ -48,6 +48,7 @@ def postTask(request,tasks, people, notifications, mail, app):
         'senderName': sName,
         'senderEmail': parent['email'],
         'priority': child['notCounter'],
+        'value': new_task['reward'],
         'read': False
     }
     notifications.insert_one(new_notification)
@@ -95,6 +96,7 @@ def completeTask(request, tasks, notifications, people, mail, app):
                 'senderName': stringName,
                 'senderEmail': child['email'],
                 'priority': parent['notCounter'],
+                'value': task['reward'],
                 'read': False
             }
             print(new_notification)
@@ -133,6 +135,7 @@ def verifyTask(request, tasks, notifications, people, mail, app):
                 'senderName': stringName,
                 'senderEmail': parent['email'],
                 'priority': child['notCounter'],
+                'value': task['reward'],
                 'read': False
             }
             print(new_notification)

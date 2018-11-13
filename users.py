@@ -83,6 +83,7 @@ def upBalance(request,people,notifications, mail, app):
             'senderName': sender['firstName'],
             'senderEmail': sender['email'],
             'priority': user['notCounter'],
+            'value': float(request_json['payLoad']['increment']),
             'read': False
         }
         notifications.insert_one(new_notification)
