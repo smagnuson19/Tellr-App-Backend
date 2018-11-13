@@ -79,7 +79,7 @@ def upBalance(request,people,notifications, mail, app):
             'accountType': 'Child',
             'notificationType': 'balanceChange',
             'notificationName': float(request_json['payLoad']['increment']),
-            'description': user['balance'],
+            'description': lastbal + float(request_json['payLoad']['increment']),
             'senderName': sender['firstName'],
             'senderEmail': sender['email'],
             'priority': user['notCounter'],
