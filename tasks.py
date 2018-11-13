@@ -106,8 +106,7 @@ def completeTask(request, tasks, notifications, people, mail, app):
             notifications.insert_one(new_notification)
             current_priority = parent['notCounter']
             people.update_one({'email': parent['email']}, {"$set":{'notCounter': current_priority+1}},upsert = False)
-            break
-    # 
+    #
     # mstring = "Your child has completed the task: " + actualT['taskName'] + ". Please visit tellrApp to see details and to verify!"
     # for char in task['senderEmail']:
     #     if char == "@":
