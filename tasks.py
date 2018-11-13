@@ -106,12 +106,14 @@ def completeTask(request, tasks, notifications, people, mail, app):
             people.update_one({'email': parent['email']}, {"$set":{'notCounter': current_priority+1}},upsert = False)
             break
     mstring = "Your child has completed the task: " + task['taskName'] + ". Please visit tellrApp to see details and to verify!"
-    with app.app_context():
-        msg = Message("Task Completed",
-                          sender="teller.notifications@gmail.com",
-                          recipients=[task['senderEmail']])
-        msg.body = mstring
-        mail.send(msg)
+    for char in task['senderEmail']:
+        if char == "@":
+            with app.app_context():
+                msg = Message("Task Completed",
+                                  sender="teller.notifications@gmail.com",
+                                  recipients=[task['senderEmail']])
+                msg.body = mstring
+                mail.send(msg)
     response = jsonify([{
     }])
     response.status_code = 200
