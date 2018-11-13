@@ -10,15 +10,14 @@ import string
 from flask_mail import Mail, Message
 
 app = Flask(__name__)
-with app.app_context():
-    app.config.update(
-        MAIL_SERVER='smtp.gmail.com',
-        MAIL_PORT=587,
-        MAIL_USE_TLS=True,
-        MAIL_USERNAME = 'tellr.notifications@gmail.com',
-        MAIL_PASSWORD = 'tellr12345'
+app.config.update(
+    MAIL_SERVER='smtp.gmail.com',
+    MAIL_PORT=587,
+    MAIL_USE_TLS=True,
+    MAIL_USERNAME = 'tellr.notifications@gmail.com',
+    MAIL_PASSWORD = 'tellr12345'
     )
-    mail = Mail(app)
+mail = Mail(app)
 
 MONGO_URL = 'mongodb://heroku_sxklq0jf:fvegd2q34of2qn0j5jivm9b51b@ds227243.mlab.com:27243/heroku_sxklq0jf'
 if MONGO_URL == None:
