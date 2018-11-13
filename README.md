@@ -252,11 +252,11 @@ where email is the email of the recipient,
 
 accountType is the accountType of the recipient, and
 
-notificationType describes what type of notification it is. The following are the list of all possible notificationType: newTask (for children), newGoal (for parents), taskComplete (for parents), taskVerified (for children), balanceChange (for children), and goalComplete (for both adult and children).
+notificationType describes what type of notification it is. The following are the list of all possible notificationType: newTask (for children), newGoal (for parents), taskComplete (for parents), taskVerified (for children), balanceChange (for children), goalApproval, and goalComplete (for both adult and children).
 
 notificationName is the name of the task for task-related notifications, name of the goal for goal-related notifications, and change in amount for balance-related notifications.
 
-description is the description fields of the tasks/goals respectively.
+description is the description fields of the tasks/goals respectively. The only exception to this is for goalApproval events. In goalApproval notifications, description is "Goal Approved" when approved and "Goal Denied" when denied.
 
 senderName and senderEmail are the name and email of the party that initiated the action (i.e. for a newTask notification, it would be the parent, for a goalComplete, it would be the child, etc.) - probably helpful for display on the front end, because you can go: "senderName has completed a task!"
 
