@@ -1,4 +1,5 @@
 from flask import Flask, request, jsonify
+from handleEmail import *
 
 def findNotifications(email,notifications):
     all = notifications.find({'email':str.lower(email)},{'_id': False})
