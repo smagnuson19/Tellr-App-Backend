@@ -137,6 +137,11 @@ def updateNotifications():
     if request.method == 'POST':
         return readNotifications(request, notifications)
 
+@app.route("/api/delete", methods =['POST'])
+def deleteUser():
+    if request.method == 'POST':
+        credentials.delete_one({ "email": fixEmail(request.get_json()['payLoad']['email']) })
+
 @app.route("/api/", methods =['GET', 'POST'])
 def main():
     if request.method == 'POST':
