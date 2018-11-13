@@ -54,7 +54,7 @@ def postTask(request,tasks, people, notifications, mail, app):
     notifications.insert_one(new_notification)
     current_priority = child['notCounter']
     people.update_one({'email': child['email']}, {"$set":{'notCounter': current_priority+1}},upsert = False)
-    mstring = "You've got money! (almost...) Your parents have posted a new task: " + new_task['taskName'] + "! Make sure to check out your tellrApp for details and complete this task before the deadline passes!"
+    #mstring = "You've got money! (almost...) Your parents have posted a new task: " + new_task['taskName'] + "! Make sure to check out your tellrApp for details and complete this task before the deadline passes!"
     # for char in child['email']:
     #     if char == "@":
     #         with app.app_context():
