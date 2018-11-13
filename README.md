@@ -122,10 +122,11 @@ GET: Returns list of goals assigned to child with email \<email\> in the format 
     email,
     description,
     image,
+    approved,
     redeemed
 }`
 
-where name is name of goal, value is cost of goal, email is email of child, image is a string address to the image, and redeemed is a boolean.
+where name is name of goal, value is cost of goal, email is email of child, image is a string address to the image, approved is 0 when it is pending parent approval, 1 when approved, and -1 when denied, and redeemed is a boolean.
 
 ##### /api/goals
 Methods: POST
@@ -137,8 +138,22 @@ POST: Add new goal for user with email \<email\>, takes a json file with name pa
     value,
     email,
     description,
-    image
+    image,
 }`
+
+##### /api/goals/approve
+Methods: POST
+
+POST: Used so parents can approve the goals set by their kids. Send me a json file named payLoad with the following fields:
+
+`{
+    goalName,
+    childEmail,
+    approved,
+    senderEmail
+}`
+
+where approved is an INTEGER that is 1 if approved and -1 if denied
 
 ##### /api/children/\<email\>
 Methods: GET

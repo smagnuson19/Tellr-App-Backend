@@ -21,6 +21,7 @@ def postGoals(request, goals, people, notifications):
         'email': fixEmail(request_json['payLoad']['email']),
         'description': request_json['payLoad']['description'],
         'image': request_json['payLoad']['image'],
+        'approved': 0,
         'redeemed': False
     }
     child = people.find_one({'email':new_goal['email']})
@@ -107,6 +108,42 @@ def finishGoal(request, people, goals, notifications):
     }
     notifications.insert_one(new_notification3)
     people.update_one({'email': child['email']}, {"$set":{'notCounter': current_priority1+2}},upsert = False)
+
+    response = jsonify([{
+    }])
+    response.status_code = 200
+    return response
+
+def approveGoal(request, goals, people, notifications):
+    request_json = request.get_json()
+    child = people.find_one({'email': fixEmail(request_json['payLoad']['childEmail'])})
+    goalList = goals.find({'email': fixEmail(request_json['payLoad']['childEmail'])})
+    for goal in goalList:
+        if goal['name'] == request_json['payLoad']['goalName']:
+            realGoal = goal
+            break
+    goals.update_one({'_id': realGoal['_id']}, {"$set":{'approved': int(request_json['payLoad']['approved'])}},upsert = False)
+    if int(request_json['payLoad']['approved']) == 1:
+        status = 'Goal Approved'
+    else:
+        status = 'Goal Denied'
+
+    parent = people.find_one({'email': fixEmail(request_json['payLoad']['senderEmail'])})
+
+    new_notification1 = {
+        'email': child['email'],
+        'accountType': 'Child',
+        'notificationType': 'goalApproval',
+        'notificationName': status,
+        'description': realGoal['description'],
+        'senderName': parent['firstName'],
+        'senderEmail': parent['email'],
+        'priority': child['notCounter'],
+        'read': False
+    }
+    notifications.insert_one(new_notification1)
+    current_priority = child['notCounter']
+    people.update_one({'email': child['email']}, {"$set":{'notCounter': current_priority+1}},upsert = False)
 
     response = jsonify([{
     }])
