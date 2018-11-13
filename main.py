@@ -15,7 +15,7 @@ MONGO_URL = 'mongodb://heroku_sxklq0jf:fvegd2q34of2qn0j5jivm9b51b@ds227243.mlab.
 if MONGO_URL == None:
     MONGO_URL = "mongodb://localhost:27017";
 
-client1 = MongoClient(URI)
+client1 = MongoClient(MONGO_URL)
 db = client1.heroku_sxklq0jf
 credentials = db.credentials
 people = db.people
