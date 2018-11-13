@@ -1,4 +1,3 @@
-import os
 from pymongo import MongoClient
 from flask import Flask, request, jsonify
 from users import *
@@ -8,6 +7,7 @@ from goals import *
 from notification import *
 from handleEmail import *
 import string
+from flask_mail import Mail,  Message
 
 app = Flask(__name__)
 
@@ -110,6 +110,11 @@ def getNotifications(email):
     realEmail = fixEmail(email)
     if request.method == 'GET':
         return findNotifications(realEmail,notifications)
+
+@app.route("/api/goals/approve", methods =['POST'])
+def approveGoals():
+    if request.method == 'POST':
+        return approveGoal(request, goals, people, notifications)
 
 #Passed Testing
 @app.route("/api/redeem", methods =['POST'])

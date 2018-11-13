@@ -1,5 +1,6 @@
 Flask==1.0.2
 Flask-Cors==3.0.6
+Flask-Mail==0.9.1
 Jinja2==2.10
 MarkupSafe==1.0
 Werkzeug==0.14.1
