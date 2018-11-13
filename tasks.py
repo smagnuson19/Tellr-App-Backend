@@ -141,8 +141,11 @@ def verifyTask(request, tasks, notifications, people, mail, app):
                 }
                 notifications.insert_one(new_notification)
                 current_priority = child['notCounter']
-                people.update_one({'email': child['email']}, {"$set":{'notCounter': current_priority+1}},upsert = False)
+                new_balance = child['balance'] + float(task['reward'])
+                people.update_one({'email': child['email']}, {"$set":{'notCounter': new_balance}},upsert = False)
+                people.update_one({'email': child['email']}, {"$set":{'balance': current_priority+1}},upsert = False)
                 break
+
         mstring = "Awesome work " + child['firstName'] + ", your completion of the task: " + task['taskName'] + " has been verified. See your tellrApp for your updated balanc !"
         with app.app_context():
             msg = Message("Cha Ching!",
