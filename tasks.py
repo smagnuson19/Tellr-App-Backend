@@ -55,15 +55,14 @@ def postTask(request,tasks, people, notifications, mail, app):
     current_priority = child['notCounter']
     people.update_one({'email': child['email']}, {"$set":{'notCounter': current_priority+1}},upsert = False)
     mstring = "You've got money! (almost...) Your parents have posted a new task: " + new_task['taskName'] + "! Make sure to check out your tellrApp for details and complete this task before the deadline passes!"
-    for char in child['email']:
-        if char == "@":
-            with app.app_context():
-                msg = Message("You've Got a New Money Maker!",
-                                  sender="teller.notifications@gmail.com",
-                                  recipients=[child['email']])
-                msg.body = mstring
-                mail.send(msg)
-
+    # for char in child['email']:
+    #     if char == "@":
+    #         with app.app_context():
+    #             msg = Message("You've Got a New Money Maker!",
+    #                               sender="teller.notifications@gmail.com",
+    #                               recipients=[child['email']])
+    #             msg.body = mstring
+    #             mail.send(msg)
     response = jsonify([{
     }])
     response.status_code = 200
@@ -108,16 +107,16 @@ def completeTask(request, tasks, notifications, people, mail, app):
             current_priority = parent['notCounter']
             people.update_one({'email': parent['email']}, {"$set":{'notCounter': current_priority+1}},upsert = False)
             break
-
-    mstring = "Your child has completed the task: " + actualT['taskName'] + ". Please visit tellrApp to see details and to verify!"
-    for char in task['senderEmail']:
-        if char == "@":
-            with app.app_context():
-                msg = Message("Task Completed",
-                                  sender="teller.notifications@gmail.com",
-                                  recipients=[task['senderEmail']])
-                msg.body = mstring
-                mail.send(msg)
+    # 
+    # mstring = "Your child has completed the task: " + actualT['taskName'] + ". Please visit tellrApp to see details and to verify!"
+    # for char in task['senderEmail']:
+    #     if char == "@":
+    #         with app.app_context():
+    #             msg = Message("Task Completed",
+    #                               sender="teller.notifications@gmail.com",
+    #                               recipients=[task['senderEmail']])
+    #             msg.body = mstring
+    #             mail.send(msg)
 
     response = jsonify([{
     }])
@@ -154,16 +153,16 @@ def verifyTask(request, tasks, notifications, people, mail, app):
                 people.update_one({'email': child['email']}, {"$set":{'balance': new_balance}},upsert = False)
                 break
 
-        mstring = "Awesome work " + child['firstName'] + ", your completion of the task: " + actualT['taskName'] + " has been verified. See your tellrApp for your updated balanc !"
-        print("test")
-        for char in child['email']:
-            if char == "@":
-                with app.app_context():
-                    msg = Message("Cha Ching!",
-                                      sender="teller.notifications@gmail.com",
-                                      recipients=[child['email']])
-                    msg.body = mstring
-                    mail.send(msg)
+        # mstring = "Awesome work " + child['firstName'] + ", your completion of the task: " + actualT['taskName'] + " has been verified. See your tellrApp for your updated balanc !"
+        # print("test")
+        # for char in child['email']:
+        #     if char == "@":
+        #         with app.app_context():
+        #             msg = Message("Cha Ching!",
+        #                               sender="teller.notifications@gmail.com",
+        #                               recipients=[child['email']])
+        #             msg.body = mstring
+        #             mail.send(msg)
         response = jsonify([{
         }])
         response.status_code = 200

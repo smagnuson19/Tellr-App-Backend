@@ -89,15 +89,15 @@ def upBalance(request,people,notifications, mail, app):
         notifications.insert_one(new_notification)
         current_priority = user['notCounter']
         people.update_one({'email': user['email']}, {"$set":{'notCounter': current_priority+1}},upsert = False)
-        for char in user['email']:
-            if char == "@":
-                mstring = "Exciting news " + user['firstName'] + ", your balance on tellr has changed... Make sure to visit our ~app~ to find out just how close you are to your next goal!"
-                with app.app_context():
-                    msg = Message("Dun dun dunnnnnn",
-                                      sender="teller.notifications@gmail.com",
-                                      recipients=[user['email']])
-                    msg.body = mstring
-                    mail.send(msg)
+        # for char in user['email']:
+        #     if char == "@":
+        #         mstring = "Exciting news " + user['firstName'] + ", your balance on tellr has changed... Make sure to visit our ~app~ to find out just how close you are to your next goal!"
+        #         with app.app_context():
+        #             msg = Message("Dun dun dunnnnnn",
+        #                               sender="teller.notifications@gmail.com",
+        #                               recipients=[user['email']])
+        #             msg.body = mstring
+        #             mail.send(msg)
         response = jsonify([{
         }])
         response.status_code=200

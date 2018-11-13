@@ -48,15 +48,15 @@ def postGoals(request, goals, people, notifications, mail, app):
     current_priority = realParent['notCounter']
     people.update_one({'email': realParent['email']}, {"$set":{'notCounter': current_priority+1}},upsert = False)
     result = goals.insert_one(new_goal)
-    mstring = "Your child " + child['firstName'] + " has created a new goal: " + new_goal['name'] + ". Visit your tellrApp to learn more and to approve or send back their choice."
-    for char in realParent['email']:
-        if char == "@":
-            with app.app_context():
-                msg = Message("New Goal Created",
-                                  sender="teller.notifications@gmail.com",
-                                  recipients=[realParent['email']])
-                msg.body = mstring
-                mail.send(msg)
+    # mstring = "Your child " + child['firstName'] + " has created a new goal: " + new_goal['name'] + ". Visit your tellrApp to learn more and to approve or send back their choice."
+    # for char in realParent['email']:
+    #     if char == "@":
+    #         with app.app_context():
+    #             msg = Message("New Goal Created",
+    #                               sender="teller.notifications@gmail.com",
+    #                               recipients=[realParent['email']])
+    #             msg.body = mstring
+    #             mail.send(msg)
     response = jsonify([{
     }])
     response.status_code = 200
@@ -122,15 +122,15 @@ def finishGoal(request, people, goals, notifications, mail, app):
         'read': False
     }
 
-    mstring = "Your child " + child['firstName'] + " has redeemed their goal: " + redeemedGoal['name'] + ". Visit your tellrApp to learn more!"
-    for char in realParent['email']:
-        if char == "@":
-            with app.app_context():
-                msg = Message("Goal Redeemed!",
-                                  sender="teller.notifications@gmail.com",
-                                  recipients=[realParent['email']])
-                msg.body = mstring
-                mail.send(msg)
+    # mstring = "Your child " + child['firstName'] + " has redeemed their goal: " + redeemedGoal['name'] + ". Visit your tellrApp to learn more!"
+    # for char in realParent['email']:
+    #     if char == "@":
+    #         with app.app_context():
+    #             msg = Message("Goal Redeemed!",
+    #                               sender="teller.notifications@gmail.com",
+    #                               recipients=[realParent['email']])
+    #             msg.body = mstring
+    #             mail.send(msg)
     notifications.insert_one(new_notification3)
     people.update_one({'email': child['email']}, {"$set":{'notCounter': current_priority1+2}},upsert = False)
 
@@ -177,16 +177,16 @@ def approveGoal(request, goals, people, notifications, mail, app):
     current_priority = child['notCounter']
     people.update_one({'email': child['email']}, {"$set":{'notCounter': current_priority+1}},upsert = False)
 
-    for char in child['email']:
-        if char == "@":
-            mstring = "Good news " + child['firstName'] + " ! Your goal for a " + realGoal['name'] + " has been approved! Visit your tellrApp to learn more. Remember that the quicker you do your tasks, the quicker you'll get your hands on the prize - see you soon!"
-            with app.app_context():
-                msg = Message("Goal Approved!!",
-                                  sender="teller.notifications@gmail.com",
-                                  recipients=[child['email']])
-                msg.body = mstring
-                mail.send(msg)
-                
+    # for char in child['email']:
+    #     if char == "@":
+    #         mstring = "Good news " + child['firstName'] + " ! Your goal for a " + realGoal['name'] + " has been approved! Visit your tellrApp to learn more. Remember that the quicker you do your tasks, the quicker you'll get your hands on the prize - see you soon!"
+    #         with app.app_context():
+    #             msg = Message("Goal Approved!!",
+    #                               sender="teller.notifications@gmail.com",
+    #                               recipients=[child['email']])
+    #             msg.body = mstring
+    #             mail.send(msg)
+
     response = jsonify([{
     }])
     response.status_code = 200
