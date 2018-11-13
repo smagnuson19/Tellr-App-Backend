@@ -105,6 +105,7 @@ def completeTask(request, tasks, notifications, people, mail, app):
             current_priority = parent['notCounter']
             people.update_one({'email': parent['email']}, {"$set":{'notCounter': current_priority+1}},upsert = False)
             break
+
     mstring = "Your child has completed the task: " + task['taskName'] + ". Please visit tellrApp to see details and to verify!"
     for char in task['senderEmail']:
         if char == "@":
@@ -114,6 +115,7 @@ def completeTask(request, tasks, notifications, people, mail, app):
                                   recipients=[task['senderEmail']])
                 msg.body = mstring
                 mail.send(msg)
+
     response = jsonify([{
     }])
     response.status_code = 200
@@ -149,12 +151,15 @@ def verifyTask(request, tasks, notifications, people, mail, app):
                 break
 
         mstring = "Awesome work " + child['firstName'] + ", your completion of the task: " + task['taskName'] + " has been verified. See your tellrApp for your updated balanc !"
-        with app.app_context():
-            msg = Message("Cha Ching!",
-                              sender="teller.notifications@gmail.com",
-                              recipients=[child['email']])
-            msg.body = mstring
-            mail.send(msg)
+        print("test")
+        for char in child['email']:
+            if char == "@":
+                with app.app_context():
+                    msg = Message("Cha Ching!",
+                                      sender="teller.notifications@gmail.com",
+                                      recipients=[child['email']])
+                    msg.body = mstring
+                    mail.send(msg)
         response = jsonify([{
         }])
         response.status_code = 200
