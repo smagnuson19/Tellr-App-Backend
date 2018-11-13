@@ -142,13 +142,13 @@ def verifyTask(request, tasks, notifications, people, mail, app):
             people.update_one({'email': child['email']}, {"$set":{'notCounter': current_priority+1}},upsert = False)
             break
 
-    # mstring = "Awesome work " + child['firstName'] + ", your completion of the task: " + task['taskName'] + " has been verified. See your tellrApp for your updated balanc !"
-    # with app.app_context():
-    #     msg = Message("Cha Ching!",
-    #                       sender="teller.notifications@gmail.com",
-    #                       recipients=child['email'])
-    #     msg.body = mstring
-    #     mail.send(msg)
+    mstring = "Awesome work " + child['firstName'] + ", your completion of the task: " + task['taskName'] + " has been verified. See your tellrApp for your updated balanc !"
+    with app.app_context():
+        msg = Message("Cha Ching!",
+                          sender="teller.notifications@gmail.com",
+                          recipients=child['email'])
+        msg.body = mstring
+        mail.send(msg)
 
     response = jsonify([{
     }])
