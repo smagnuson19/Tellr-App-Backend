@@ -1,5 +1,6 @@
 from flask import Flask, request, jsonify
 from handleEmail import *
+from flask_mail import Mail, Message
 
 def getTasks(familyName,tasks):
     tasksList = tasks.find({'familyName':str.lower(familyName)},{'_id': False})
@@ -12,7 +13,7 @@ def getTasks(familyName,tasks):
     response.status_code = 200
     return response
 
-def postTask(request,tasks, people, notifications):
+def postTask(request,tasks, people, notifications, mail, app):
     request_json = request.get_json()
     print(request_json)
     if request_json['payLoad']['childEmail'] == '':
@@ -52,6 +53,14 @@ def postTask(request,tasks, people, notifications):
     notifications.insert_one(new_notification)
     current_priority = child['notCounter']
     people.update_one({'email': child['email']}, {"$set":{'notCounter': current_priority+1}},upsert = False)
+    mstring = "You've got money! (almost...) Your parents have posted a new task: " + new_task['taskName'] + "! Make sure to check out your tellrApp for details and complete this task before the deadline passes!"
+    with app.app_context():
+        msg = Message("You've Got a New Money Maker!",
+                          sender="teller.notifications@gmail.com",
+                          recipients=[child['email']])
+        msg.body = mstring
+        mail.send(msg)
+
     response = jsonify([{
     }])
     response.status_code = 200
@@ -68,7 +77,7 @@ def getTasksChild(email, tasks):
     response.status_code = 200
     return response
 
-def completeTask(request, tasks, notifications, people):
+def completeTask(request, tasks, notifications, people, mail, app):
     request_json = request.get_json()
     child = people.find_one({'email':fixEmail(request_json['payLoad']['email'])})
     stringName = child['firstName']+ ' '+ child['lastName']
@@ -94,12 +103,19 @@ def completeTask(request, tasks, notifications, people):
             current_priority = parent['notCounter']
             people.update_one({'email': parent['email']}, {"$set":{'notCounter': current_priority+1}},upsert = False)
             break
+    mstring = "Your child has completed the task: " + task['taskName'] + ". Please visit tellrApp to see details and to verify!"
+    with app.app_context():
+        msg = Message("Task Completed",
+                          sender="teller.notifications@gmail.com",
+                          recipients=parent['email'])
+        msg.body = mstring
+        mail.send(msg)
     response = jsonify([{
     }])
     response.status_code = 200
     return response
 
-def verifyTask(request, tasks, notifications, people):
+def verifyTask(request, tasks, notifications, people, mail, app):
     request_json = request.get_json()
     child = people.find_one({'email':fixEmail(request_json['payLoad']['email'])})
     tasksList = tasks.find({'childEmail': fixEmail(request_json['payLoad']['email'])})
@@ -125,6 +141,15 @@ def verifyTask(request, tasks, notifications, people):
             current_priority = child['notCounter']
             people.update_one({'email': child['email']}, {"$set":{'notCounter': current_priority+1}},upsert = False)
             break
+
+    mstring = "Awesome work " + child['firstName'] + ", your completion of the task: " + task['taskName'] + " has been verified. See your tellrApp for your updated balance and keep up the good work!"
+    with app.app_context():
+        msg = Message("Cha Ching!",
+                          sender="teller.notifications@gmail.com",
+                          recipients=child['email'])
+        msg.body = mstring
+        mail.send(msg)
+
     response = jsonify([{
     }])
     response.status_code = 200

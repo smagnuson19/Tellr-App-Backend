@@ -7,13 +7,23 @@ from goals import *
 from notification import *
 from handleEmail import *
 import string
-from flask_mail import Mail,  Message
+from flask_mail import Mail, Message
 
 app = Flask(__name__)
+with app.app_context():
+    app.config.update(
+        MAIL_SERVER='smtp.gmail.com',
+        MAIL_PORT=587,
+        MAIL_USE_TLS=True,
+        MAIL_USERNAME = 'tellr.notifications@gmail.com',
+        MAIL_PASSWORD = 'tellr12345'
+    )
+    mail = Mail(app)
 
 MONGO_URL = 'mongodb://heroku_sxklq0jf:fvegd2q34of2qn0j5jivm9b51b@ds227243.mlab.com:27243/heroku_sxklq0jf'
 if MONGO_URL == None:
     MONGO_URL = "mongodb://localhost:27017";
+
 
 client1 = MongoClient(MONGO_URL)
 db = client1.heroku_sxklq0jf
@@ -28,6 +38,7 @@ notifications = db.notifications
 def childtask_handler(email):
     if request.method == 'GET':
         return getTasksChild(fixEmail(email),tasks)
+
 #Passed
 @app.route("/api/parenttasks/<familyName>", methods =['GET'])
 def adulttask_handler(familyName):
@@ -38,19 +49,19 @@ def adulttask_handler(familyName):
 @app.route("/api/tasks", methods =['POST'])
 def postTasks():
     if request.method == 'POST':
-        return postTask(request, tasks, people, notifications)
+        return postTask(request, tasks, people, notifications, mail, app)
 
 #Passed Testing
 @app.route("/api/tasks/completed", methods = ['POST'])
 def completeTasks():
     if request.method == 'POST':
-        return completeTask(request, tasks, notifications, people)
+        return completeTask(request, tasks, notifications, people, mail, app)
 
 #Passed Testing
 @app.route("/api/tasks/verified", methods = ['POST'])
 def verifyTasks():
     if request.method == 'POST':
-        return verifyTask(request, tasks, notifications, people)
+        return verifyTask(request, tasks, notifications, people, mail, app)
 
 #Passed Testing
 @app.route("/api/users", methods =['POST'])
@@ -89,7 +100,7 @@ def handleGoals(email):
 @app.route("/api/goals", methods =['POST'])
 def makeGoals():
     if request.method == 'POST':
-        return postGoals(request, goals, people, notifications)
+        return postGoals(request, goals, people, notifications, mail, app)
 
 #Passed Testing
 @app.route("/api/children/<email>", methods =['GET'])
@@ -102,7 +113,7 @@ def getChildren(email):
 @app.route("/api/balance", methods =['POST'])
 def updateBalance():
     if request.method == 'POST':
-        return upBalance(request,people,notifications)
+        return upBalance(request,people,notifications, mail, app)
 
 #Passed Testing
 @app.route("/api/notifications/<email>", methods =['GET'])
@@ -114,13 +125,13 @@ def getNotifications(email):
 @app.route("/api/goals/approve", methods =['POST'])
 def approveGoals():
     if request.method == 'POST':
-        return approveGoal(request, goals, people, notifications)
+        return approveGoal(request, goals, people, notifications, mail, app)
 
 #Passed Testing
 @app.route("/api/redeem", methods =['POST'])
 def redeemGoal():
     if request.method == 'POST':
-        return finishGoal(request,people, goals, notifications)
+        return finishGoal(request,people, goals, notifications, mail, app)
 
 @app.route("/api/notifications", methods =['POST'])
 def updateNotifications():
