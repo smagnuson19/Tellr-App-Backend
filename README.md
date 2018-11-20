@@ -16,26 +16,30 @@ Install Homebrew, npm, node, yarn
 
 ### Setup of Local Python Environment
 
-1. 'brew install python'
-2. 'pip install pymongo=3.4.0'
-3. 'pip install Flask'
-4. 'pip install Flask-Mail'
-5. 'pip install gunicorn'
+1. `brew install python`
+2. `pip install pymongo=3.4.0`
+3. `pip install Flask`
+4. `pip install Flask-Mail`
+5. `pip install gunicorn`
 
 ### Setup of Local MongoDB
 
-1. 'brew install mongodb'
-2. 'mkdir -p /data/db'
-3. 'sudo chown -R `id -un` /data/db'
-4. 'mongod'
+1. `brew install mongodb`
+2. `mkdir -p /data/db`
+3. `sudo chown -R `id -un` /data/db`
+4. `mongod`
 
 ## Deployment
 
-Database currently hosted on Heroku.
+To run locally (default port 27017), run:
 
-MLab URI: 'mongodb://heroku_sxklq0jf:fvegd2q34of2qn0j5jivm9b51b@ds227243.mlab.com:27243/heroku_sxklq0jf'
+`python main.py`
 
-Heroku API URL (for front end): 'https://tellr-dartmouth.herokuapp.com/api'
+The online database is currently hosted on Heroku.
+
+MLab URI: `mongodb://heroku_sxklq0jf:fvegd2q34of2qn0j5jivm9b51b@ds227243.mlab.com:27243/heroku_sxklq0jf`
+
+Heroku API URL (for front end): `https://tellr-dartmouth.herokuapp.com/api`
 
 ## Authors
 
