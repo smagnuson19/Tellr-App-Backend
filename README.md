@@ -4,20 +4,53 @@
 
 # Tellr
 
-Organize and streamline task assignment and chores in your household while teaching your kids the value of money! (testing branches and merging)
+Organize and streamline task assignment and chores in your household while teaching your kids the value of money!
 
 ![alt text](https://github.com/dartmouth-cs98/18f-tellr-frontend/blob/master/Data%20Model%20and%20Sketches/Tellr-18F-Child.png)
+
+## Setup
+
+### Initial setup using Homebrew:
+
+Install Homebrew, npm, node, yarn
+
+### Setup of Local Python Environment
+
+1. 'brew install python'
+2. 'pip install pymongo=3.4.0'
+3. 'pip install Flask'
+4. 'pip install Flask-Mail'
+5. 'pip install gunicorn'
+
+### Setup of Local MongoDB
+
+1. 'brew install mongodb'
+2. 'mkdir -p /data/db'
+3. 'sudo chown -R `id -un` /data/db'
+4. 'mongod'
+
+## Deployment
+
+Database currently hosted on Heroku.
+
+MLab URI: 'mongodb://heroku_sxklq0jf:fvegd2q34of2qn0j5jivm9b51b@ds227243.mlab.com:27243/heroku_sxklq0jf'
+
+Heroku API URL (for front end): 'https://tellr-dartmouth.herokuapp.com/api'
+
+## Authors
+
+Hanting Guo, Scott Magnuson, Emily Pitts, Jed Rosen
 
 ## Architecture
 
 MongoDB, Pymongo, Flask, RestAPI
 
 #### Tech Stack
-We are using React Native for our frontend and mobile app and flask for our backend
+We are using React Native for our frontend and mobile app and flask for our backend.
 
 #### Data Objects and Methods
 
-Our two primary data objects are the parentUser and the childUser. We currently believe we will be using three more secondary data objects to track transactions between the parentUsers and childUsers.
+The following are the data objects for each GET and POST request.
 
 ##### /api/childtasks/\<email\>
 Methods: GET
