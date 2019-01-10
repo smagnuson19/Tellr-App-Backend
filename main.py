@@ -8,7 +8,9 @@ from notification import *
 from handleEmail import *
 import string
 from flask_mail import Mail, Message
+import jwt
 
+secret = 'secret'
 app = Flask(__name__)
 app.config.update(
     MAIL_SERVER='smtp.gmail.com',
@@ -36,13 +38,13 @@ notifications = db.notifications
 @app.route("/api/childtasks/<email>", methods =['GET'])
 def childtask_handler(email):
     if request.method == 'GET':
-        return getTasksChild(fixEmail(email),tasks)
+        return jwt.encode(getTasksChild(fixEmail(email),tasks), secret, algorithms=['HS256'])
 
 #Passed
 @app.route("/api/parenttasks/<familyName>", methods =['GET'])
 def adulttask_handler(familyName):
     if request.method == 'GET':
-        return getTasks(familyName,tasks)
+        return jwt.encode(getTasks(familyName,tasks), secret, algorithms=['HS256'])
 
 #Passed Testing
 @app.route("/api/tasks", methods =['POST'])
@@ -145,7 +147,7 @@ def deleteAllUsers():
 @app.route("/api/delete", methods =['POST'])
 def deleteOne():
     if request.method == 'POST':
-        return delOne(request, people credentials)
+        return delOne(request, people, credentials)
 
 @app.route("/api/", methods =['GET', 'POST'])
 def main():
