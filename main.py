@@ -145,7 +145,7 @@ def deleteAllUsers():
 @app.route("/api/delete", methods =['POST'])
 def deleteOne():
     if request.method == 'POST':
-        return delOne(request, credentials)
+        return delOne(request, people credentials)
 
 @app.route("/api/", methods =['GET', 'POST'])
 def main():
