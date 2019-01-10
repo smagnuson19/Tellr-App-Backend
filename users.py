@@ -103,3 +103,23 @@ def upBalance(request,people,notifications, mail, app):
         response.status_code=200
 
     return response
+
+def delAllUser(request,people, credentials):
+    person = people.find_one({'email': (request.get_json()['payLoad']['email'])}, {'_id': False})
+    if person.accountType == 'Parent':
+        for member in people.find({'familyName': person['familyName']}):
+            credentials.delete_one({ "email": member['familyName'] })
+    credentials.delete_one({ "email": fixEmail(request.get_json()['payLoad']['email']) })
+    response = jsonify([{
+    }])
+    response.status_code=200
+
+    return response
+
+def delOne(request, credentials):
+    credentials.delete_one({ "email": fixEmail(request.get_json()['payLoad']['email']) })
+    response = jsonify([{
+    }])
+    response.status_code=200
+
+    return response
