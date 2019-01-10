@@ -17,10 +17,11 @@ Install Homebrew, npm, node, yarn
 ### Setup of Local Python Environment
 
 1. `brew install python`
-2. `pip install pymongo=3.4.0`
-3. `pip install Flask`
-4. `pip install Flask-Mail`
-5. `pip install gunicorn`
+2. `python3 -m pip install --user virtualenv`
+3. `python -m virtualenv env`
+4. `source env/bin/activate`
+5. Use pip to install pymongo, Flask, Flask-Mail, and Gunicorn on your virtualenv, per requirements.txt
+6. `python main.py`
 
 ### Setup of Local MongoDB
 
