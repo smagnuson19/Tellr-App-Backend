@@ -268,6 +268,27 @@ Alerts backend when a user reads/dismisses a notification, changing the read sta
 
 where email is the email of the notified user (also in the notification dictionary structure) and priority is the priority field of the notification dictionary. Here it's as essentially an ID to help me identify which notification it is.
 
+##### /api/delete
+Methods: POST
+
+Deletes single account; gives json file with following field:
+
+`{
+  email
+}`
+
+where email is the email of the account that wants to be deleted.
+
+##### /api/deleteall
+Methods: POST
+
+Allows parents to delete all accounts including their children; gives json file with following field:
+
+`{
+  email
+}`
+
+where email is the email of their account; all children accounts associated with the family will be deleted.
 
 ##### /api/notifications/\<email\>
 Methods: GET
