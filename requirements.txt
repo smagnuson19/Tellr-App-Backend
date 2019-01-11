@@ -11,3 +11,4 @@ Werkzeug==0.14.1
 pytz==2018.5
 six==1.11.0
 PyJWT==1.7.1
+bcrypt==3.1.5
