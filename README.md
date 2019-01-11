@@ -20,7 +20,7 @@ Install Homebrew, npm, node, yarn
 2. `python3 -m pip install --user virtualenv`
 3. `python -m virtualenv env`
 4. `source env/bin/activate`
-5. Use pip to install pymongo, Flask, Flask-Mail, and Gunicorn on your virtualenv, per requirements.txt
+5. `pip install -r requirements.txt`
 6. `python main.py`
 
 ### Setup of Local MongoDB

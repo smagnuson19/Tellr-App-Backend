@@ -6,11 +6,11 @@ from credentials import *
 from goals import *
 from notification import *
 from handleEmail import *
+from authenticate import *
 import string
 from flask_mail import Mail, Message
 import jwt
 
-secret = 'secret'
 app = Flask(__name__)
 app.config.update(
     MAIL_SERVER='smtp.gmail.com',
@@ -38,7 +38,7 @@ notifications = db.notifications
 @app.route("/api/childtasks/<email>", methods =['GET'])
 def childtask_handler(email):
     if request.method == 'GET':
-        return jwt.encode(getTasksChild(fixEmail(email),tasks), secret, algorithms=['HS256'])
+        return getTasksChild(fixEmail(email),tasks)
 
 #Passed
 @app.route("/api/parenttasks/<familyName>", methods =['GET'])
@@ -84,6 +84,16 @@ def get_user(email):
         response = jsonify(user)
         response.status_code = 200
     return response
+
+@app.route("/api/auth/login", methods =['POST'])
+def authenticate():
+    if request.method == 'POST':
+        return authenticateUser(request, credentials)
+
+@app.route("/api/auth/register", methods =['POST'])
+def authregister():
+    if request.method == 'POST':
+        return authAddUser(request, credentials)
 
 #Passed Testing
 @app.route("/api/<email>/credentials/<password>", methods =['POST'])
