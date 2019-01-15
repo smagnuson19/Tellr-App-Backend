@@ -17,9 +17,10 @@ def postTask(request,tasks, people, notifications, mail, app):
     request_json = request.get_json()
     print(request_json)
     if request_json['payLoad']['childEmail'] == '':
-        response = jsonify([{
+        response = jsonify([{'Success': False,
+        'Error': 'No children selected'
         }])
-        response.status_code = 500
+        response.status_code = 401
         return response
     child = people.find_one({'email':fixEmail(request_json['payLoad']['childEmail'])},{'_id': False})
     stringName = child['firstName']+ ' '+ child['lastName']

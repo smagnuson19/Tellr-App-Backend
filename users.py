@@ -9,8 +9,9 @@ def add_user(request, people, credentials):
         #Check to see whether user is already in databse; if so, return empty json with 201 status
         if not people.find_one({'email':str.lower(request_json['payLoad']['email'])},{'_id': False}) == None:
             response = jsonify([{'Success': False,
+            'Error': 'Email already exists'
             }])
-            response.status_code = 201
+            response.status_code = 401
             return response
 
         #If not in databse, add to user and credentials database and return a 200 status code
@@ -42,9 +43,10 @@ def findChildren(email, people):
     user = people.find_one({'email': str.lower(email)}, {'_id': False})
     #If invalid email, return empty json with 201 status
     if user == None:
-        response = jsonify([{
+        response = jsonify([{'Success': False,
+        'Error': 'No children found'
         }])
-        response.status_code=201
+        response.status_code=401
     #Else, find all children with the same family name
     else:
         childrenList = people.find({'familyName':str.lower(user['familyName'])},{'_id': False})
@@ -66,9 +68,10 @@ def upBalance(request,people,notifications, mail, app):
     user = people.find_one({'email': fixEmail(request_json['payLoad']['email'])}, {'_id': False})
     #If email given isn't in the database, make an empty json and return status code 201
     if user == None:
-        response = jsonify([{
+        response = jsonify([{'Success': False,
+        'Error': 'User not found'
         }])
-        response.status_code=201
+        response.status_code=401
     #If email is found, update the balance and return 200 status code
     else:
         lastbal = user['balance']
