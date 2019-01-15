@@ -13,8 +13,9 @@ def authenticateUser(request, credentials):
     if user == None:
         response = jsonify([{
         'Success': False,
+        'Error' : "Inccorect username and password combo",
         }])
-        response.status_code = 201
+        response.status_code = 401
         return response
     else:
         date = datetime.datetime.now()
@@ -28,11 +29,14 @@ def authenticateUser(request, credentials):
             'Success': True,
             'Token': token
             }])
+            response.status_code = 200
         else:
             response = jsonify([{
             'Success': False,
+            'Error' : "Inccorect password",
             }])
-        response.status_code = 200
+            response.status_code = 401
+
     return response
 
 def authAddUser(request, people, credentials):
@@ -42,7 +46,8 @@ def authAddUser(request, people, credentials):
         if not people.find_one({'email':str.lower(request_json['payLoad']['email'])},{'_id': False}) == None:
             response = jsonify([{'Success': False,
             }])
-            response.status_code = 201
+            response.status_code = 401
+            response.detail = "Person exsits"
             return response
 
         #If not in databse, add to user and credentials database and return a 200 status code
