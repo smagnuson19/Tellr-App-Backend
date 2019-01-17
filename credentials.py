@@ -5,7 +5,7 @@ def handleCredentials(email, password, credentials):
     if user == None:
         response = jsonify([{
         'Success': False,
-        'Error' : 'Inccorect username and password combo',
+        'Error' : 'Incorrect username and password combo',
         }])
         response.status_code = 401
         print('Nope')
@@ -19,7 +19,7 @@ def handleCredentials(email, password, credentials):
         else:
             response = jsonify([{
             'Success': False,
-            'Error' : 'Inccorect password',
+            'Error' : 'Incorrect password',
             }])
             print('Nope')
             response.status_code = 401

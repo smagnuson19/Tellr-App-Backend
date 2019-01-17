@@ -144,6 +144,11 @@ def redeemGoal():
     if request.method == 'POST':
         return finishGoal(request,people, goals, notifications, mail, app)
 
+@app.route("/api/redeemmoney", methods =['POST'])
+def redeemMoney():
+    if request.method == 'POST':
+        return redeemMon(request,people, notifications)
+
 @app.route("/api/notifications", methods =['POST'])
 def updateNotifications():
     if request.method == 'POST':

@@ -191,3 +191,39 @@ def approveGoal(request, goals, people, notifications, mail, app):
     }])
     response.status_code = 200
     return response
+
+def redeemMon(request, people, notifications):
+    request_json = request_json.get_json()
+    child = people.find_one({'email': fixEmail(request_json['payLoad']['email'])})
+    balanceDeduct = request_json['payLoad']['amount']
+    currentBalance = child['balance']
+    newBalance = currentBalance-balanceDeduct
+    people.update_one({'email': child['email']},{"$set":{'balance': newBalance}},upsert = False)
+    parents = people.find({'familyName': child['familyName']})
+    for parent in parents:
+        if parent['accountType']=='Parent':
+            realParent = parent
+            break
+
+    new_notification = {
+        'email': realParent['email'],
+        'accountType': 'Parent',
+        'notificationType': 'Redemption',
+        'notificationName': balanceDeduct,
+        'description': newBalance,
+        'senderName': child['firstName'],
+        'senderEmail': child['email'],
+        'priority': realParent['notCounter'],
+        'value': balanceDeduct,
+        'read': False
+    }
+
+    notifications.insert_one(new_notification)
+    current_priority = realParent['notCounter']
+    people.update_one({'email': realParent['email']}, {"$set":{'notCounter': current_priority+1}},upsert = False)
+
+    response = jsonify([{
+    }])
+
+    response.status_code = 200
+    return response
