@@ -256,6 +256,13 @@ Redeems a selected goal and updates balance accordingly. Post the following json
 
 where email is the email of the child that is redeeming the goal, and goalName is the name of the goal that is being redeemed.
 
+##### /api/redeemmoney
+Methods: POST
+Redeems a selected goal and updates balance accordingly. Post the following json named payLoad:
+`{ email,  $amount }`
+where email is the email of the child that is redeeming the goal, and $amount is the float (no dollar sign) of amount redeemed
+
+
 ##### /api/notifications
 Methods: POST
 
@@ -304,8 +311,11 @@ Returns a dictionary keyed on integers (0, 1, ...) of notifications to be displa
   senderName,
   senderEmail,
   priority,
-  read
+  read,
+  deadline,
+  displayRed
 }`
+_*Both deadline and displayRed are only present for newTask notifications_
 
 where email is the email of the recipient,
 
@@ -322,3 +332,7 @@ senderName and senderEmail are the name and email of the party that initiated th
 priority, you don't have to worry about but it's just an int that I increment on the backend... the higher the int the more recent the notification. I also use this as its ID (since it is unique)
 
 read is whether or not the user has already seen this notification. All notifications sent to you should have a read field of False
+
+deadline is the string of the task's deadline
+
+displayRed is a boolean that is true if the task is due in less than 24 hours
