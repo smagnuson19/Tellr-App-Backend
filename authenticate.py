@@ -1,5 +1,6 @@
 import jwt
 import bcrypt
+import random
 from handleEmail import *
 from datetime import datetime
 SECRET = "secret"
@@ -9,7 +10,7 @@ def authenticateUser(request, credentials):
     email = fixEmail(request_json['payLoad']['email'])
     pw = request_json['payLoad']['password']
     user = credentials.find_one({'email': email}, {'_id': False})
-    hash = password['hash']
+
     if user == None:
         response = jsonify([{
         'Success': False,
@@ -19,6 +20,7 @@ def authenticateUser(request, credentials):
         return response
     else:
         date = datetime.datetime.now()
+        hash = user['password']
         if bcrypt.checkpw(pw.encode('utf-8'), hash):
             tokendict = {
                 'sub': email,
@@ -81,6 +83,57 @@ def authAddUser(request, people, credentials):
             response.status_code = 200
             return response
 
+def authChangePassword(request, credentials):
+    request_json = request.get_json()
+    email = (verifyToken(request))
+    if (not email =='Invalid Token') and (not email == 'Expired Token'):
+        newpassword = request_json['payLoad']['newPassword']
+        pw = request_json['payLoad']['password']
+        user = credentials.find_one({'email': fixEmail(email)}, {'_id': False})
+        hash = user['password']
+        if bcrypt.checkpw(pw.encode('utf-8'), hash):
+            newhash = bcrypt.hashpw(newpassword.encode('utf-8'),bcrypt.gensalt())
+            credentials.update_one({'email': fixEmail(email)}, {"$set":{'password': newhash}},upsert = False)
+            response = jsonify([{'Success': True}])
+            response.status_code = 200
+            return response
+        else:
+            response = jsonify([{'Success': False, 'Error' : "Inccorect password"
+            }])
+            response.status_code = 401
+            return response
+    else:
+        response = jsonify([{'Success': False, 'Error' : "Invalid/Expired Token"
+        }])
+        response.status_code = 401
+        return response
+
+def forgotPassword(request, credentials, mail, app):
+    newPW = ''.join(random.choice(string.ascii_uppercase + string.digits) for i in range(16))
+    email = (verifyToken(request))
+    if (not email =='Invalid Token') and (not email == 'Expired Token'):
+        email = fixEmail(email)
+        newhash = bcrypt.hashpw(newPW.encode('utf-8'),bcrypt.gensalt())
+        credentials.update_one({'email': email}, {"$set":{'password': newhash}},upsert = False)
+        mstring = "Your new Tellr password is: " + newPW
+        for char in email:
+            if char == "@":
+                with app.app_context():
+                    msg = Message("Your Tellr Password Reset Request",
+                        sender="teller.notifications@gmail.com",
+                        recipients=[email])
+                    msg.body = mstring
+                    mail.send(msg)
+        response = jsonify([{'Success': True}])
+        response.status_code = 200
+        return response
+
+    else:
+        response = jsonify([{'Success': False, 'Error' : "Invalid/Expired Token"
+        }])
+        response.status_code = 401
+        return response
+
 def verifyToken(request):
     request_json = request.get_json()
     token = request_json['payLoad']['token']
@@ -90,7 +143,7 @@ def verifyToken(request):
         return("Invalid Token")
 
     now =datetime.datetime.now()
-    if (now - datetime.datetime.strptime(decoded['iad'], "%Y-%m-%d %H:%M:%S")) > datetime.timedelta(hours=3):
+    if (now - datetime.datetime.strptime(decoded['iad'], "%Y-%m-%d %H:%M:%S")) > datetime.timedelta(days=3):
         return("Expired Token")
 
     else:

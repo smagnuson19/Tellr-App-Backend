@@ -95,6 +95,16 @@ def authregister():
     if request.method == 'POST':
         return authAddUser(request, credentials)
 
+@app.route("/api/auth/changepassword", methods =['POST'])
+def changePassword():
+    if request.method == 'POST':
+        return authChangePassword(request, credentials)
+
+@app.route("/api/auth/forgotpassword", methods =['POST'])
+def resetPassword():
+    if request.method == 'POST':
+        return forgotPassword(request, credentials, mail, app)
+
 #Passed Testing
 @app.route("/api/<email>/credentials/<password>", methods =['POST'])
 def check_credentials(email, password):
