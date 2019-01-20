@@ -1,6 +1,7 @@
 from flask import Flask, request, jsonify
 from handleEmail import *
 from flask_mail import Mail, Message
+from datetime import datetime
 
 def getTasks(familyName,tasks):
     tasksList = tasks.find({'familyName':str.lower(familyName)},{'_id': False})
@@ -24,10 +25,16 @@ def postTask(request,tasks, people, notifications, mail, app):
         return response
     child = people.find_one({'email':fixEmail(request_json['payLoad']['childEmail'])},{'_id': False})
     stringName = child['firstName']+ ' '+ child['lastName']
+
+    date_time_str = request_json['payLoad']['taskDeadline']
+    datelist = date_time_str.split()
+    realstr = datelist[0][:3] + " " + datelist[1][:-2] + " " + datelist[2][:-1]+ " " + datelist[3]
+    date_time_obj = datetime.datetime.strptime(realstr, '%b %d %Y %I:%M%p')
+
     new_task = {
         'taskName': request_json['payLoad']['taskName'],
         'reward': float(request_json['payLoad']['reward']),
-        'taskDeadline': request_json['payLoad']['taskDeadline'],
+        'taskDeadline': date_time_obj,
         'taskDescription': request_json['payLoad']['taskDescription'],
         'childEmail': fixEmail(request_json['payLoad']['childEmail']),
         'senderEmail': fixEmail(str.lower(request_json['payLoad']['senderEmail'])),
@@ -35,11 +42,20 @@ def postTask(request,tasks, people, notifications, mail, app):
         'complete': False,
         'verified': False,
         'dateCompleted': None,
-        'familyName': child['familyName']
+        'familyName': child['familyName'],
+        'alert': False
     }
+
     result1 = tasks.insert_one(new_task)
     parent = people.find_one({'email': new_task['senderEmail']},{'_id': False})
     sName = parent['firstName']+ ' '+ parent['lastName']
+
+    now =datetime.datetime.now()
+    if (new_task['taskDeadline']-now) < datetime.timedelta(hours=24):
+        display = True
+    else:
+        display = False
+
     new_notification = {
         'email': child['email'],
         'accountType': 'Child',
@@ -50,7 +66,9 @@ def postTask(request,tasks, people, notifications, mail, app):
         'senderEmail': parent['email'],
         'priority': child['notCounter'],
         'value': new_task['reward'],
-        'read': False
+        'read': False,
+        'deadline': datetime.datetime.strftime(new_task['taskDeadline'], '%b %d %Y %I:%M%p'),
+        'displayRed': display
     }
     notifications.insert_one(new_notification)
     current_priority = child['notCounter']
@@ -74,6 +92,7 @@ def getTasksChild(email, tasks):
     dictresponse = {}
     i = 0
     for task in tasksList:
+        task['taskDeadline'] = str(task['taskDeadline'])
         dictresponse[i]=task
         i = i+1
     response = jsonify(dictresponse)
