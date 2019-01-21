@@ -10,16 +10,16 @@ def findNotifications(email,notifications):
 
     for noti in all:
         if not noti['read']:
-            if not (noti['notificationType'] == 'newTask'):
-                send_list.append(noti)
-            else:
-                date_time_obj = datetime.datetime.strptime(noti['deadline'], '%b %d %Y %I:%M%p')
-                if ((date_time_obj - now) > datetime.timedelta(hours=0)):
-                    if ((date_time_obj - now) < datetime.timedelta(hours=24)):
-                        noti['displayRed'] = True
-                    else:
-                        noti['displayRed'] = False
-                    send_list.append(noti)
+            # if not (noti['notificationType'] == 'newTask'):
+            send_list.append(noti)
+            # else:
+            #     date_time_obj = datetime.datetime.strptime(noti['deadline'], '%b %d %Y %I:%M%p')
+            #     if ((date_time_obj - now) > datetime.timedelta(hours=0)):
+            #         if ((date_time_obj - now) < datetime.timedelta(hours=24)):
+            #             noti['displayRed'] = True
+            #         else:
+            #             noti['displayRed'] = False
+            #         send_list.append(noti)
 
     quicksort(send_list)
     for i in range(len(send_list)):
