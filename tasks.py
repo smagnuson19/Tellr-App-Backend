@@ -27,8 +27,10 @@ def postTask(request,tasks, people, notifications, mail, app):
     stringName = child['firstName']+ ' '+ child['lastName']
 
     date_time_str = request_json['payLoad']['taskDeadline']
+    print(date_time_str)
     datelist = date_time_str.split()
-    realstr = datelist[0][:3] + " " + datelist[1][:-2] + " " + datelist[2][:-1]+ " " + datelist[3]
+    now = datetime.datetime.now()
+    realstr = datelist[0][:3] + " "+ datelist[1][:-3] + " " + str(now.year) +  " "  + datelist[2]
     date_time_obj = datetime.datetime.strptime(realstr, '%b %d %Y %I:%M%p')
 
     new_task = {
