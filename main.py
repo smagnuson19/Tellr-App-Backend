@@ -7,6 +7,7 @@ from goals import *
 from notification import *
 from handleEmail import *
 from authenticate import *
+from social import *
 import string
 from flask_mail import Mail, Message
 import jwt
@@ -33,6 +34,7 @@ people = db.people
 tasks = db.tasks
 goals = db.goals
 notifications = db.notifications
+social = db.social
 
 #Passed
 @app.route("/api/childtasks/<email>", methods =['GET'])
@@ -173,6 +175,16 @@ def deleteAllUsers():
 def deleteOne():
     if request.method == 'POST':
         return delOne(request, people, credentials)
+
+@app.route("/api/addfriend", methods =['POST'])
+def addFriend():
+    if request.method == 'POST':
+        return socialAdd(request, people, social)
+
+@app.route("/api/acceptfriends", methods =['POST'])
+def acceptFriend():
+    if request.method == 'POST':
+        return socialAccept(request, people, social)
 
 @app.route("/api/", methods =['GET', 'POST'])
 def main():

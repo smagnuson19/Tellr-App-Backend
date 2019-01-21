@@ -2,7 +2,7 @@ import jwt
 import bcrypt
 import random
 from handleEmail import *
-from datetime import datetime
+import datetime
 SECRET = "secret"
 
 def authenticateUser(request, credentials):

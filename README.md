@@ -138,6 +138,31 @@ Returns info on the user with email \<email\> including the following fields:
   balance
 }`
 
+
+##### /api/addfriends
+Methods: POST
+
+Adds new friends for social/competitive element. Needs friend approval for each to see other's rankings. Send me a json with the following fields::
+
+`{
+  email,
+  friend
+}`
+
+where email is the email of the user and friend is the inputted email of the friend to be invited. No checks on the friend email needs to be done on the front end.
+
+##### /api/addfriends
+Methods: POST
+
+Once a user accepts a friend request notification, send me the following:
+
+`{
+  email,
+  friend
+}`
+
+where email is the email of the user accepting the request and friend is the email of the friend that made the request.
+
 ##### /api/\<email\>/credentials/\<password\>
 Methods: POST
 
