@@ -21,12 +21,13 @@ def findNotifications(email,notifications):
                         noti['displayRed'] = False
                     send_list.append(noti)
 
+
     quicksort(send_list)
     for i in range(len(send_list)):
         dictresponse[i]=send_list[i]
-    print(dictresponse)
+
     response = jsonify(dictresponse)
-    response.response_code=200
+    response.status_code=200
     return response
 
 def readNotifications(request, notifications):
