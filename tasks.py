@@ -1,7 +1,7 @@
 from flask import Flask, request, jsonify
 from handleEmail import *
 from flask_mail import Mail, Message
-from datetime import datetime
+import datetime
 
 def getTasks(familyName,tasks):
     tasksList = tasks.find({'familyName':str.lower(familyName)},{'_id': False})
