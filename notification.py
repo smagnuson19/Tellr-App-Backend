@@ -14,7 +14,7 @@ def findNotifications(email,notifications):
                 send_list.append(noti)
             else:
                 date_time_obj = datetime.datetime.strptime(noti['deadline'], '%b %d %Y %I:%M%p')
-                if ((date_time_obj - now) > datetime.timedelta(hours=0)):
+                if ((date_time_obj - now) > datetime.timedelta(minutes=0)):
                     if ((date_time_obj - now) < datetime.timedelta(hours=24)):
                         noti['displayRed'] = True
                     else:
