@@ -3,8 +3,9 @@ from handleEmail import *
 from flask_mail import Mail, Message
 
 #Adding a user to the database
-def add_user(request, people, credentials):
+def add_user(request, people, credentials, social):
     if request.method == 'POST':
+        print("hii9")
         request_json = request.get_json()
         #Check to see whether user is already in databse; if so, return empty json with 201 status
         if not people.find_one({'email':str.lower(request_json['payLoad']['email'])},{'_id': False}) == None:
@@ -33,6 +34,15 @@ def add_user(request, people, credentials):
                 'password': request_json['payLoad']['password']
             }
             result2= credentials.insert_one(creds)
+
+            socialEntry = {
+                'email': str.lower(request_json['payLoad']['email']),
+                'tasksCompleted': [],
+                'goalsCompleted': [],
+                'completionRate': []
+            }
+            print(socialEntry)
+            result3= social.insert_one(socialEntry)
             response = jsonify([{'Success': True,
             }])
             response.status_code = 200

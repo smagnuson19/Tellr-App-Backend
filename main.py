@@ -22,9 +22,9 @@ app.config.update(
     )
 mail = Mail(app)
 
-MONGO_URL = 'mongodb://heroku_sxklq0jf:fvegd2q34of2qn0j5jivm9b51b@ds227243.mlab.com:27243/heroku_sxklq0jf'
-if MONGO_URL == None:
-    MONGO_URL = "mongodb://localhost:27017";
+# MONGO_URL = 'mongodb://heroku_sxklq0jf:fvegd2q34of2qn0j5jivm9b51b@ds227243.mlab.com:27243/heroku_sxklq0jf'
+# if MONGO_URL == None:
+MONGO_URL = "mongodb://localhost:27017"
 
 
 client1 = MongoClient(MONGO_URL)
@@ -64,12 +64,12 @@ def completeTasks():
 @app.route("/api/tasks/verified", methods = ['POST'])
 def verifyTasks():
     if request.method == 'POST':
-        return verifyTask(request, tasks, notifications, people, mail, app)
+        return verifyTask(request, tasks, notifications, people, mail, app, social)
 
 #Passed Testing
 @app.route("/api/users", methods =['POST'])
 def add_users():
-    return add_user(request, people, credentials)
+    return add_user(request, people, credentials, social)
 
 #Passed Testing
 @app.route("/api/users/<email>", methods =['GET'])
@@ -95,7 +95,8 @@ def authenticate():
 @app.route("/api/auth/register", methods =['POST'])
 def authregister():
     if request.method == 'POST':
-        return authAddUser(request, credentials)
+        print("hi")
+        return authAddUser(request, people, credentials, social)
 
 @app.route("/api/auth/changepassword", methods =['POST'])
 def changePassword():
@@ -154,7 +155,7 @@ def approveGoals():
 @app.route("/api/redeem", methods =['POST'])
 def redeemGoal():
     if request.method == 'POST':
-        return finishGoal(request,people, goals, notifications, mail, app)
+        return finishGoal(request,people, goals, notifications, mail, app, social)
 
 @app.route("/api/redeemmoney", methods =['POST'])
 def redeemMoney():
@@ -185,6 +186,12 @@ def addFriend():
 def acceptFriend():
     if request.method == 'POST':
         return socialAccept(request, people, social)
+
+@app.route("/api/social/<email>", methods =['GET'])
+def getSocialStats(email):
+    realEmail = fixEmail(email)
+    if request.method == 'GET':
+        return getStats(realEmail, people, social, tasks)
 
 @app.route("/api/", methods =['GET', 'POST'])
 def main():

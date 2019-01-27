@@ -1,6 +1,7 @@
 from flask import Flask, request, jsonify
 from handleEmail import *
 from flask_mail import Mail, Message
+import datetime
 
 def getGoals(email, goals):
     goalList = goals.find({'email': str.lower(email)},{'_id': False})
@@ -62,7 +63,7 @@ def postGoals(request, goals, people, notifications, mail, app):
     response.status_code = 200
     return response
 
-def finishGoal(request, people, goals, notifications, mail, app):
+def finishGoal(request, people, goals, notifications, mail, app, social):
     request_json = request.get_json()
     child = people.find_one({'email': fixEmail(request_json['payLoad']['email'])})
     goalList = goals.find({'email': fixEmail(request_json['payLoad']['email'])})
@@ -121,6 +122,11 @@ def finishGoal(request, people, goals, notifications, mail, app):
         'value': balanceDeduct,
         'read': False
     }
+    now = datetime.datetime.now()
+    socialEntry = social.find_one({'email':fixEmail(request_json['payLoad']['email'])})
+    newList = socialEntry['goalsCompleted']
+    newList.append(now)
+    social.update_one({'email': socialEntry['email']}, {"$set":{'goalsCompleted': newList}},upsert = False)
 
     # mstring = "Your child " + child['firstName'] + " has redeemed their goal: " + redeemedGoal['name'] + ". Visit your tellrApp to learn more!"
     # for char in realParent['email']:
