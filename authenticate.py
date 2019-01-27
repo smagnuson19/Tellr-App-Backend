@@ -2,6 +2,7 @@ import jwt
 import bcrypt
 import random
 from handleEmail import *
+from flask import Flask, request, jsonify
 import datetime
 SECRET = "secret"
 
@@ -41,7 +42,7 @@ def authenticateUser(request, credentials):
 
     return response
 
-def authAddUser(request, people, credentials):
+def authAddUser(request, people, credentials, social):
     if request.method == 'POST':
         request_json = request.get_json()
         #Check to see whether user is already in databse; if so, return empty json with 201 status
@@ -76,6 +77,14 @@ def authAddUser(request, people, credentials):
                 'sub': str.lower(request_json['payLoad']['email']),
                 'iad': datetime.datetime.strftime(date, "%Y-%m-%d %H:%M:%S")
             }
+
+            socialEntry = {
+                'email': str.lower(request_json['payLoad']['email']),
+                'tasksCompleted': [],
+                'goalsCompleted': [],
+                'completionRate': []
+            }
+            result3= social.insert_one(socialEntry)
 
             token = jwt.encode(tokendict, SECRET, algorithm='HS256')
             response = jsonify([{'Success': True, 'Token': token

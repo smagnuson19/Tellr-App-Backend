@@ -144,7 +144,7 @@ def completeTask(request, tasks, notifications, people, mail, app):
     response.status_code = 200
     return response
 
-def verifyTask(request, tasks, notifications, people, mail, app):
+def verifyTask(request, tasks, notifications, people, mail, app, social):
     request_json = request.get_json()
     child = people.find_one({'email':fixEmail(request_json['payLoad']['email'])})
     tasksList = tasks.find({'childEmail': fixEmail(request_json['payLoad']['email'])})
@@ -173,7 +173,15 @@ def verifyTask(request, tasks, notifications, people, mail, app):
                 people.update_one({'email': child['email']}, {"$set":{'notCounter': current_priority+1}},upsert = False)
                 people.update_one({'email': child['email']}, {"$set":{'balance': new_balance}},upsert = False)
                 break
-
+        now = datetime.datetime.now()
+        socialEntry = social.find_one({'email':fixEmail(request_json['payLoad']['email'])})
+        newList = socialEntry['tasksCompleted']
+        newList.append(now)
+        social.update_one({'email': socialEntry['email']}, {"$set":{'tasksCompleted': newList}},upsert = False)
+        nList = socialEntry['completionRate']
+        deadline = actualT['taskDeadline']
+        nList.append(deadline)
+        social.update_one({'email': socialEntry['email']}, {"$set":{'completionRate': nList}},upsert = False)
         # mstring = "Awesome work " + child['firstName'] + ", your completion of the task: " + actualT['taskName'] + " has been verified. See your tellrApp for your updated balanc !"
         # print("test")
         # for char in child['email']:
