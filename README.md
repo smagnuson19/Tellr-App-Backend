@@ -163,7 +163,7 @@ Once a user accepts a friend request notification, send me the following:
 
 where email is the email of the user accepting the request and friend is the email of the friend that made the request.
 
-##### /api/social/<email>
+##### /api/social/\<email\>
 Methods: GET
 
 Method to obtain social stats for all the friends of the user with email <email>. Returns a dictionary of dictionary, with the outer dictionary keyed on the email of a friend in the user's friend list and the inner dictionaries keyed on the following values:
