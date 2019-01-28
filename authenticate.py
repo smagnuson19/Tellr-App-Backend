@@ -29,7 +29,11 @@ def authenticateUser(request, credentials):
                 'iad': datetime.datetime.strftime(date, "%Y-%m-%d %H:%M:%S")
             }
             token = jwt.encode(tokendict, SECRET, algorithm='HS256')
-            return token
+            response = jsonify([{
+            'Success': True,
+            'Token': token.decode('utf-8')
+            }])
+            response.status_code = 200
         else:
             response = jsonify([{
             'Success': False,
@@ -84,9 +88,12 @@ def authAddUser(request, people, credentials, social):
             result3= social.insert_one(socialEntry)
 
             token = jwt.encode(tokendict, SECRET, algorithm='HS256')
-            return token
-            # response = {'Success': True, 'Token': token}
-            # return jsonify([{json.dumps(response)}])
+            response = {'Success': True, 'Token': token.decode('utf-8')
+            }
+            print(response)
+            response= jsonify(response)
+            response.status_code = 200
+            return response
 
 def authChangePassword(request, credentials):
     request_json = request.get_json()
@@ -141,7 +148,8 @@ def forgotPassword(request, credentials, mail, app):
 
 def verifyToken(request):
     request_json = request.get_json()
-    token = request_json['payLoad']['token']
+    untoken = request_json['payLoad']['token']
+    token = str.encode(untoken)
     try:
         decoded = jwt.decode(token, SECRET, algorithm='HS256')
     except:
