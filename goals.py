@@ -162,8 +162,10 @@ def approveGoal(request, goals, people, notifications, mail, app):
     goals.update_one({'_id': realGoal['_id']}, {"$set":{'approved': int(request_json['payLoad']['approved'])}},upsert = False)
     if int(request_json['payLoad']['approved']) == 1:
         status = 'Goal Approved'
+        stat = 'goalApproval'
     else:
         status = 'Goal Denied'
+        stat = 'goalDenied'
 
     parent = people.find_one({'email': fixEmail(request_json['payLoad']['senderEmail'])})
 
@@ -179,6 +181,7 @@ def approveGoal(request, goals, people, notifications, mail, app):
         'value': realGoal['value'],
         'read': False
     }
+    print(new_notification1)
     notifications.insert_one(new_notification1)
     current_priority = child['notCounter']
     people.update_one({'email': child['email']}, {"$set":{'notCounter': current_priority+1}},upsert = False)
