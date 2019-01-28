@@ -9,8 +9,10 @@ from handleEmail import *
 from authenticate import *
 from social import *
 import string
+from push import *
 from flask_mail import Mail, Message
 import jwt
+import onesignal as onesignal_sdk
 
 app = Flask(__name__)
 app.config.update(
@@ -27,6 +29,9 @@ mail = Mail(app)
 MONGO_URL = "mongodb://localhost:27017"
 print("hi")
 
+onesignal_client = onesignal_sdk.Client(user_auth_key="XXXXX",
+                                        app={"app_auth_key": "XXXX", "app_id": "YYYYY"})
+
 client1 = MongoClient(MONGO_URL)
 db = client1.heroku_sxklq0jf
 credentials = db.credentials
@@ -35,6 +40,7 @@ tasks = db.tasks
 goals = db.goals
 notifications = db.notifications
 social = db.social
+push_notifications = db.push_notifications
 
 #Passed
 @app.route("/api/childtasks/<email>", methods =['GET'])
