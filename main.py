@@ -180,12 +180,12 @@ def deleteOne():
 @app.route("/api/addfriend", methods =['POST'])
 def addFriend():
     if request.method == 'POST':
-        return socialAdd(request, people, social)
+        return socialAdd(request, people, social, notifications)
 
 @app.route("/api/acceptfriends", methods =['POST'])
 def acceptFriend():
     if request.method == 'POST':
-        return socialAccept(request, people, social)
+        return socialAccept(request, people, social, notifications)
 
 @app.route("/api/social/<email>", methods =['GET'])
 def getSocialStats(email):
