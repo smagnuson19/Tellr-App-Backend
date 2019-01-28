@@ -64,7 +64,6 @@ def findChildren(email, people):
         dictresponse = {}
         i = 0
         for child in childrenList:
-            print(child)
             if child['accountType']=='Child':
                 dictresponse[i]=child
                 i = i+1
