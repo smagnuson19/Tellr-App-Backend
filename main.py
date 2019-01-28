@@ -24,13 +24,12 @@ app.config.update(
     )
 mail = Mail(app)
 
-# MONGO_URL = 'mongodb://heroku_sxklq0jf:fvegd2q34of2qn0j5jivm9b51b@ds227243.mlab.com:27243/heroku_sxklq0jf'
+MONGO_URL = 'mongodb://heroku_sxklq0jf:fvegd2q34of2qn0j5jivm9b51b@ds227243.mlab.com:27243/heroku_sxklq0jf'
 # if MONGO_URL == None:
-MONGO_URL = "mongodb://localhost:27017"
-print("hi")
+# MONGO_URL = "mongodb://localhost:27017"
 
-onesignal_client = onesignal_sdk.Client(user_auth_key="XXXXX",
-                                        app={"app_auth_key": "XXXX", "app_id": "YYYYY"})
+# onesignal_client = onesignal_sdk.Client(user_auth_key="XXXXX",
+#                                         app={"app_auth_key": "XXXX", "app_id": "YYYYY"})
 
 client1 = MongoClient(MONGO_URL)
 db = client1.heroku_sxklq0jf
