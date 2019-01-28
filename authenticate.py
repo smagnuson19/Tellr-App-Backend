@@ -3,6 +3,7 @@ import bcrypt
 import random
 from handleEmail import *
 from flask import Flask, request, jsonify
+import json
 import datetime
 SECRET = "secret"
 
@@ -28,11 +29,7 @@ def authenticateUser(request, credentials):
                 'iad': datetime.datetime.strftime(date, "%Y-%m-%d %H:%M:%S")
             }
             token = jwt.encode(tokendict, SECRET, algorithm='HS256')
-            response = jsonify([{
-            'Success': True,
-            'Token': token
-            }])
-            response.status_code = 200
+            return token
         else:
             response = jsonify([{
             'Success': False,
@@ -87,10 +84,9 @@ def authAddUser(request, people, credentials, social):
             result3= social.insert_one(socialEntry)
 
             token = jwt.encode(tokendict, SECRET, algorithm='HS256')
-            response = jsonify([{'Success': True, 'Token': token
-            }])
-            response.status_code = 200
-            return response
+            return token
+            # response = {'Success': True, 'Token': token}
+            # return jsonify([{json.dumps(response)}])
 
 def authChangePassword(request, credentials):
     request_json = request.get_json()
