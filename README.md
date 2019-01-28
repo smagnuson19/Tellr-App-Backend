@@ -364,7 +364,7 @@ where email is the email of the recipient,
 
 accountType is the accountType of the recipient, and
 
-notificationType describes what type of notification it is. The following are the list of all possible notificationType: newTask (for children), newGoal (for parents), taskComplete (for parents), taskVerified (for children), taskUnverified (for children), balanceChange (for children), goalApproval, addRequest (for children, social), requestAccepted (for children, social) and goalComplete (for both adult and children).
+notificationType describes what type of notification it is. The following are the list of all possible notificationType: newTask (for children), newGoal (for parents), taskComplete (for parents), taskVerified (for children), taskUnverified (for children), balanceChange (for children), goalApproval (for both approved and denied goals), addRequest (for children, social), requestAccepted (for children, social) and goalComplete (for both adult and children).
 
 notificationName is the name of the task for task-related notifications, name of the goal for goal-related notifications, and change in amount for balance-related notifications.
 
