@@ -151,7 +151,7 @@ Adds new friends for social/competitive element. Needs friend approval for each 
 
 where email is the email of the user and friend is the inputted email of the friend to be invited. No checks on the friend email needs to be done on the front end.
 
-##### /api/addfriends
+##### /api/acceptfriends
 Methods: POST
 
 Once a user accepts a friend request notification, send me the following:
@@ -162,6 +162,24 @@ Once a user accepts a friend request notification, send me the following:
 }`
 
 where email is the email of the user accepting the request and friend is the email of the friend that made the request.
+
+##### /api/social/<email>
+Methods: GET
+
+Method to obtain social stats for all the friends of the user with email <email>. Returns a dictionary of dictionary, with the outer dictionary keyed on the email of a friend in the user's friend list and the inner dictionaries keyed on the following values:
+
+`{
+  tasksCompletedWeek,
+  tasksCompletedWeek,
+  goalsCompletedWeek,
+  goalsCompletedMonth,
+  taskCompletionRateWeek,
+  taskCompletionRateMonth,
+  firstName,
+  lastName
+}`
+
+where the first four terms are the number of goals/tasks completed in their respective timeframes, the next two are completion percentages of tasks expressed as floats (ranging in value from 0.0 to 1.0) and firstName and lastName are strings of the first and last name of the friend, respectively.
 
 ##### /api/\<email\>/credentials/\<password\>
 Methods: POST
@@ -346,7 +364,7 @@ where email is the email of the recipient,
 
 accountType is the accountType of the recipient, and
 
-notificationType describes what type of notification it is. The following are the list of all possible notificationType: newTask (for children), newGoal (for parents), taskComplete (for parents), taskVerified (for children), balanceChange (for children), goalApproval, and goalComplete (for both adult and children).
+notificationType describes what type of notification it is. The following are the list of all possible notificationType: newTask (for children), newGoal (for parents), taskComplete (for parents), taskVerified (for children), taskUnverified (for children), balanceChange (for children), goalApproval, addRequest (for children, social), requestAccepted (for children, social) and goalComplete (for both adult and children).
 
 notificationName is the name of the task for task-related notifications, name of the goal for goal-related notifications, and change in amount for balance-related notifications.
 

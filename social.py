@@ -2,8 +2,9 @@ from flask import Flask, request, jsonify
 from handleEmail import *
 from flask_mail import Mail, Message
 import datetime
+from copy import deepcopy
 
-def socialAdd(request, people, social):
+def socialAdd(request, people, social, notifications):
     request_json = request.get_json()
     userEmail = fixEmail(request_json['payLoad']['email'])
     user = people.find_one({'email': userEmail}, {'_id': False})
@@ -31,20 +32,27 @@ def socialAdd(request, people, social):
     notifications.insert_one(new_notification)
     current_priority = friend['notCounter']
     people.update_one({'email': friendEmail}, {"$set":{'notCounter': current_priority+1}},upsert = False)
+    response = jsonify([{
+    }])
+    response.status_code = 200
+    return response
 
-def socialAccept(request, people, social):
+
+def socialAccept(request, people, social, notifications):
     request_json = request.get_json()
     senderEmail = request_json['payLoad']['friend']
     accepterEmail = request_json['payLoad']['email']
 
     sender = people.find_one({'email': senderEmail}, {'_id': False})
     accepter = people.find_one({'email': accepterEmail}, {'_id': False})
-    senderFriends = sender['friends']
-    accepterFriends = sender['friends']
-
-    updatedSList = senderFriends.append(accepterEmail)
-    updatedAList = accepterFriends.append(senderEmail)
-
+    senderFriends = deepcopy(sender['friends'])
+    accepterFriends = deepcopy(accepter['friends'])
+    print(senderFriends)
+    print(accepterFriends)
+    updatedSList = senderFriends + [accepterEmail]
+    updatedAList = accepterFriends + [senderEmail]
+    print(updatedSList)
+    print(updatedAList)
     people.update_one({'email': senderEmail}, {"$set":{'friends': updatedSList}}, upsert = False)
     people.update_one({'email': accepterEmail}, {"$set":{'friends': updatedAList}}, upsert = False)
 
@@ -63,10 +71,16 @@ def socialAccept(request, people, social):
 
     notifications.insert_one(new_notification)
     current_priority = sender['notCounter']
-    people.update_one({'email': friendEmail}, {"$set":{'notCounter': current_priority+1}},upsert = False)
+    people.update_one({'email': senderEmail}, {"$set":{'notCounter': current_priority+1}},upsert = False)
+    response = jsonify([{
+    }])
+    response.status_code = 200
+    return response
+
 
 def getStats(email, people, social, tasks):
     user = people.find_one({'email': email}, {'_id': False})
+    print(user)
     friendsList = user['friends']
     responseDict = {}
     now = datetime.datetime.now()
@@ -74,56 +88,82 @@ def getStats(email, people, social, tasks):
         friend = {}
         statsObj = social.find_one({'email': friendEmail}, {'_id': False})
         person = people.find_one({'email': friendEmail}, {'_id': False})
+
+        tasksCompleted = 0
         tasksCompList= statsObj['tasksCompleted']
         index = len(tasksCompList) - 1
-        current = tasksCompList[index]
-        tasksCompleted = 0
-        while ((now - current <= datetime.timedelta(days=7))):
-            tasksCompleted += 1
-            index -=1
+        if index >=0:
             current = tasksCompList[index]
+            while ((now - current <= datetime.timedelta(days=7))):
+                tasksCompleted += 1
+                index -=1
+                if index == -1:
+                    break
+                current = tasksCompList[index]
         friend['tasksCompletedWeek'] = tasksCompleted
-        while ((now - current <= datetime.timedelta(days=30))):
-            tasksCompleted += 1
-            index -= 1
-            current = tasksCompList[index]
-        friend['tasksCompletedMonth'] = tasksComleted
+        if index >=0:
+            while ((now - current <= datetime.timedelta(days=30))):
+                tasksCompleted += 1
+                index -= 1
+                if index == -1:
+                    break
+                current = tasksCompList[index]
+        friend['tasksCompletedMonth'] = tasksCompleted
         goalsCompList = statsObj['goalsCompleted']
         index = len(goalsCompList) - 1
-        current = goalsCompList[index]
         goalsCompleted = 0
-        while ((now - current <= datetime.timedelta(days=7))):
-            goalsCompleted += 1
-            index -= 1
+        if index >=0:
             current = goalsCompList[index]
+            while ((now - current <= datetime.timedelta(days=7))):
+                goalsCompleted += 1
+                index -= 1
+                if index == -1:
+                    break
+                current = goalsCompList[index]
         friend['goalsCompletedWeek'] = goalsCompleted
-        while ((now - current <= datetime.timedelta(days=30))):
-            goalsCompleted +=1
-            index -=1
-            current = goalsCompList[index]
-        friend['goalsCompletedWeek'] = goalsCompleted
+        if index >=0:
+            while ((now - current <= datetime.timedelta(days=30))):
+                goalsCompleted +=1
+                index -=1
+                if index == -1:
+                    break
+                current = goalsCompList[index]
+        friend['goalsCompletedMonth'] = goalsCompleted
         completionDeadlineList = statsObj['completionRate']
         index = len(completionDeadlineList) -1
-        current = completionDeadlineList[index]
         tasksCompletedDeadline = 0
-        while ((now - current <= datetime.timedelta(days=7)) and now > current):
-            tasksCompletedDeadline +=1
-            index -=1
+        if index >=0:
             current = completionDeadlineList[index]
+            while ((now - current <= datetime.timedelta(days=7)) and now > current):
+                tasksCompletedDeadline +=1
+                index -=1
+                if index == -1:
+                    break
+                current = completionDeadlineList[index]
         totalTasksAssigned = get_total_tasks_week(tasks, friendEmail, now)
-        taskCompleteRate = float(tasksCompletedDeadline/totalTasksAssigned)
+        if totalTasksAssigned == 0:
+            taskCompleteRate = 0
+        else:
+            taskCompleteRate = float(tasksCompletedDeadline/totalTasksAssigned)
         friend['taskCompletionRateWeek'] = taskCompleteRate
-        while ((now - current <= datetime.timedelta(days=30)) and now > current):
-            tasksCompletedDeadline +=1
-            index -=1
-            current = completionDeadlineList[index]
+        if index >=0:
+            while ((now - current <= datetime.timedelta(days=30)) and now > current):
+                tasksCompletedDeadline +=1
+                index -=1
+                if index == -1:
+                    break
+                current = completionDeadlineList[index]
         totalTasksAssigned = get_total_tasks_month(tasks,friendEmail, now)
-        taskCompleteRate = float(tasksCompletedDeadline/totalTasksAssigned)
+        if totalTasksAssigned == 0:
+            taskCompleteRate = 0
+        else:
+            taskCompleteRate = float(tasksCompletedDeadline/totalTasksAssigned)
         friend['taskCompletionRateMonth'] = taskCompleteRate
         friend['email'] = friendEmail
         friend['firstName'] = person['firstName']
         friend['lastName'] = person['lastName']
         responseDict[friendEmail] = friend
+    print(responseDict)
     response = jsonify(responseDict)
     response.status_code=200
     return response

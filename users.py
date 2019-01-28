@@ -26,7 +26,7 @@ def add_user(request, people, credentials, social):
                 'accountType': request_json['payLoad']['accountType'],
                 'balance': 0.0,
                 'notCounter': 0,
-                'friends': []
+                'friends': [str.lower(request_json['payLoad']['email'])]
             }
             result1 = people.insert_one(new_person)
             creds = {

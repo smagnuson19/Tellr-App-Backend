@@ -63,7 +63,8 @@ def authAddUser(request, people, credentials, social):
                 'familyName': str.lower(request_json['payLoad']['familyName']),
                 'accountType': request_json['payLoad']['accountType'],
                 'balance': 0.0,
-                'notCounter': 0
+                'notCounter': 0,
+                'friends': [str.lower(request_json['payLoad']['email'])]
             }
             people.insert_one(new_person)
             password = request_json['payLoad']['password']
