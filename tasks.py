@@ -32,6 +32,13 @@ def postTask(request,tasks, people, notifications, mail, app):
     now = datetime.datetime.now()
     realstr = datelist[0][:3] + " "+ datelist[1][:-3] + " " + str(now.year) +  " "  + datelist[2]
     date_time_obj = datetime.datetime.strptime(realstr, '%b %d %Y %I:%M%p')
+    now = datetime.datetime.now()
+
+    if (now - date_time_obj) > datetime.timedelta(hours=0):
+        response = jsonify([{'Success': False, 'Error': 'Task Deadline has already passed!'
+        }])
+        response.status_code = 401
+        return response
 
     new_task = {
         'taskName': request_json['payLoad']['taskName'],
