@@ -90,10 +90,11 @@ def authAddUser(request, people, credentials, social):
             result3= social.insert_one(socialEntry)
 
             token = jwt.encode(tokendict, SECRET, algorithm='HS256')
-            response = {'Success': True, 'Token': token.decode('utf-8')
-            }
-            print(response)
-            response= jsonify(response)
+            response = jsonify([{
+            'Success': True,
+            'Token': token.decode('utf-8')
+            }])
+
             response.status_code = 200
             return response
 
