@@ -150,17 +150,22 @@ def forgotPassword(request, credentials, mail, app):
         return response
 
 def verifyToken(request):
+    for token in request.headers:
+        print(token)
+        print(str(request.headers.get('Authorization')))
+
+    untoken = str(request.headers.get('Authorization'))
     request_json = request.get_json()
-    untoken = request_json['payLoad']['token']
+
     token = str.encode(untoken)
     try:
         decoded = jwt.decode(token, SECRET, algorithm='HS256')
     except:
-        return("Invalid Token")
+        return("Invalid Token", False)
 
     now =datetime.datetime.now()
     if (now - datetime.datetime.strptime(decoded['iad'], "%Y-%m-%d %H:%M:%S")) > datetime.timedelta(days=3):
-        return("Expired Token")
+        return("Expired Token", False)
 
     else:
-        return decoded['sub']
+        return (decoded['sub'], True)
