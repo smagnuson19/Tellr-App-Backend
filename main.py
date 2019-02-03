@@ -105,7 +105,7 @@ def verifyTasks():
     authenStatus = verifyToken(request)
     if authenStatus[1]:
         if request.method == 'POST':
-            return verifyTask(request, tasks, notifications, people, mail, app, social)
+            return verifyTask(request, tasks, notifications, people, mail, app, social, push_notifications)
     else:
         response = jsonify([{'status': authenStatus[0]
         }])
@@ -267,7 +267,7 @@ def approveGoals():
     authenStatus = verifyToken(request)
     if authenStatus[1]:
         if request.method == 'POST':
-            return approveGoal(request, goals, people, notifications, mail, app)
+            return approveGoal(request, goals, people, notifications, mail, app, push_notifications)
     else:
         response = jsonify([{'status': authenStatus[0]
         }])
@@ -292,7 +292,7 @@ def redeemMoney():
     authenStatus = verifyToken(request)
     if authenStatus[1]:
         if request.method == 'POST':
-            return redeemMon(request,people, notifications)
+            return redeemMon(request,people, notifications, push_notifications)
     else:
         response = jsonify([{'status': authenStatus[0]
         }])
@@ -340,7 +340,7 @@ def addFriend():
     authenStatus = verifyToken(request)
     if authenStatus[1]:
         if request.method == 'POST':
-            return socialAdd(request, people, social, notifications)
+            return socialAdd(request, people, social, notifications, push_notifications)
     else:
         response = jsonify([{'status': authenStatus[0]
         }])
@@ -352,7 +352,7 @@ def acceptFriend():
     authenStatus = verifyToken(request)
     if authenStatus[1]:
         if request.method == 'POST':
-            return socialAccept(request, people, social, notifications)
+            return socialAccept(request, people, social, notifications, push_notifications)
     else:
         response = jsonify([{'status': authenStatus[0]
         }])

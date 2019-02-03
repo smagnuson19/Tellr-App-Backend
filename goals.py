@@ -2,6 +2,7 @@ from flask import Flask, request, jsonify
 from handleEmail import *
 from flask_mail import Mail, Message
 import datetime
+from push import *
 
 def getGoals(email, goals):
     goalList = goals.find({'email': str.lower(email)},{'_id': False})
@@ -145,7 +146,7 @@ def finishGoal(request, people, goals, notifications, mail, app, social):
     response.status_code = 200
     return response
 
-def approveGoal(request, goals, people, notifications, mail, app):
+def approveGoal(request, goals, people, notifications, mail, app, push_notifications):
     request_json = request.get_json()
     child = people.find_one({'email': fixEmail(request_json['payLoad']['childEmail'])})
     goalList = goals.find({'email': fixEmail(request_json['payLoad']['childEmail'])})
@@ -196,12 +197,17 @@ def approveGoal(request, goals, people, notifications, mail, app):
     #             msg.body = mstring
     #             mail.send(msg)
 
+    notString = "Your goal: " + new_notification1['notificationName'] + " has been approved!"
+
+    # Waiting for OneSignal account to test
+    # send_notification(client, new_notification1['email'], notString, 'Goal Approved!', push_notifications)
+
     response = jsonify([{
     }])
     response.status_code = 200
     return response
 
-def redeemMon(request, people, notifications):
+def redeemMon(request, people, notifications, push_notifications):
     request_json = request_json.get_json()
     child = people.find_one({'email': fixEmail(request_json['payLoad']['email'])})
     balanceDeduct = request_json['payLoad']['amount']
@@ -230,6 +236,11 @@ def redeemMon(request, people, notifications):
     notifications.insert_one(new_notification)
     current_priority = realParent['notCounter']
     people.update_one({'email': realParent['email']}, {"$set":{'notCounter': current_priority+1}},upsert = False)
+
+    notString = "Your child " + child['firstName'] + " has redeemed $" +str(balanceDeduct) + "."
+
+    # Waiting for OneSignal account to test
+    # send_notification(client, new_notification['email'], notString, 'Money Redemption', push_notifications)
 
     response = jsonify([{
     }])
