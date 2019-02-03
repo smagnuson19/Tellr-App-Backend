@@ -13,6 +13,9 @@ from push import *
 from flask_mail import Mail, Message
 import jwt
 import onesignal as onesignal_sdk
+import time
+import datetime
+
 
 app = Flask(__name__)
 app.config.update(
@@ -40,6 +43,9 @@ goals = db.goals
 notifications = db.notifications
 social = db.social
 push_notifications = db.push_notifications
+
+# Task deadline notification checker - waiting for OneSignal account
+# check_task_notis(tasks, push_notifications)
 
 #Passed
 @app.route("/api/childtasks/<email>", methods =['GET'])
@@ -73,7 +79,7 @@ def postTasks():
     authenStatus = verifyToken(request)
     if authenStatus[1]:
         if request.method == 'POST':
-            return postTask(request, tasks, people, notifications, mail, app)
+            return postTask(request, tasks, people, notifications, mail, app, push_notifications)
     else:
         response = jsonify([{'status': authenStatus[0]
         }])
