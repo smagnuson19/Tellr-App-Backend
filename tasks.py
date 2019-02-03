@@ -2,6 +2,7 @@ from flask import Flask, request, jsonify
 from handleEmail import *
 from flask_mail import Mail, Message
 import datetime
+from push import *
 
 def getTasks(familyName,tasks):
     tasksList = tasks.find({'familyName':str.lower(familyName)},{'_id': False})
@@ -14,7 +15,7 @@ def getTasks(familyName,tasks):
     response.status_code = 200
     return response
 
-def postTask(request,tasks, people, notifications, mail, app):
+def postTask(request,tasks, people, notifications, mail, app, push_notifications):
     request_json = request.get_json()
     print(request_json)
     if request_json['payLoad']['childEmail'] == '':
@@ -91,6 +92,11 @@ def postTask(request,tasks, people, notifications, mail, app):
     #                               recipients=[child['email']])
     #             msg.body = mstring
     #             mail.send(msg)
+    notString = 'A new task ' + new_task['taskName'] + ' has been created!'
+
+    # Waiting for OneSignal account to test
+    # send_notification(client, child['email'], notString, 'New Task Created!', push_notifications)
+
     response = jsonify([{
     }])
     response.status_code = 200

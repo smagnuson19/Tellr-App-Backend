@@ -1,9 +1,12 @@
 import onesignal as onesignal_sdk
+import datetime
+from threading import Timer
 
 def add_device(client, email, type, account, push_notifications):
     device_body = {
         'type': type,
         'accountType': account,
+        # Add family ID
         'email': email,
         'language': 'en'
     }
@@ -28,3 +31,13 @@ def send_notification(client, email, notification, heading, push_notifications):
     if response.status_code == 200:
         return True
     return False
+
+def check_task_notis(tasks, push_notifications):
+    now = datetime.datetime.now()
+    incompleteTasks = tasks.find({'complete':False},{'_id': False})
+    for task in incompleteTasks:
+        if (now - task['taskDeadline'] <= datetime.timedelta(hours=24)) and (now - task['taskDeadline'] > datetime.timedelta(hours = 22.9)):
+            notString = 'Your task ' + task['taskName'] + ' is due in les than 24 hours!'
+            send_notification(client, task['childEail'], notString, 'Task Due Soon!', push_notifications)
+    t = Timer(3600, check_task_notis)
+    t.start()
