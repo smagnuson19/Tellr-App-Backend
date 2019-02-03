@@ -31,6 +31,7 @@ def postTask(request,tasks, people, notifications, mail, app, push_notifications
     print(date_time_str)
     datelist = date_time_str.split()
     now = datetime.datetime.now()
+    print(datelist)
     realstr = datelist[0][:3] + " "+ datelist[1][:-3] + " " + str(now.year) +  " "  + datelist[2]
     date_time_obj = datetime.datetime.strptime(realstr, '%b %d %Y %I:%M%p')
     now = datetime.datetime.now()
@@ -157,7 +158,7 @@ def completeTask(request, tasks, notifications, people, mail, app):
     response.status_code = 200
     return response
 
-def verifyTask(request, tasks, notifications, people, mail, app, social):
+def verifyTask(request, tasks, notifications, people, mail, app, social, push_notifications):
     request_json = request.get_json()
     child = people.find_one({'email':fixEmail(request_json['payLoad']['email'])})
     tasksList = tasks.find({'childEmail': fixEmail(request_json['payLoad']['email'])})
@@ -205,6 +206,12 @@ def verifyTask(request, tasks, notifications, people, mail, app, social):
         #                               recipients=[child['email']])
         #             msg.body = mstring
         #             mail.send(msg)
+
+        notString = 'Completion of your task ' + payLoad['taskName'] + ' has verified! Your balance has been updated.'
+
+        # Waiting for OneSignal account to test
+        # send_notification(client, child['email'], notString, 'Task Completion Verified!', push_notifications)
+
         response = jsonify([{
         }])
         response.status_code = 200
@@ -230,6 +237,11 @@ def verifyTask(request, tasks, notifications, people, mail, app, social):
                 current_priority = child['notCounter']
                 people.update_one({'email': child['email']}, {"$set":{'notCounter': current_priority+1}},upsert = False)
                 break
+
+                notString = 'Completion of your task ' + payLoad['taskName'] + ' has been denied! Please click here to redo your task.'
+
+                # Waiting for OneSignal account to test
+                # send_notification(client, child['email'], notString, 'Task Completion Denied', push_notifications)
         response = jsonify([{
         }])
         response.status_code = 200
