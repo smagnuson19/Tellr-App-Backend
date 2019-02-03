@@ -4,6 +4,7 @@ from flask_mail import Mail, Message
 import datetime
 from copy import deepcopy
 
+#Function for adding a friend in social leaderboard
 def socialAdd(request, people, social, notifications):
     request_json = request.get_json()
     userEmail = fixEmail(request_json['payLoad']['email'])
@@ -16,6 +17,7 @@ def socialAdd(request, people, social, notifications):
         response.status_code = 401
         return response
 
+    #Notification sent to friend being added
     new_notification = {
         'email': friendEmail,
         'accountType': 'Child',
@@ -43,12 +45,13 @@ def socialAdd(request, people, social, notifications):
     response.status_code = 200
     return response
 
-
+# Function for accepting friend requests
 def socialAccept(request, people, social, notifications, push_notifications):
     request_json = request.get_json()
     senderEmail = request_json['payLoad']['friend']
     accepterEmail = request_json['payLoad']['email']
 
+    #Updates the friend list of both the sender and the accepter
     sender = people.find_one({'email': senderEmail}, {'_id': False})
     accepter = people.find_one({'email': accepterEmail}, {'_id': False})
     senderFriends = deepcopy(sender['friends'])
@@ -62,6 +65,7 @@ def socialAccept(request, people, social, notifications, push_notifications):
     people.update_one({'email': senderEmail}, {"$set":{'friends': updatedSList}}, upsert = False)
     people.update_one({'email': accepterEmail}, {"$set":{'friends': updatedAList}}, upsert = False)
 
+    #Notification sent to original requester
     new_notification = {
         'email': senderEmail,
         'accountType': 'Child',
@@ -88,13 +92,14 @@ def socialAccept(request, people, social, notifications, push_notifications):
     response.status_code = 200
     return response
 
-
+#Function for getting social statistics for leaderboard
 def getStats(email, people, social, tasks):
     user = people.find_one({'email': email}, {'_id': False})
     print(user)
     friendsList = user['friends']
     responseDict = {}
     now = datetime.datetime.now()
+    #Find the list first, then count the number of tasks completed/goals completed in the past week/month
     for friendEmail in friendsList:
         friend = {}
         statsObj = social.find_one({'email': friendEmail}, {'_id': False})
@@ -105,7 +110,7 @@ def getStats(email, people, social, tasks):
         index = len(tasksCompList) - 1
         if index >=0:
             current = tasksCompList[index]
-            while ((now - current <= datetime.timedelta(days=7))):
+            while ((now - current <= datetime.timedelta(days=7))): #last week
                 tasksCompleted += 1
                 index -=1
                 if index == -1:
@@ -113,7 +118,7 @@ def getStats(email, people, social, tasks):
                 current = tasksCompList[index]
         friend['tasksCompletedWeek'] = tasksCompleted
         if index >=0:
-            while ((now - current <= datetime.timedelta(days=30))):
+            while ((now - current <= datetime.timedelta(days=30))): #last month
                 tasksCompleted += 1
                 index -= 1
                 if index == -1:
@@ -143,6 +148,8 @@ def getStats(email, people, social, tasks):
         completionDeadlineList = statsObj['completionRate']
         index = len(completionDeadlineList) -1
         tasksCompletedDeadline = 0
+        #For completion rate, find the total number of tasks assigned in past month/week,
+        #then the number of those that are completed
         if index >=0:
             current = completionDeadlineList[index]
             while ((now - current <= datetime.timedelta(days=7)) and now > current):
@@ -155,6 +162,7 @@ def getStats(email, people, social, tasks):
         if totalTasksAssigned == 0:
             taskCompleteRate = 0
         else:
+            #Send rate as float
             taskCompleteRate = float(tasksCompletedDeadline/totalTasksAssigned)
         friend['taskCompletionRateWeek'] = taskCompleteRate
         if index >=0:
@@ -179,6 +187,7 @@ def getStats(email, people, social, tasks):
     response.status_code=200
     return response
 
+#Helper function to get the total number of tasks in a week
 def get_total_tasks_week(tasks, friendEmail, now):
     count = 0
     all = tasks.find({'email':str.lower(friendEmail)},{'_id': False})
@@ -187,6 +196,7 @@ def get_total_tasks_week(tasks, friendEmail, now):
             count += 1
     return count
 
+#Helper function to get the total number of tasks in a month
 def get_total_tasks_month(tasks, friendEmail, now):
     count = 0
     all = tasks.find({'email':str.lower(friendEmail)},{'_id': False})

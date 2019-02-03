@@ -7,12 +7,14 @@ import json
 import datetime
 SECRET = "secret"
 
+#Function for secure login and token generation
 def authenticateUser(request, credentials):
     request_json = request.get_json()
     email = fixEmail(request_json['payLoad']['email'])
     pw = request_json['payLoad']['password']
     user = credentials.find_one({'email': email}, {'_id': False})
 
+    #If we did get a user, raise an error
     if user == None:
         response = jsonify([{
         'Success': False,
@@ -20,6 +22,8 @@ def authenticateUser(request, credentials):
         }])
         response.status_code = 401
         return response
+
+    #Otherwise make a token
     else:
         date = datetime.datetime.now()
         hash = user['password']
@@ -28,12 +32,14 @@ def authenticateUser(request, credentials):
                 'sub': email,
                 'iad': datetime.datetime.strftime(date, "%Y-%m-%d %H:%M:%S")
             }
+            # Generate token with date and encode it with secret
             token = jwt.encode(tokendict, SECRET, algorithm='HS256')
             response = jsonify([{
             'Success': True,
             'Token': token.decode('utf-8')
             }])
             response.status_code = 200
+        #If wrong password, raise error
         else:
             response = jsonify([{
             'Success': False,
@@ -43,6 +49,7 @@ def authenticateUser(request, credentials):
 
     return response
 
+#Function for securely adding user login credentials during account creation
 def authAddUser(request, people, credentials, social):
     if request.method == 'POST':
         request_json = request.get_json()
@@ -56,6 +63,7 @@ def authAddUser(request, people, credentials, social):
 
         #If not in databse, add to user and credentials database and return a 200 status code
         else:
+            #Add a new person to the people database
             new_person = {
                 'firstName': request_json['payLoad']['firstName'],
                 'lastName': request_json['payLoad']['lastName'],
@@ -68,6 +76,7 @@ def authAddUser(request, people, credentials, social):
                 'deviceID': 'None'
             }
             people.insert_one(new_person)
+            #Store password as a hash within credentials database
             password = request_json['payLoad']['password']
             hash = bcrypt.hashpw(password.encode('utf-8'),bcrypt.gensalt())
             creds = {
@@ -80,7 +89,7 @@ def authAddUser(request, people, credentials, social):
                 'sub': str.lower(request_json['payLoad']['email']),
                 'iad': datetime.datetime.strftime(date, "%Y-%m-%d %H:%M:%S")
             }
-
+            #Create a social entry to competitive stats purposes in social database
             socialEntry = {
                 'email': str.lower(request_json['payLoad']['email']),
                 'tasksCompleted': [],
@@ -89,6 +98,7 @@ def authAddUser(request, people, credentials, social):
             }
             result3= social.insert_one(socialEntry)
 
+            #Encode a token and send it
             token = jwt.encode(tokendict, SECRET, algorithm='HS256')
             response = jsonify([{
             'Success': True,
@@ -98,6 +108,7 @@ def authAddUser(request, people, credentials, social):
             response.status_code = 200
             return response
 
+#Function to securely change password and send back a valid token
 def authChangePassword(request, credentials):
     request_json = request.get_json()
     email = (verifyToken(request))
@@ -123,6 +134,7 @@ def authChangePassword(request, credentials):
         response.status_code = 401
         return response
 
+#Function to allow users to change password using temporary password sent over email
 def forgotPassword(request, credentials, mail, app):
     newPW = ''.join(random.choice(string.ascii_uppercase + string.digits) for i in range(16))
     email = (verifyToken(request))
@@ -149,6 +161,7 @@ def forgotPassword(request, credentials, mail, app):
         response.status_code = 401
         return response
 
+#Main wrapper function that verifies tokens at each endpoint
 def verifyToken(request):
     for token in request.headers:
         print(token)

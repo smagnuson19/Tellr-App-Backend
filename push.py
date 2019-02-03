@@ -2,6 +2,7 @@ import onesignal as onesignal_sdk
 import datetime
 from threading import Timer
 
+#Function to add new device to push notifications database, allowing backedn to send push notifications to device through oneSignal
 def add_device(client, email, type, account, push_notifications):
     device_body = {
         'type': type,
@@ -21,6 +22,7 @@ def add_device(client, email, type, account, push_notifications):
     else:
         return False
 
+#General fucntion for sending different types of notifications to user with given email through OneSignal
 def send_notification(client, email, notification, heading, push_notifications):
     new_notification = onesignal_sdk.Notification(contents= {"en": notification})
     new_notification.set_parameter("headings", {"en": heading})
@@ -32,6 +34,7 @@ def send_notification(client, email, notification, heading, push_notifications):
         return True
     return False
 
+# Function to check and notify users with tasks due within 24 hours; runs every hour using timer object from threading
 def check_task_notis(tasks, push_notifications):
     now = datetime.datetime.now()
     incompleteTasks = tasks.find({'complete':False},{'_id': False})

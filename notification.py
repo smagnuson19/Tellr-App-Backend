@@ -2,6 +2,7 @@ from flask import Flask, request, jsonify
 from handleEmail import *
 import datetime
 
+#Main worker function for searching and sorting within notifcations database for each user
 def findNotifications(email,notifications):
     all = notifications.find({'email':str.lower(email)},{'_id': False})
     send_list = []
@@ -45,6 +46,7 @@ def readNotifications(request, notifications):
     response.status_code = 200
     return response
 
+#Helper function for sorting notifications by order of time raised
 def partition(the_list, p, r):
     i = p - 1              # i demarcates the end of the sublist containing values <= pivot.
     j = p                  # j demarcates end of sublist containing values > pivot.
