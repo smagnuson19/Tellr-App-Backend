@@ -1,5 +1,6 @@
 from flask import Flask, request, jsonify
 
+#Deprecated after authentication
 def handleCredentials(email, password, credentials):
     user = credentials.find_one({'email': str.lower(email)}, {'_id': False})
     if user == None:

@@ -4,6 +4,7 @@ from flask_mail import Mail, Message
 import datetime
 from push import *
 
+# Function to get all goals for user with certain email
 def getGoals(email, goals):
     goalList = goals.find({'email': str.lower(email)},{'_id': False})
     dictresponse = {}
@@ -17,6 +18,7 @@ def getGoals(email, goals):
     response.status_code = 200
     return response
 
+# Function for posting and storing goals created by children
 def postGoals(request, goals, people, notifications, mail, app):
     request_json = request.get_json()
     new_goal = {
@@ -64,6 +66,7 @@ def postGoals(request, goals, people, notifications, mail, app):
     response.status_code = 200
     return response
 
+# Function that allows children to redeem goals and updates balance and notifies parents accordingly
 def finishGoal(request, people, goals, notifications, mail, app, social):
     request_json = request.get_json()
     child = people.find_one({'email': fixEmail(request_json['payLoad']['email'])})
@@ -146,6 +149,7 @@ def finishGoal(request, people, goals, notifications, mail, app, social):
     response.status_code = 200
     return response
 
+# Function that allows parents to approve goals submitted by their children
 def approveGoal(request, goals, people, notifications, mail, app, push_notifications):
     request_json = request.get_json()
     child = people.find_one({'email': fixEmail(request_json['payLoad']['childEmail'])})
@@ -207,6 +211,7 @@ def approveGoal(request, goals, people, notifications, mail, app, push_notificat
     response.status_code = 200
     return response
 
+#Function that allows children to redeem money from their balance
 def redeemMon(request, people, notifications, push_notifications):
     request_json = request_json.get_json()
     child = people.find_one({'email': fixEmail(request_json['payLoad']['email'])})

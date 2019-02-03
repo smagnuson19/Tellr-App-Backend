@@ -117,6 +117,7 @@ def upBalance(request,people,notifications, mail, app):
 
     return response
 
+#Function for deleting all users of a given family name
 def delAllUser(request,people, credentials):
     person = people.find_one({'email': (request.get_json()['payLoad']['email'])}, {'_id': False})
     if person.accountType == 'Parent':
@@ -131,6 +132,7 @@ def delAllUser(request,people, credentials):
 
     return response
 
+#Function to delete one user
 def delOne(request, people, credentials):
     credentials.delete_one({ "email": fixEmail(request.get_json()['payLoad']['email']) })
     people.delete_one({"email": fixEmail(request.get_json()['payLoad']['email'])})

@@ -4,6 +4,7 @@ from flask_mail import Mail, Message
 import datetime
 from push import *
 
+#Function to get all tasks for a given family name
 def getTasks(familyName,tasks):
     tasksList = tasks.find({'familyName':str.lower(familyName)},{'_id': False})
     dictresponse = {}
@@ -15,6 +16,7 @@ def getTasks(familyName,tasks):
     response.status_code = 200
     return response
 
+#Function to allow parents to post tasks for their kids
 def postTask(request,tasks, people, notifications, mail, app, push_notifications):
     request_json = request.get_json()
     print(request_json)
@@ -27,6 +29,7 @@ def postTask(request,tasks, people, notifications, mail, app, push_notifications
     child = people.find_one({'email':fixEmail(request_json['payLoad']['childEmail'])},{'_id': False})
     stringName = child['firstName']+ ' '+ child['lastName']
 
+    #Store deadline as a datetime object (convert from string)
     date_time_str = request_json['payLoad']['taskDeadline']
     print(date_time_str)
     datelist = date_time_str.split()
@@ -42,6 +45,7 @@ def postTask(request,tasks, people, notifications, mail, app, push_notifications
         response.status_code = 401
         return response
 
+    #Create new task entry and store in tasks database
     new_task = {
         'taskName': request_json['payLoad']['taskName'],
         'reward': float(request_json['payLoad']['reward']),
@@ -67,6 +71,7 @@ def postTask(request,tasks, people, notifications, mail, app, push_notifications
     else:
         display = False
 
+    #Notify child that they have a new task
     new_notification = {
         'email': child['email'],
         'accountType': 'Child',
@@ -103,6 +108,7 @@ def postTask(request,tasks, people, notifications, mail, app, push_notifications
     response.status_code = 200
     return response
 
+#Get tasks list for all children
 def getTasksChild(email, tasks):
     tasksList = tasks.find({'childEmail':str.lower(email)},{'_id': False})
     dictresponse = {}
@@ -115,6 +121,7 @@ def getTasksChild(email, tasks):
     response.status_code = 200
     return response
 
+#Handle when children complete tasks
 def completeTask(request, tasks, notifications, people, mail, app):
     request_json = request.get_json()
     child = people.find_one({'email':fixEmail(request_json['payLoad']['email'])})
@@ -158,6 +165,7 @@ def completeTask(request, tasks, notifications, people, mail, app):
     response.status_code = 200
     return response
 
+#Function to allow parents to verfiy tasks
 def verifyTask(request, tasks, notifications, people, mail, app, social, push_notifications):
     request_json = request.get_json()
     child = people.find_one({'email':fixEmail(request_json['payLoad']['email'])})
@@ -169,6 +177,7 @@ def verifyTask(request, tasks, notifications, people, mail, app, social, push_no
                 tasks.update_one({'_id': task['_id']}, {"$set":{'verified': True}},upsert = False)
                 parent = people.find_one({'email':fixEmail(task['senderEmail'])})
                 stringName = parent['firstName']+ ' '+ parent['lastName']
+                #Notify children
                 new_notification={
                     'email': child['email'],
                     'accountType': 'Child',
@@ -183,10 +192,12 @@ def verifyTask(request, tasks, notifications, people, mail, app, social, push_no
                 }
                 notifications.insert_one(new_notification)
                 current_priority = child['notCounter']
+                #update balance of children
                 new_balance = child['balance'] + float(task['reward'])
                 people.update_one({'email': child['email']}, {"$set":{'notCounter': current_priority+1}},upsert = False)
                 people.update_one({'email': child['email']}, {"$set":{'balance': new_balance}},upsert = False)
                 break
+        #update social entries accordingly for tasks and task completion rate
         now = datetime.datetime.now()
         socialEntry = social.find_one({'email':fixEmail(request_json['payLoad']['email'])})
         newList = socialEntry['tasksCompleted']
@@ -217,6 +228,7 @@ def verifyTask(request, tasks, notifications, people, mail, app, social, push_no
         response.status_code = 200
         return response
     else:
+        #If parents deny the completion, notify children and re-publish the task
         for task in tasksList:
             if task['taskName'] == request_json['payLoad']['taskName']:
                 tasks.update_one({'_id': task['_id']}, {"$set":{'complete': False}},upsert = False)
