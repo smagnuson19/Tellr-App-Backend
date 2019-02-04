@@ -99,6 +99,18 @@ def completeTasks():
         response.status_code = 401
         return response
 
+@app.route("/api/tasks/seecompleted/<email>", methods = ['GET'])
+def seeCompletedTasks():
+    authenStatus = verifyToken(request)
+    if authenStatus[1]:
+        if request.method == 'GET':
+            return getCompletedTasks(request, tasks)
+    else:
+        response = jsonify([{'status': authenStatus[0]
+        }])
+        response.status_code = 401
+        return response
+
 #Passed Testing
 @app.route("/api/tasks/verified", methods = ['POST'])
 def verifyTasks():
@@ -202,6 +214,30 @@ def handleGoals(email):
     if authenStatus[1]:
         if request.method == 'GET':
             return getGoals(fixEmail(email), goals)
+    else:
+        response = jsonify([{'status': authenStatus[0]
+        }])
+        response.status_code = 401
+        return response
+
+@app.route("/api/goals/complete/<email>", methods =['GET'])
+def handleCompleteGoals(email):
+    authenStatus = verifyToken(request)
+    if authenStatus[1]:
+        if request.method == 'GET':
+            return getCompleteGoals(fixEmail(email), goals)
+    else:
+        response = jsonify([{'status': authenStatus[0]
+        }])
+        response.status_code = 401
+        return response
+
+@app.route("/api/goals/incomplete/<email>", methods =['GET'])
+def handleIncompleteGoals(email):
+    authenStatus = verifyToken(request)
+    if authenStatus[1]:
+        if request.method == 'GET':
+            return getIncompleteGoals(fixEmail(email), goals)
     else:
         response = jsonify([{'status': authenStatus[0]
         }])
