@@ -408,6 +408,19 @@ def getSocialStats(email):
         response.status_code = 401
         return response
 
+@app.route("/api/social/taskhistory/<email>", methods =['GET'])
+def getTaskHistory(email, social):
+    authenStatus = verifyToken(request)
+    if authenStatus[1]:
+        realEmail = fixEmail(email)
+        if request.method == 'GET':
+            return get_completed_task_number_graph(email, social)
+    else:
+        response = jsonify([{'status': authenStatus[0]
+        }])
+        response.status_code = 401
+        return response
+
 @app.route("/api/", methods =['GET', 'POST'])
 def main():
     if request.method == 'POST':

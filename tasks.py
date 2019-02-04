@@ -58,6 +58,7 @@ def postTask(request,tasks, people, notifications, mail, app, push_notifications
         'verified': False,
         'dateCompleted': None,
         'familyName': child['familyName'],
+        'timeCompleted': None,
         'alert': False
     }
 
@@ -127,10 +128,12 @@ def completeTask(request, tasks, notifications, people, mail, app):
     child = people.find_one({'email':fixEmail(request_json['payLoad']['email'])})
     stringName = child['firstName']+ ' '+ child['lastName']
     tasksList = tasks.find({'childEmail':fixEmail(str.lower(request_json['payLoad']['email']))})
+    now = datetime.datetime.now()
     for task in tasksList:
         if task['taskName'] == request_json['payLoad']['taskName']:
             actualT = task
             tasks.update_one({'_id': task['_id']}, {"$set":{'complete': True}},upsert = False)
+            tasks.update_one({'_id': task['_id']}, {"$set":{'timeCompleted': now}},upsert = False)
             parent = people.find_one({'email':str.lower(task['senderEmail'])})
             new_notification = {
                 'email': task['senderEmail'],
@@ -201,7 +204,7 @@ def verifyTask(request, tasks, notifications, people, mail, app, social, push_no
         now = datetime.datetime.now()
         socialEntry = social.find_one({'email':fixEmail(request_json['payLoad']['email'])})
         newList = socialEntry['tasksCompleted']
-        newList.append(now)
+        newList.append(actualT['timeCompleted'])
         social.update_one({'email': socialEntry['email']}, {"$set":{'tasksCompleted': newList}},upsert = False)
         nList = socialEntry['completionRate']
         deadline = actualT['taskDeadline']
@@ -232,6 +235,7 @@ def verifyTask(request, tasks, notifications, people, mail, app, social, push_no
         for task in tasksList:
             if task['taskName'] == request_json['payLoad']['taskName']:
                 tasks.update_one({'_id': task['_id']}, {"$set":{'complete': False}},upsert = False)
+                tasks.update_one({'_id': task['_id']}, {"$set":{'timeCompleted': None}},upsert = False)
                 parent = people.find_one({'email':fixEmail(task['senderEmail'])})
                 new_notification={
                     'email': child['email'],
