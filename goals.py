@@ -252,3 +252,29 @@ def redeemMon(request, people, notifications, push_notifications):
 
     response.status_code = 200
     return response
+
+def getIncompleteGoals(email, goals):
+    goalList = goals.find({'email': str.lower(email)},{'_id': False})
+    dictresponse = {}
+    i = 0
+    for goal in goalList:
+        if goal['redeemed']==False:
+            dictresponse[i]=goal
+            i = i+1
+    response = jsonify(dictresponse)
+    print(dictresponse)
+    response.status_code = 200
+    return response
+
+def getCompleteGoals(email, goals):
+    goalList = goals.find({'email': str.lower(email)},{'_id': False})
+    dictresponse = {}
+    i = 0
+    for goal in goalList:
+        if goal['redeemed']==True:
+            dictresponse[i]=goal
+            i = i+1
+    response = jsonify(dictresponse)
+    print(dictresponse)
+    response.status_code = 200
+    return response

@@ -258,3 +258,50 @@ def verifyTask(request, tasks, notifications, people, mail, app, social, push_no
         }])
         response.status_code = 200
         return response
+
+def getCompletedTasks(request, tasks):
+    request_json = request.get_json()
+    counter = 0
+    returnList = []
+    tasksList = tasks.find({'childEmail': fixEmail(request_json['payLoad']['email'])}, {'_id': False})
+
+    for task in tasksList:
+        if task['verified'] == True:
+            returnList.append(task)
+
+    quicksort_time(returnList)
+    returnDict = {}
+    for index in range(len(returnList)):
+        returnDict[index] = returnList[index]
+
+    response = jsonify([returnDict
+        ])
+    response.status_code = 200
+    return response
+
+
+def partition(the_list, p, r):
+    i = p - 1              # i demarcates the end of the sublist containing values <= pivot.
+    j = p                  # j demarcates end of sublist containing values > pivot.
+    pivot = the_list[r]['taskDeadline']    # Pivot will store value of sublist's last item.
+    while j < r:
+        if the_list[j]['taskDeadline'] < pivot:
+            j += 1         # Increment j.
+        elif the_list[j]['taskDeadline'] >= pivot:
+            i += 1         # Increment i.
+            the_list[i], the_list[j] = the_list[j], the_list[i]
+            j += 1
+    the_list[r], the_list[i + 1] = the_list[i + 1], the_list[r]
+    return i + 1
+
+# Sort the_list[p ... r], using quick sort.
+def quicksort_time(the_list, p = 0, r = None):
+    # If using the default parameters, sort the entire list.
+    if r == None:
+        r = len(the_list) - 1
+    # Base case: If sublist has fewer than 2 items... then do nothing. No code required!
+    if p < r:
+        q = partition(the_list, p, r)  # Locates pivot item, since partition returns its index.
+        quicksort_time(the_list, p, q - 1)  # Quicksort sublist from p to q (exclusive).
+        quicksort_time(the_list, q + 1, r)  # Quicksort sublist from one past q to r (inclusive).
+    return the_list
