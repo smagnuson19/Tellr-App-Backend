@@ -109,6 +109,11 @@ Post a new task to this address with a json file named payLoad and the following
   senderEmail
 }`
 
+##### /api/tasks/seecompleted
+Methods: GET
+
+Returns a dictionary sorted by taskdeadline keyed on integers (0 corresponding to earliest task, and so on) with values that are smaller dictionaries representing tasks that are identical in structure to other methods that return tasks.
+
 ##### /api/users
 Methods: POST
 
@@ -181,6 +186,11 @@ Method to obtain social stats for all the friends of the user with email <email>
 
 where the first four terms are the number of goals/tasks completed in their respective timeframes, the next two are completion percentages of tasks expressed as floats (ranging in value from 0.0 to 1.0) and firstName and lastName are strings of the first and last name of the friend, respectively.
 
+##### /api/social/taskhistory/\<email\>
+Methods: GET
+
+Used for showing graph (number line) of task history for given user with email \<email\>. Returns a dictionary keyed on integers from 0 to 31, with values representing the number of tasks completed on that day. For example, a value of 5 and a key of 3 means that the user completed 5 tasks 3 days ago.
+
 ##### /api/\<email\>/credentials/\<password\>
 Methods: POST
 
@@ -221,6 +231,16 @@ POST: Add new goal for user with email \<email\>, takes a json file with name pa
     description,
     image,
 }`
+
+##### /api/goals/complete/<email>
+Methods: GET
+
+GET: Get a dictionary keyed on integers and with values corresponding to goals completed by the user in the identical format as the dictionary above.
+
+##### /api/goals/incomplete/<email>
+Methods: GET
+
+GET: Get a dictionary keyed on integers and with values corresponding to goals that are still incomplete in the identical format as the dictionary above. 
 
 ##### /api/goals/approve
 Methods: POST
