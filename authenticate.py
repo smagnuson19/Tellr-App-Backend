@@ -5,6 +5,7 @@ from handleEmail import *
 from flask import Flask, request, jsonify
 import json
 import datetime
+from push import *
 SECRET = "secret"
 
 #Function for secure login and token generation
@@ -34,6 +35,7 @@ def authenticateUser(request, credentials):
             }
             # Generate token with date and encode it with secret
             token = jwt.encode(tokendict, SECRET, algorithm='HS256')
+
             response = jsonify([{
             'Success': True,
             'Token': token.decode('utf-8')
@@ -50,7 +52,7 @@ def authenticateUser(request, credentials):
     return response
 
 #Function for securely adding user login credentials during account creation
-def authAddUser(request, people, credentials, social):
+def authAddUser(request, people, credentials, social, push_notifications):
     if request.method == 'POST':
         request_json = request.get_json()
         #Check to see whether user is already in databse; if so, return empty json with 201 status
@@ -72,10 +74,9 @@ def authAddUser(request, people, credentials, social):
                 'accountType': request_json['payLoad']['accountType'],
                 'balance': 0.0,
                 'notCounter': 0,
-                'friends': [str.lower(request_json['payLoad']['email'])],
-                'deviceID': 'None'
+                'friends': [str.lower(request_json['payLoad']['email'])]
             }
-            people.insert_one(new_person)
+
             #Store password as a hash within credentials database
             password = request_json['payLoad']['password']
             hash = bcrypt.hashpw(password.encode('utf-8'),bcrypt.gensalt())
@@ -83,7 +84,7 @@ def authAddUser(request, people, credentials, social):
                 'email': str.lower(request_json['payLoad']['email']),
                 'password': hash
             }
-            credentials.insert_one(creds)
+
             date = datetime.datetime.now()
             tokendict = {
                 'sub': str.lower(request_json['payLoad']['email']),
@@ -96,8 +97,21 @@ def authAddUser(request, people, credentials, social):
                 'goalsCompleted': [],
                 'completionRate': []
             }
-            result3= social.insert_one(socialEntry)
 
+
+            red = add_device(str.lower(request_json['payLoad']['email']), 'type', request_json['payLoad']['accountType'], push_notifications)
+            if not red[0]:
+                print(red[1])
+                response = jsonify([{
+                    'Success': False,
+                    'Error': str(red[1])
+                }])
+                response.status_code = 402
+                return response
+
+            people.insert_one(new_person)
+            credentials.insert_one(creds)
+            result3= social.insert_one(socialEntry)
             #Encode a token and send it
             token = jwt.encode(tokendict, SECRET, algorithm='HS256')
             response = jsonify([{
@@ -163,10 +177,6 @@ def forgotPassword(request, credentials, mail, app):
 
 #Main wrapper function that verifies tokens at each endpoint
 def verifyToken(request):
-    for token in request.headers:
-        print(token)
-        print(str(request.headers.get('Authorization')))
-
     untoken = str(request.headers.get('Authorization'))
     request_json = request.get_json()
 

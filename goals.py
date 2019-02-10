@@ -204,7 +204,7 @@ def approveGoal(request, goals, people, notifications, mail, app, push_notificat
     notString = "Your goal: " + new_notification1['notificationName'] + " has been approved!"
 
     # Waiting for OneSignal account to test
-    # send_notification(client, new_notification1['email'], notString, 'Goal Approved!', push_notifications)
+    send_notification(new_notification1['email'], notString, 'Goal Approved!', push_notifications)
 
     response = jsonify([{
     }])
@@ -245,7 +245,7 @@ def redeemMon(request, people, notifications, push_notifications):
     notString = "Your child " + child['firstName'] + " has redeemed $" +str(balanceDeduct) + "."
 
     # Waiting for OneSignal account to test
-    # send_notification(client, new_notification['email'], notString, 'Money Redemption', push_notifications)
+    send_notification(new_notification['email'], notString, 'Money Redemption', push_notifications)
 
     response = jsonify([{
     }])
