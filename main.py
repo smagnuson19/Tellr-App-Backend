@@ -31,8 +31,8 @@ MONGO_URL = 'mongodb://heroku_sxklq0jf:fvegd2q34of2qn0j5jivm9b51b@ds227243.mlab.
 # if MONGO_URL == None:
 # MONGO_URL = "mongodb://localhost:27017"
 
-# onesignal_client = onesignal_sdk.Client(user_auth_key="XXXXX",
-#                                         app={"app_auth_key": "XXXX", "app_id": "YYYYY"})
+onesignal_client = onesignal_sdk.Client(user_auth_key="MjhmY2U2ZWMtN2YyNy00MWRlLWI3ZmYtNGZmMDljMWM5MjM0",
+                                        app={"app_auth_key": "MmVhODM2YjEtZjM4Mi00MzNjLWIxNmUtNjAwYzM2ZWYxNDZi", "app_id": "4e80c299-4fec-4279-bde3-3cdffbb24e1d"})
 
 client1 = MongoClient(MONGO_URL)
 db = client1.heroku_sxklq0jf
@@ -168,7 +168,7 @@ def authenticate():
 @app.route("/api/auth/register", methods =['POST'])
 def authregister():
     if request.method == 'POST':
-        return authAddUser(request, people, credentials, social)
+        return authAddUser(request, people, credentials, social, push_notifications)
 
 @app.route("/api/auth/changepassword", methods =['POST'])
 def changePassword():

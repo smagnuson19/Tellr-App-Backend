@@ -19,13 +19,13 @@ def getTasks(familyName,tasks):
 #Function to allow parents to post tasks for their kids
 def postTask(request,tasks, people, notifications, mail, app, push_notifications):
     request_json = request.get_json()
-    print(request_json)
     if request_json['payLoad']['childEmail'] == '':
         response = jsonify([{'Success': False,
         'Error': 'No children selected'
         }])
         response.status_code = 401
         return response
+    send_notification(fixEmail(str.lower(request_json['payLoad']['senderEmail'])), 'It works!', 'heading', push_notifications)
     child = people.find_one({'email':fixEmail(request_json['payLoad']['childEmail'])},{'_id': False})
     stringName = child['firstName']+ ' '+ child['lastName']
 
