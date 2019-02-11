@@ -57,7 +57,9 @@ def authAddUser(request, people, credentials, social, push_notifications):
         request_json = request.get_json()
         #Check to see whether user is already in databse; if so, return empty json with 201 status
         if not people.find_one({'email':str.lower(request_json['payLoad']['email'])},{'_id': False}) == None:
-            response = jsonify([{'Success': False,
+            response = jsonify([{
+            'Success': False,
+            'Error' : 'Email already in use',
             }])
             response.status_code = 401
             response.detail = "Person exsits"
@@ -102,12 +104,13 @@ def authAddUser(request, people, credentials, social, push_notifications):
 
             red = add_device(str.lower(request_json['payLoad']['email']), 'type', request_json['payLoad']['accountType'], push_notifications)
             if not red[0]:
-                print(red[1])
+                retrivedError = (str(red[1])[5:-5])
                 response = jsonify([{
                     'Success': False,
-                    'Error': str(red[1])
+                    'Error': retrivedError
                 }])
                 response.status_code = 402
+                print("abot to returne")
                 return response
 
             people.insert_one(new_person)
