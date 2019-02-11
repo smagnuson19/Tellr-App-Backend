@@ -159,6 +159,18 @@ def get_user(email):
         response.status_code = 401
         return response
 
+@app.route("/api/history/<email>", methods = ['GET'])
+def getHistory():
+    authenStatus = verifyToken(request)
+    if authenStatus[1]:
+        if request.method == 'GET':
+            return getUserHistory(fixEmail(email), people)
+    else:
+        response = jsonify([{'status': authenStatus[0]
+        }])
+        response.status_code = 401
+        return response
+
 @app.route("/api/auth/login", methods =['POST'])
 def authenticate():
     if request.method == 'POST':
