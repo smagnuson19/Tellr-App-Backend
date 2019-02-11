@@ -2,6 +2,7 @@ from flask import Flask, request, jsonify
 from handleEmail import *
 from flask_mail import Mail, Message
 from push import *
+import datetime
 
 #Adding a user to the database
 def add_user(request, people, credentials, social, push_notifications):
@@ -74,12 +75,210 @@ def findChildren(email, people):
         response.status_code = 200
     return response
 
-def get_user_history(email, people):
+def getUserHistory(email, people):
     child = people.find_one({'email': str.lower(email)}, {'_id': False})
     earnings_history = child['history']
     for i in range(len(earnings_history)):
         dictresponse[i] = list(earnings_history[i])
         dictresponse[i][1] = str(dictresponse[i][1])
+    response = jsonify(dictresponse)
+    response.status_code = 200
+    return response
+
+def getUserHistoryWeek(email, people):
+    child = people.find_one({'email': str.lower(email)}, {'_id': False})
+    earnings_history = child['history']
+    now = datetime.datetime.now()
+    for i in range(len(earnings_history)):
+        i = len(earnings_history) -1
+        if (now - earnings_history[i][1]) < datetime.timedelta(days = 7):
+            dictresponse[i] = list(earnings_history[i])
+            dictresponse[i][1] = str(dictresponse[i][1])
+        else:
+            break
+    response = jsonify(dictresponse)
+    response.status_code = 200
+    return response
+
+def getUserHistoryMonth(email, people):
+    child = people.find_one({'email': str.lower(email)}, {'_id': False})
+    earnings_history = child['history']
+    now = datetime.datetime.now()
+    for i in range(len(earnings_history)):
+        i = len(earnings_history) -1
+        if (now - earnings_history[i][1]) < datetime.timedelta(days = 31):
+            dictresponse[i] = list(earnings_history[i])
+            dictresponse[i][1] = str(dictresponse[i][1])
+        else:
+            break
+    response = jsonify(dictresponse)
+    response.status_code = 200
+    return response
+
+def getUserHistoryYear(email, people):
+    child = people.find_one({'email': str.lower(email)}, {'_id': False})
+    earnings_history = child['history']
+    now = datetime.datetime.now()
+    for i in range(len(earnings_history)):
+        i = len(earnings_history) -1
+        if (now - earnings_history[i][1]) < datetime.timedelta(days = 365):
+            dictresponse[i] = list(earnings_history[i])
+            dictresponse[i][1] = str(dictresponse[i][1])
+        else:
+            break
+    response = jsonify(dictresponse)
+    response.status_code = 200
+    return response
+
+def getAnalyticsWeek(email, people):
+    child = people.find_one({'email': str.lower(email)}, {'_id': False})
+    earnings_history = child['history']
+    now = datetime.datetime.now()
+    tasksCompleted = 0
+    goalsRedeemed = 0
+    moneyReeemed = 0
+    task_earned = 0
+    goal_used = 0
+    redemptions = 0
+    to_operate = ""
+    for i in range(len(earnings_history)):
+        i = len(earnings_history) -1
+        if to_operate == 'TASK':
+            task_earned += currentBalance - earnings_history[i][0]
+        elif to_operate == 'GOAL':
+            goal_used +=  earnings_history[i][0] - currentBalance
+        elif to_operate == 'RED':
+            moneyReeemed += earnings_history[i][0] - currentBalance
+
+        if (now - earnings_history[i][1]) < datetime.timedelta(days = 7):
+            if earnings_history[i][2] == 'TASK':
+                tasksCompleted += 1
+                to_operate = 'TASK'
+                currentBalance = earnings_history[i][0]
+            if earnings_history[i][2] == 'GOAL':
+                goalsRedeemed += 1
+                to_operate = 'GOAL'
+                currentBalance = earnings_history[i][0]
+            if earnings_history[i][2] == 'RED':
+                redemptions += 1
+                to_operate = moneyReeemed
+                currentBalance = earnings_history[i][0]
+        else:
+            break
+    dictresponse = {}
+    dictresponse['tasksCompleted'] = tasksCompleted
+    dictresponse['goalsRedeemed'] = goalsRedeemed
+    dictresponse['redemptions'] = redemptions
+    dictresponse['moneyReeemed'] = moneyReeemed
+    dictresponse['task_earned'] = task_earned
+    dictresponse['goal_used'] = goal_used
+    dictresponse['redemptions'] = redemptions
+    dictresponse['avgTask'] = float(task_earned/tasksCompleted)
+    dictresponse['avgGoal'] = float(goal_used/goalsRedeemed)
+    dictresponse['net'] = task_earned - moneyReeemed - goal_used
+    dictresponse['rate'] = net
+    response = jsonify(dictresponse)
+    response.status_code = 200
+    return response
+
+def getAnalyticsMonth(email, people):
+    child = people.find_one({'email': str.lower(email)}, {'_id': False})
+    earnings_history = child['history']
+    now = datetime.datetime.now()
+    tasksCompleted = 0
+    goalsRedeemed = 0
+    moneyReeemed = 0
+    task_earned = 0
+    goal_used = 0
+    redemptions = 0
+    to_operate = ""
+    for i in range(len(earnings_history)):
+        i = len(earnings_history) -1
+        if to_operate == 'TASK':
+            task_earned += currentBalance - earnings_history[i][0]
+        elif to_operate == 'GOAL':
+            goal_used +=  earnings_history[i][0] - currentBalance
+        elif to_operate == 'RED':
+            moneyReeemed += earnings_history[i][0] - currentBalance
+
+        if (now - earnings_history[i][1]) < datetime.timedelta(days = 31):
+            if earnings_history[i][2] == 'TASK':
+                tasksCompleted += 1
+                to_operate = 'TASK'
+                currentBalance = earnings_history[i][0]
+            if earnings_history[i][2] == 'GOAL':
+                goalsRedeemed += 1
+                to_operate = 'GOAL'
+                currentBalance = earnings_history[i][0]
+            if earnings_history[i][2] == 'RED':
+                redemptions += 1
+                to_operate = moneyReeemed
+                currentBalance = earnings_history[i][0]
+        else:
+            break
+    dictresponse = {}
+    dictresponse['tasksCompleted'] = tasksCompleted
+    dictresponse['goalsRedeemed'] = goalsRedeemed
+    dictresponse['redemptions'] = redemptions
+    dictresponse['moneyReeemed'] = moneyReeemed
+    dictresponse['task_earned'] = task_earned
+    dictresponse['goal_used'] = goal_used
+    dictresponse['redemptions'] = redemptions
+    dictresponse['avgTask'] = float(task_earned/tasksCompleted)
+    dictresponse['avgGoal'] = float(goal_used/goalsRedeemed)
+    dictresponse['net'] = task_earned - moneyReeemed - goal_used
+    dictresponse['rate'] = float(net*7/31)
+    response = jsonify(dictresponse)
+    response.status_code = 200
+    return response
+
+def getAnalyticsYear(email, people):
+    child = people.find_one({'email': str.lower(email)}, {'_id': False})
+    earnings_history = child['history']
+    now = datetime.datetime.now()
+    tasksCompleted = 0
+    goalsRedeemed = 0
+    moneyReeemed = 0
+    task_earned = 0
+    goal_used = 0
+    redemptions = 0
+    to_operate = ""
+    for i in range(len(earnings_history)):
+        i = len(earnings_history) -1
+        if to_operate == 'TASK':
+            task_earned += currentBalance - earnings_history[i][0]
+        elif to_operate == 'GOAL':
+            goal_used +=  earnings_history[i][0] - currentBalance
+        elif to_operate == 'RED':
+            moneyReeemed += earnings_history[i][0] - currentBalance
+
+        if (now - earnings_history[i][1]) < datetime.timedelta(days = 365):
+            if earnings_history[i][2] == 'TASK':
+                tasksCompleted += 1
+                to_operate = 'TASK'
+                currentBalance = earnings_history[i][0]
+            if earnings_history[i][2] == 'GOAL':
+                goalsRedeemed += 1
+                to_operate = 'GOAL'
+                currentBalance = earnings_history[i][0]
+            if earnings_history[i][2] == 'RED':
+                redemptions += 1
+                to_operate = moneyReeemed
+                currentBalance = earnings_history[i][0]
+        else:
+            break
+    dictresponse = {}
+    dictresponse['tasksCompleted'] = tasksCompleted
+    dictresponse['goalsRedeemed'] = goalsRedeemed
+    dictresponse['redemptions'] = redemptions
+    dictresponse['moneyReeemed'] = moneyReeemed
+    dictresponse['task_earned'] = task_earned
+    dictresponse['goal_used'] = goal_used
+    dictresponse['redemptions'] = redemptions
+    dictresponse['avgTask'] = float(task_earned/tasksCompleted)
+    dictresponse['avgGoal'] = float(goal_used/goalsRedeemed)
+    dictresponse['net'] = task_earned - moneyReeemed - goal_used
+    dictresponse['rate'] = float(net*7/365)
     response = jsonify(dictresponse)
     response.status_code = 200
     return response

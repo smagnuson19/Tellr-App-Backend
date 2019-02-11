@@ -128,6 +128,37 @@ Add new users to the database by posting to this address with a json file named 
   accountType
 }`
 
+##### /api/history/\<email\>
+Methods: GET
+
+Returns a dictionary keyed on integers with values in chronologoical order of all balances in user history. Values specifically are a list with the balance as the first element, the string of the date of that balance in the second element, and a description of what caused the change in balance as the third element. TASK means a change due to verified task, RED means a change due to a money redemption, GOAL means a change due to a goal redemption.
+
+##### /api/history/\<email\>/\<timeframe\>
+Methods: GET
+
+Returns the same dictionary as above but limited to the given timeframe. Input 'week' for history for past week, 'month' for history for past month, and 'year' for history of past year.
+
+##### /api/analytics/\<email\>/\<timeframe\>
+Methods: GET
+
+Same inputs as timeframe as above. Returns a dictionary keyed on the following values:
+
+`{
+  tasksCompleted,
+  goalsRedeemed,
+  redemptions,
+  moneyReeemed,
+  task_earned,
+  goal_used,
+  redemptions,
+  avgTask,
+  avgGoal,
+  net,
+  rate
+}`
+
+Where task_earned is the dollar earned from tasks, goalused is the amount spent on goals, redemptions is number of money redemptions, avgTask is average earnings per task, avgGoal is average money spent per goal, net is total net loss/ gains in the given timeframe, and rate is the weekly earn rate.
+
 ##### /api/users/\<email\>
 Methods: GET
 
@@ -240,7 +271,7 @@ GET: Get a dictionary keyed on integers and with values corresponding to goals c
 ##### /api/goals/incomplete/<email>
 Methods: GET
 
-GET: Get a dictionary keyed on integers and with values corresponding to goals that are still incomplete in the identical format as the dictionary above. 
+GET: Get a dictionary keyed on integers and with values corresponding to goals that are still incomplete in the identical format as the dictionary above.
 
 ##### /api/goals/approve
 Methods: POST
