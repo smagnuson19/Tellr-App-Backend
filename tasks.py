@@ -193,12 +193,17 @@ def verifyTask(request, tasks, notifications, people, mail, app, social, push_no
                     'value': task['reward'],
                     'read': False
                 }
+
                 notifications.insert_one(new_notification)
                 current_priority = child['notCounter']
                 #update balance of children
                 new_balance = child['balance'] + float(task['reward'])
                 people.update_one({'email': child['email']}, {"$set":{'notCounter': current_priority+1}},upsert = False)
                 people.update_one({'email': child['email']}, {"$set":{'balance': new_balance}},upsert = False)
+
+                earnings_history = child['earnings']
+                earnings_history.append((new_balance, datetime.datetime.now(), 'TASK'))
+                people.update_one({'email': child['email']},{"$set":{'earnings': earnings_history}},upsert = False)
                 break
         #update social entries accordingly for tasks and task completion rate
         now = datetime.datetime.now()

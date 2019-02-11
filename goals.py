@@ -80,6 +80,11 @@ def finishGoal(request, people, goals, notifications, mail, app, social):
     currentBalance = child['balance']
     newBalance = currentBalance-balanceDeduct
     people.update_one({'email': child['email']},{"$set":{'balance': newBalance}},upsert = False)
+
+    earnings_history = child['earnings']
+    earnings_history.append((newBalance, datetime.datetime.now(), 'GOAL'))
+    people.update_one({'email': child['email']},{"$set":{'earnings': earnings_history}},upsert = False)
+
     parents = people.find({'familyName': child['familyName']})
     for parent in parents:
         if parent['accountType']=='Parent':
@@ -243,6 +248,10 @@ def redeemMon(request, people, notifications, push_notifications):
     people.update_one({'email': realParent['email']}, {"$set":{'notCounter': current_priority+1}},upsert = False)
 
     notString = "Your child " + child['firstName'] + " has redeemed $" +str(balanceDeduct) + "."
+
+    earnings_history = child['earnings']
+    earnings_history.append((newBalance, datetime.datetime.now(), 'RED'))
+    people.update_one({'email': child['email']},{"$set":{'earnings': earnings_history}},upsert = False)
 
     # Waiting for OneSignal account to test
     send_notification(new_notification['email'], notString, 'Money Redemption', push_notifications)

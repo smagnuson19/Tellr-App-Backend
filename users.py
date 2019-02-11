@@ -73,6 +73,16 @@ def findChildren(email, people):
         response.status_code = 200
     return response
 
+def get_user_history(email, people):
+    child = people.find_one({'email': str.lower(email)}, {'_id': False})
+    earnings_history = child['history']
+    for i in range(len(earnings_history)):
+        dictresponse[i] = list(earnings_history[i])
+        dictresponse[i][1] = str(dictresponse[i][1])
+    response = jsonify(dictresponse)
+    response.status_code = 200
+    return response
+
 #Function that updates balance
 def upBalance(request,people,notifications, mail, app):
     request_json = request.get_json()
