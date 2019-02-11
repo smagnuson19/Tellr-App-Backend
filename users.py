@@ -9,7 +9,8 @@ def add_user(request, people, credentials, social, push_notifications):
         request_json = request.get_json()
         #Check to see whether user is already in databse; if so, return empty json with 201 status
         if not people.find_one({'email':str.lower(request_json['payLoad']['email'])},{'_id': False}) == None:
-            response = jsonify([{'Success': False,
+            response = jsonify([{
+            'Success': False,
             'Error': 'Email already exists'
             }])
             response.status_code = 401
