@@ -171,11 +171,44 @@ def getHistory():
         response.status_code = 401
         return response
 
+@app.route("/api/history/<email>/<timeframe>", methods = ['GET'])
+def getTimedHistory():
+    authenStatus = verifyToken(request)
+    if authenStatus[1]:
+        if request.method == 'GET':
+            if str.lower(timeframe) == 'week':
+                return getUserHistoryWeek(fixEmail(email), people)
+            elif str.lower(timeframe) == 'month':
+                return getUserHistoryMonth(fixEmail(email), people)
+            elif str.lower(timeframe) == 'year':
+                return getUserHistoryYear(fixEmail(email), people)
+    else:
+        response = jsonify([{'status': authenStatus[0]
+        }])
+        response.status_code = 401
+        return response
+
 @app.route("/api/auth/login", methods =['POST'])
 def authenticate():
     if request.method == 'POST':
         return authenticateUser(request, credentials)
 
+@app.route("/api/analytics/<email>/<timeframe>", methods = ['GET'])
+def analyze():
+    authenStatus = verifyToken(request)
+    if authenStatus[1]:
+        if request.method == 'GET':
+            if str.lower(timeframe) == 'week':
+                return getAnalyticsWeek(fixEmail(email), people)
+            elif str.lower(timeframe) == 'month':
+                return getAnalyticsMonth(fixEmail(email), people)
+            elif str.lower(timeframe) == 'year':
+                return getAnalyticsYear(fixEmail(email), people)
+    else:
+        response = jsonify([{'status': authenStatus[0]
+        }])
+        response.status_code = 401
+        return response
 
 @app.route("/api/auth/register", methods =['POST'])
 def authregister():
