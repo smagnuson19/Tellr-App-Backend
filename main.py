@@ -421,7 +421,7 @@ def addFriend():
     authenStatus = verifyToken(request)
     if authenStatus[1]:
         if request.method == 'POST':
-            return socialAdd(request, people, social, notifications, push_notifications)
+            return socialAdd(request, people, social, notifications)
     else:
         response = jsonify([{'status': authenStatus[0]
         }])
