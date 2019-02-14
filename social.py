@@ -3,6 +3,7 @@ from handleEmail import *
 from flask_mail import Mail, Message
 import datetime
 from copy import deepcopy
+from push import *
 
 #Function for adding a friend in social leaderboard
 def socialAdd(request, people, social, notifications):
@@ -38,7 +39,7 @@ def socialAdd(request, people, social, notifications):
     notString = new_notification['notificationName'] + ' has invited you to connect on Tellr!'
 
     # Waiting for OneSignal account to test
-    send_notification(new_notification['friendEmail'], notString, 'Task Completion Verified!', push_notifications)
+    # send_notification(new_notification['friendEmail'], notString, 'Task Completion Verified!', push_notifications)
 
     response = jsonify([{
     }])
