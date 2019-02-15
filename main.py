@@ -55,7 +55,7 @@ def childtask_handler(email):
         if request.method == 'GET':
             return getTasksChild(fixEmail(email),tasks)
     else:
-        response = jsonify([{'status': authenStatus[0]
+        response = jsonify([{'error': authenStatus[0]
         }])
         response.status_code = 401
         return response
@@ -68,7 +68,7 @@ def adulttask_handler(familyName):
         if request.method == 'GET':
             return getTasks(familyName,tasks)
     else:
-        response = jsonify([{'status': authenStatus[0]
+        response = jsonify([{'error': authenStatus[0]
         }])
         response.status_code = 401
         return response
@@ -81,7 +81,7 @@ def postTasks():
         if request.method == 'POST':
             return postTask(request, tasks, people, notifications, mail, app, push_notifications)
     else:
-        response = jsonify([{'status': authenStatus[0]
+        response = jsonify([{'error': authenStatus[0]
         }])
         response.status_code = 401
         return response
@@ -94,7 +94,7 @@ def completeTasks():
         if request.method == 'POST':
             return completeTask(request, tasks, notifications, people, mail, app)
     else:
-        response = jsonify([{'status': authenStatus[0]
+        response = jsonify([{'error': authenStatus[0]
         }])
         response.status_code = 401
         return response
@@ -106,7 +106,7 @@ def seeCompletedTasks():
         if request.method == 'GET':
             return getCompletedTasks(request, tasks)
     else:
-        response = jsonify([{'status': authenStatus[0]
+        response = jsonify([{'error': authenStatus[0]
         }])
         response.status_code = 401
         return response
@@ -119,7 +119,7 @@ def verifyTasks():
         if request.method == 'POST':
             return verifyTask(request, tasks, notifications, people, mail, app, social, push_notifications)
     else:
-        response = jsonify([{'status': authenStatus[0]
+        response = jsonify([{'error': authenStatus[0]
         }])
         response.status_code = 401
         return response
@@ -131,7 +131,7 @@ def add_users():
     if authenStatus[1]:
         return add_user(request, people, credentials, social)
     else:
-        response = jsonify([{'status': authenStatus[0]
+        response = jsonify([{'error': authenStatus[0]
         }])
         response.status_code = 401
         return response
@@ -154,7 +154,7 @@ def get_user(email):
             response.status_code = 200
         return response
     else:
-        response = jsonify([{'status': authenStatus[0]
+        response = jsonify([{'error': authenStatus[0]
         }])
         response.status_code = 401
         return response
@@ -166,7 +166,7 @@ def getHistory():
         if request.method == 'GET':
             return getUserHistory(fixEmail(email), people)
     else:
-        response = jsonify([{'status': authenStatus[0]
+        response = jsonify([{'error': authenStatus[0]
         }])
         response.status_code = 401
         return response
@@ -183,7 +183,7 @@ def getTimedHistory():
             elif str.lower(timeframe) == 'year':
                 return getUserHistoryYear(fixEmail(email), people)
     else:
-        response = jsonify([{'status': authenStatus[0]
+        response = jsonify([{'error': authenStatus[0]
         }])
         response.status_code = 401
         return response
@@ -205,7 +205,7 @@ def analyze():
             elif str.lower(timeframe) == 'year':
                 return getAnalyticsYear(fixEmail(email), people)
     else:
-        response = jsonify([{'status': authenStatus[0]
+        response = jsonify([{'error': authenStatus[0]
         }])
         response.status_code = 401
         return response
@@ -222,7 +222,7 @@ def changePassword():
         if request.method == 'POST':
             return authChangePassword(request, credentials)
     else:
-        response = jsonify([{'status': authenStatus[0]
+        response = jsonify([{'error': authenStatus[0]
         }])
         response.status_code = 401
         return response
@@ -234,7 +234,7 @@ def resetPassword():
         if request.method == 'POST':
             return forgotPassword(request, credentials, mail, app)
     else:
-        response = jsonify([{'status': authenStatus[0]
+        response = jsonify([{'error': authenStatus[0]
         }])
         response.status_code = 401
         return response
@@ -247,7 +247,7 @@ def check_credentials(email, password):
         if request.method == 'POST':
             return handleCredentials(email, password, credentials)
     else:
-        response = jsonify([{'status': authenStatus[0]
+        response = jsonify([{'error': authenStatus[0]
         }])
         response.status_code = 401
         return response
@@ -260,7 +260,7 @@ def handleGoals(email):
         if request.method == 'GET':
             return getGoals(fixEmail(email), goals)
     else:
-        response = jsonify([{'status': authenStatus[0]
+        response = jsonify([{'error': authenStatus[0]
         }])
         response.status_code = 401
         return response
@@ -272,7 +272,7 @@ def handleCompleteGoals(email):
         if request.method == 'GET':
             return getCompleteGoals(fixEmail(email), goals)
     else:
-        response = jsonify([{'status': authenStatus[0]
+        response = jsonify([{'error': authenStatus[0]
         }])
         response.status_code = 401
         return response
@@ -284,7 +284,7 @@ def handleIncompleteGoals(email):
         if request.method == 'GET':
             return getIncompleteGoals(fixEmail(email), goals)
     else:
-        response = jsonify([{'status': authenStatus[0]
+        response = jsonify([{'error': authenStatus[0]
         }])
         response.status_code = 401
         return response
@@ -297,7 +297,7 @@ def makeGoals():
         if request.method == 'POST':
             return postGoals(request, goals, people, notifications, mail, app)
     else:
-        response = jsonify([{'status': authenStatus[0]
+        response = jsonify([{'error': authenStatus[0]
         }])
         response.status_code = 401
         return response
@@ -311,7 +311,7 @@ def getChildren(email):
         if request.method == 'GET':
             return findChildren(realEmail, people)
     else:
-        response = jsonify([{'status': authenStatus[0]
+        response = jsonify([{'error': authenStatus[0]
         }])
         response.status_code = 401
         return response
@@ -324,7 +324,7 @@ def updateBalance():
         if request.method == 'POST':
             return upBalance(request,people,notifications, mail, app)
     else:
-        response = jsonify([{'status': authenStatus[0]
+        response = jsonify([{'error': authenStatus[0]
         }])
         response.status_code = 401
         return response
@@ -338,7 +338,7 @@ def getNotifications(email):
         if request.method == 'GET':
             return findNotifications(realEmail,notifications)
     else:
-        response = jsonify([{'status': authenStatus[0]
+        response = jsonify([{'error': authenStatus[0]
         }])
         response.status_code = 401
         return response
@@ -350,7 +350,7 @@ def approveGoals():
         if request.method == 'POST':
             return approveGoal(request, goals, people, notifications, mail, app, push_notifications)
     else:
-        response = jsonify([{'status': authenStatus[0]
+        response = jsonify([{'error': authenStatus[0]
         }])
         response.status_code = 401
         return response
@@ -363,7 +363,7 @@ def redeemGoal():
         if request.method == 'POST':
             return finishGoal(request,people, goals, notifications, mail, app, social)
     else:
-        response = jsonify([{'status': authenStatus[0]
+        response = jsonify([{'error': authenStatus[0]
         }])
         response.status_code = 401
         return response
@@ -375,7 +375,7 @@ def redeemMoney():
         if request.method == 'POST':
             return redeemMon(request,people, notifications, push_notifications)
     else:
-        response = jsonify([{'status': authenStatus[0]
+        response = jsonify([{'error': authenStatus[0]
         }])
         response.status_code = 401
         return response
@@ -387,7 +387,7 @@ def updateNotifications():
         if request.method == 'POST':
             return readNotifications(request, notifications)
     else:
-        response = jsonify([{'status': authenStatus[0]
+        response = jsonify([{'error': authenStatus[0]
         }])
         response.status_code = 401
         return response
@@ -399,7 +399,7 @@ def deleteAllUsers():
         if request.method == 'POST':
             return deleteAllUser(request, people, credentials)
     else:
-        response = jsonify([{'status': authenStatus[0]
+        response = jsonify([{'error': authenStatus[0]
         }])
         response.status_code = 401
         return response
@@ -411,7 +411,7 @@ def deleteOne():
         if request.method == 'POST':
             return delOne(request, people, credentials)
     else:
-        response = jsonify([{'status': authenStatus[0]
+        response = jsonify([{'error': authenStatus[0]
         }])
         response.status_code = 401
         return response
@@ -423,7 +423,7 @@ def addFriend():
         if request.method == 'POST':
             return socialAdd(request, people, social, notifications)
     else:
-        response = jsonify([{'status': authenStatus[0]
+        response = jsonify([{'error': authenStatus[0]
         }])
         response.status_code = 401
         return response
@@ -435,7 +435,7 @@ def acceptFriend():
         if request.method == 'POST':
             return socialAccept(request, people, social, notifications, push_notifications)
     else:
-        response = jsonify([{'status': authenStatus[0]
+        response = jsonify([{'error': authenStatus[0]
         }])
         response.status_code = 401
         return response
@@ -448,7 +448,7 @@ def getSocialStats(email):
         if request.method == 'GET':
             return getStats(realEmail, people, social, tasks)
     else:
-        response = jsonify([{'status': authenStatus[0]
+        response = jsonify([{'error': authenStatus[0]
         }])
         response.status_code = 401
         return response
@@ -461,7 +461,7 @@ def getTaskHistory(email, social):
         if request.method == 'GET':
             return get_completed_task_number_graph(email, social)
     else:
-        response = jsonify([{'status': authenStatus[0]
+        response = jsonify([{'error': authenStatus[0]
         }])
         response.status_code = 401
         return response
