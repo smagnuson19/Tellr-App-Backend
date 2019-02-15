@@ -272,7 +272,7 @@ def handleCompleteGoals(email):
         if request.method == 'GET':
             return getCompleteGoals(fixEmail(email), goals)
     else:
-        response = jsonify([{'error': authenStatus[0]
+        response = jsonify([{'Error': authenStatus[0]
         }])
         response.status_code = 401
         return response
@@ -284,7 +284,7 @@ def handleIncompleteGoals(email):
         if request.method == 'GET':
             return getIncompleteGoals(fixEmail(email), goals)
     else:
-        response = jsonify([{'error': authenStatus[0]
+        response = jsonify([{'Error': authenStatus[0]
         }])
         response.status_code = 401
         return response
