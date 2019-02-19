@@ -155,7 +155,8 @@ def authChangePassword(request, credentials):
 #Function to allow users to change password using temporary password sent over email
 def forgotPassword(request, credentials, mail, app):
     newPW = ''.join(random.choice(string.ascii_uppercase + string.digits) for i in range(16))
-    email = (verifyToken(request))[0]
+    request_json = request.get_json()
+    email = request_json['payLoad']['email']
     if (not email =='Invalid Token') and (not email == 'Expired Token'):
         email = fixEmail(email)
         newhash = bcrypt.hashpw(newPW.encode('utf-8'),bcrypt.gensalt())

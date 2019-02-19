@@ -229,12 +229,10 @@ def changePassword():
 
 @app.route("/api/auth/forgotpassword", methods =['POST'])
 def resetPassword():
-    authenStatus = verifyToken(request)
-    if authenStatus[1]:
-        if request.method == 'POST':
-            return forgotPassword(request, credentials, mail, app)
+    if request.method == 'POST':
+        return forgotPassword(request, credentials, mail, app)
     else:
-        response = jsonify([{'Error': authenStatus[0]
+        response = jsonify([{
         }])
         response.status_code = 401
         return response
