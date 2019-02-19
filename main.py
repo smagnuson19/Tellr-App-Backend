@@ -460,7 +460,7 @@ def getSocialStats(email):
         return response
 
 @app.route("/api/social/taskhistory/<email>", methods =['GET'])
-def getTaskHistory(email, social):
+def getTaskHistory(email):
     authenStatus = verifyToken(request)
     if authenStatus[1]:
         realEmail = fixEmail(email)

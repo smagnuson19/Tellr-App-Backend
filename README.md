@@ -391,6 +391,28 @@ Allows parents to delete all accounts including their children; gives json file 
 
 where email is the email of their account; all children accounts associated with the family will be deleted.
 
+##### /api/auth/forgotpassword
+Methods: POST
+
+Allows password change, also uses flask email which can be janky. Send me a post (with token) with following fields:
+
+`{
+  email
+}`
+
+##### /api/auth/changepassword
+Methods: POST
+
+Allows password change, also uses flask email which can be janky. Send me a post (with token) with following fields:
+
+`{
+  email
+  password
+  newPassword
+}`
+
+where password is the old password and newPassword is the password you want to change it to. 
+
 ##### /api/notifications/\<email\>
 Methods: GET
 
