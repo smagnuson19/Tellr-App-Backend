@@ -290,7 +290,7 @@ def handleIncompleteGoals(email):
 #Passed Testing
 @app.route("/api/goals", methods =['POST'])
 def makeGoals():
-    if (datetime.datetime.now() - goal_last_posted) > datetime.timedelta(seconds=5):
+    if (goal_last_posted!= None) and (datetime.datetime.now() - goal_last_posted) > datetime.timedelta(seconds=5):
         goal_last_posted = datetime.datetime.now()
         authenStatus = verifyToken(request)
         if authenStatus[1]:
