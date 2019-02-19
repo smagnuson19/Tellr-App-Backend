@@ -290,21 +290,15 @@ def handleIncompleteGoals(email):
 #Passed Testing
 @app.route("/api/goals", methods =['POST'])
 def makeGoals():
-    if (datetime.datetime.now() - goal_last_posted) > datetime.timedelta(seconds=5):
-        goal_last_posted = datetime.datetime.now()
-        authenStatus = verifyToken(request)
-        if authenStatus[1]:
-            if request.method == 'POST':
-                return postGoals(request, goals, people, notifications, mail, app)
-        else:
-            response = jsonify([{'Error': authenStatus[0]
-            }])
-            response.status_code = 401
-            return response
+    authenStatus = verifyToken(request)
+    if authenStatus[1]:
+        if request.method == 'POST':
+            return postGoals(request, goals, people, notifications, mail, app)
     else:
-            response = jsonify([{'Error': 'Too many posts'
-            }])
-            response.status_code = 301
+        response = jsonify([{'Error': authenStatus[0]
+        }])
+        response.status_code = 401
+        return response
 
 #Passed Testing
 @app.route("/api/children/<email>", methods =['GET'])
