@@ -99,18 +99,19 @@ def get_completed_task_number_graph(email, social):
     for i in range(31):
         responseDict[i] = 0
     completedList = socialObject['tasksCompleted']
-    quicksort(completedList)
+    quicksort_time(completedList)
     timeD = 0
     index = 0
     now = datetime.datetime.now()
+    maxIndex = len(completedList)
     while timeD <= 31:
-        tdeltamin = datetime.datetime.timedelta(days = timeD)
-        tdeltamax = datetime.datetime.timedelta(days = timeD + 1)
-        while (now - completedList[index]) >= tdeltamin and (now - completedList[index]) <= tdeltamax:
+        tdeltamin = datetime.timedelta(days = timeD)
+        tdeltamax = datetime.timedelta(days = timeD + 1)
+        while index < maxIndex and (now - completedList[index]) >= tdeltamin and (now - completedList[index]) <= tdeltamax:
             index += 1
             responseDict[timeD] += 1
         timeD += 1
-    response = jsonify([returnDict
+    response = jsonify([responseDict
         ])
     response.status_code = 200
     return response

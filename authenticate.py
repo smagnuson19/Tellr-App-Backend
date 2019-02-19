@@ -129,7 +129,7 @@ def authAddUser(request, people, credentials, social, push_notifications):
 #Function to securely change password and send back a valid token
 def authChangePassword(request, credentials):
     request_json = request.get_json()
-    email = (verifyToken(request))
+    email = (verifyToken(request))[0]
     if (not email =='Invalid Token') and (not email == 'Expired Token'):
         newpassword = request_json['payLoad']['newPassword']
         pw = request_json['payLoad']['password']
@@ -155,7 +155,7 @@ def authChangePassword(request, credentials):
 #Function to allow users to change password using temporary password sent over email
 def forgotPassword(request, credentials, mail, app):
     newPW = ''.join(random.choice(string.ascii_uppercase + string.digits) for i in range(16))
-    email = (verifyToken(request))
+    email = (verifyToken(request))[0]
     if (not email =='Invalid Token') and (not email == 'Expired Token'):
         email = fixEmail(email)
         newhash = bcrypt.hashpw(newPW.encode('utf-8'),bcrypt.gensalt())
