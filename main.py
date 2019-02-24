@@ -406,6 +406,7 @@ def deleteAllUsers():
 def deleteOne():
     authenStatus = verifyToken(request)
     if authenStatus[1]:
+        print(request.get_json())
         if request.method == 'POST':
             return delOne(request, people, credentials)
     else:
