@@ -154,7 +154,8 @@ def getStats(email, people, social, tasks):
         friend = {}
         statsObj = social.find_one({'email': friendEmail}, {'_id': False})
         person = people.find_one({'email': friendEmail}, {'_id': False})
-
+        if person == None:
+            continue
         tasksCompleted = 0
         tasksCompList= statsObj['tasksCompleted']
         index = len(tasksCompList) - 1
@@ -231,6 +232,10 @@ def getStats(email, people, social, tasks):
         friend['email'] = friendEmail
         friend['firstName'] = person['firstName']
         friend['lastName'] = person['lastName']
+        if 'avatarColor' not in person:
+            friend['avatarColor'] = '#000000'
+        else:
+            friend['avatarColor'] = person['avatarColor']
         responseDict[friendEmail] = friend
     print(responseDict)
     response = jsonify(responseDict)
