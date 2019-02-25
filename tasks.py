@@ -39,7 +39,7 @@ def postTask(request,tasks, people, notifications, mail, app, push_notifications
     date_time_obj = datetime.datetime.strptime(realstr, '%b %d %Y %I:%M%p')
     now = datetime.datetime.now()
 
-    if (now - date_time_obj) > datetime.timedelta(hours=0):
+    if (now - date_time_obj) < datetime.timedelta(hours=0):
         response = jsonify([{'Success': False, 'Error': 'Task Deadline has already passed!'
         }])
         response.status_code = 401
@@ -79,7 +79,7 @@ def postTask(request,tasks, people, notifications, mail, app, push_notifications
         'notificationType': 'newTask',
         'notificationName': new_task['taskName'],
         'description': new_task['taskDescription'],
-        'senderName': sName,
+        'senderName': parent['firstName'],
         'senderEmail': parent['email'],
         'priority': child['notCounter'],
         'value': new_task['reward'],
@@ -141,6 +141,7 @@ def completeTask(request, tasks, notifications, people, mail, app):
                 'notificationType': 'taskComplete',
                 'notificationName': task['taskName'],
                 'description': task['taskDescription'],
+                'deadline':  datetime.datetime.strftime(task['taskDeadline'], '%b %d %Y %I:%M%p'),
                 'senderName': stringName,
                 'senderEmail': child['email'],
                 'priority': parent['notCounter'],
@@ -242,6 +243,11 @@ def verifyTask(request, tasks, notifications, people, mail, app, social, push_no
                 tasks.update_one({'_id': task['_id']}, {"$set":{'complete': False}},upsert = False)
                 tasks.update_one({'_id': task['_id']}, {"$set":{'timeCompleted': None}},upsert = False)
                 parent = people.find_one({'email':fixEmail(task['senderEmail'])})
+                now =datetime.datetime.now()
+                if (task['taskDeadline']-now) < datetime.timedelta(hours=24):
+                    display = True
+                else:
+                    display = False
                 new_notification={
                     'email': child['email'],
                     'accountType': 'Child',
@@ -251,8 +257,10 @@ def verifyTask(request, tasks, notifications, people, mail, app, social, push_no
                     'senderName': parent['firstName'],
                     'senderEmail': parent['email'],
                     'priority': child['notCounter'],
+                    'deadline':  datetime.datetime.strftime(task['taskDeadline'], '%b %d %Y %I:%M%p'),
                     'value': task['reward'],
-                    'read': False
+                    'read': False,
+                    'displayRed': display
                 }
                 notifications.insert_one(new_notification)
                 current_priority = child['notCounter']
