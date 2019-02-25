@@ -135,6 +135,11 @@ def completeTask(request, tasks, notifications, people, mail, app):
             tasks.update_one({'_id': task['_id']}, {"$set":{'complete': True}},upsert = False)
             tasks.update_one({'_id': task['_id']}, {"$set":{'timeCompleted': now}},upsert = False)
             parent = people.find_one({'email':str.lower(task['senderEmail'])})
+            now =datetime.datetime.now()
+            if (task['taskDeadline']-now) < datetime.timedelta(hours=24):
+                display = True
+            else:
+                display = False
             new_notification = {
                 'email': task['senderEmail'],
                 'accountType': 'Parent',
@@ -146,7 +151,8 @@ def completeTask(request, tasks, notifications, people, mail, app):
                 'senderEmail': child['email'],
                 'priority': parent['notCounter'],
                 'value': task['reward'],
-                'read': False
+                'read': False,
+                'displayRed': display
             }
             print(new_notification)
             print(task)
