@@ -470,7 +470,7 @@ def getTaskHistory(email):
     if authenStatus[1]:
         realEmail = fixEmail(email)
         if request.method == 'GET':
-            return get_completed_task_number_graph(email, social)
+            return get_completed_task_number_graph(email, social, people, goals)
     else:
         response = jsonify([{'Error': authenStatus[0]
         }])
