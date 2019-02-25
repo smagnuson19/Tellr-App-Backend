@@ -77,18 +77,20 @@ def findChildren(email, people):
 
 def getUserHistory(email, people):
     child = people.find_one({'email': str.lower(email)}, {'_id': False})
-    earnings_history = child['history']
+    earnings_history = child['earnings']
+    dictresponse = {}
     for i in range(len(earnings_history)):
         dictresponse[i] = list(earnings_history[i])
-        dictresponse[i][1] = str(dictresponse[i][1])
+        dictresponse[i][1] = str(dictresponse[i][1])[:10]
     response = jsonify(dictresponse)
     response.status_code = 200
     return response
 
 def getUserHistoryWeek(email, people):
     child = people.find_one({'email': str.lower(email)}, {'_id': False})
-    earnings_history = child['history']
+    earnings_history = child['earnings']
     now = datetime.datetime.now()
+    dictresponse = {}
     for i in range(len(earnings_history)):
         i = len(earnings_history) -1
         if (now - earnings_history[i][1]) < datetime.timedelta(days = 7):
@@ -102,8 +104,9 @@ def getUserHistoryWeek(email, people):
 
 def getUserHistoryMonth(email, people):
     child = people.find_one({'email': str.lower(email)}, {'_id': False})
-    earnings_history = child['history']
+    earnings_history = child['earnings']
     now = datetime.datetime.now()
+    dictresponse = {}
     for i in range(len(earnings_history)):
         i = len(earnings_history) -1
         if (now - earnings_history[i][1]) < datetime.timedelta(days = 31):
@@ -117,8 +120,9 @@ def getUserHistoryMonth(email, people):
 
 def getUserHistoryYear(email, people):
     child = people.find_one({'email': str.lower(email)}, {'_id': False})
-    earnings_history = child['history']
+    earnings_history = child['earnings']
     now = datetime.datetime.now()
+    dictresponse = {}
     for i in range(len(earnings_history)):
         i = len(earnings_history) -1
         if (now - earnings_history[i][1]) < datetime.timedelta(days = 365):
@@ -132,7 +136,7 @@ def getUserHistoryYear(email, people):
 
 def getAnalyticsWeek(email, people):
     child = people.find_one({'email': str.lower(email)}, {'_id': False})
-    earnings_history = child['history']
+    earnings_history = child['earnings']
     now = datetime.datetime.now()
     tasksCompleted = 0
     goalsRedeemed = 0
@@ -183,7 +187,7 @@ def getAnalyticsWeek(email, people):
 
 def getAnalyticsMonth(email, people):
     child = people.find_one({'email': str.lower(email)}, {'_id': False})
-    earnings_history = child['history']
+    earnings_history = child['earnings']
     now = datetime.datetime.now()
     tasksCompleted = 0
     goalsRedeemed = 0
@@ -234,7 +238,7 @@ def getAnalyticsMonth(email, people):
 
 def getAnalyticsYear(email, people):
     child = people.find_one({'email': str.lower(email)}, {'_id': False})
-    earnings_history = child['history']
+    earnings_history = child['earnings']
     now = datetime.datetime.now()
     tasksCompleted = 0
     goalsRedeemed = 0
@@ -297,6 +301,9 @@ def upBalance(request,people,notifications, mail, app):
     else:
         lastbal = user['balance']
         people.update_one({'email': fixEmail(user['email'])}, {"$set":{'balance': lastbal + float(request_json['payLoad']['increment'])}},upsert = False)
+        earnings_history = user['earnings']
+        earnings_history.append((lastbal + float(request_json['payLoad']['increment']), datetime.datetime.now(), 'UP'))
+        people.update_one({'email': user['email']},{"$set":{'earnings': earnings_history}},upsert = False)
         sender = people.find_one({'email': fixEmail(request_json['payLoad']['senderEmail'])}, {'_id': False})
         new_notification = {
             'email': user['email'],
