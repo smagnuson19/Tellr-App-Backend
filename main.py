@@ -456,7 +456,6 @@ def getSocialStats(email):
 def makeGoAway():
     authenStatus = verifyToken(request)
     if authenStatus[1]:
-        realEmail = fixEmail(email)
         if request.method == 'POST':
             return remFriend(request, people)
     else:
