@@ -160,7 +160,7 @@ def get_user(email):
         return response
 
 @app.route("/api/history/<email>", methods = ['GET'])
-def getHistory():
+def getHistory(email):
     authenStatus = verifyToken(request)
     if authenStatus[1]:
         if request.method == 'GET':
