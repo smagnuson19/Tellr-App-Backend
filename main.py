@@ -172,7 +172,7 @@ def getHistory(email):
         return response
 
 @app.route("/api/history/<email>/<timeframe>", methods = ['GET'])
-def getTimedHistory():
+def getTimedHistory(email):
     authenStatus = verifyToken(request)
     if authenStatus[1]:
         if request.method == 'GET':
@@ -194,7 +194,7 @@ def authenticate():
         return authenticateUser(request, credentials)
 
 @app.route("/api/analytics/<email>/<timeframe>", methods = ['GET'])
-def analyze():
+def analyze(email, timeframe):
     authenStatus = verifyToken(request)
     if authenStatus[1]:
         if request.method == 'GET':
@@ -204,6 +204,8 @@ def analyze():
                 return getAnalyticsMonth(fixEmail(email), people)
             elif str.lower(timeframe) == 'year':
                 return getAnalyticsYear(fixEmail(email), people)
+            elif str.lower(timeframe) == 'all':
+                return getAnalyticsAll(fixEmail(email), people)
     else:
         response = jsonify([{'Error': authenStatus[0]
         }])
