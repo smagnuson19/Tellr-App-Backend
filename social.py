@@ -93,8 +93,10 @@ def socialAccept(request, people, social, notifications, push_notifications):
     response.status_code = 200
     return response
 
-def get_completed_task_number_graph(email, social):
+def get_completed_task_number_graph(email, social, people, goals):
+    email = str.lower(email)
     socialObject = social.find_one({'email': email}, {'_id': False})
+    child = people.find_one({'email': email}, {'_id': False})
     responseDict = {}
     for i in range(31):
         responseDict[i] = 0
@@ -111,10 +113,31 @@ def get_completed_task_number_graph(email, social):
             index += 1
             responseDict[timeD] += 1
         timeD += 1
+
+    allGoals = goals.find({'email': email}, {'_id': False})
+    maxVal = -1000000
+    current = None
+    for poss in allGoals:
+        if not poss['redeemed'] and poss['approved']==1:
+            if poss['value'] > maxVal:
+                current = poss
+                maxVal = poss['value']
+    if current == None:
+        retnum = 1
+    else:
+        retnum = child['balance']/float(maxVal)
+    if retnum > 1:
+        retnum = 1
+    if str(float(100*float(retnum)))[3] == '.':
+        responseDict[timeD] = str(100*float(retnum))[:3]
+    else:
+        responseDict[timeD] = str(100*float(retnum))[:4]
+    print(responseDict)
     response = jsonify([responseDict
         ])
     response.status_code = 200
     return response
+
 
 def partition(the_list, p, r):
     i = p - 1              # i demarcates the end of the sublist containing values <= pivot.
@@ -202,8 +225,11 @@ def getStats(email, people, social, tasks):
         #For completion rate, find the total number of tasks assigned in past month/week,
         #then the number of those that are completed
         if index >=0:
+            run = 0
             current = completionDeadlineList[index]
-            while ((now - current <= datetime.timedelta(days=7)) and now > current):
+            while ((now - current <= datetime.timedelta(days=7))):
+                if now > current:
+                    run += 1
                 tasksCompletedDeadline +=1
                 index -=1
                 if index == -1:
@@ -211,13 +237,17 @@ def getStats(email, people, social, tasks):
                 current = completionDeadlineList[index]
         totalTasksAssigned = get_total_tasks_week(tasks, friendEmail, now)
         if totalTasksAssigned == 0:
-            taskCompleteRate = 0
+            taskCompleteRate = 1
         else:
             #Send rate as float
+            totalTasksAssigned = totalTasksAssigned + run
             taskCompleteRate = float(tasksCompletedDeadline/totalTasksAssigned)
-        friend['taskCompletionRateWeek'] = taskCompleteRate
+        if str(float(taskCompleteRate*100))[3] == '.':
+            friend['taskCompletionRateWeek'] = str(taskCompleteRate*100)[:3]
+        else:
+            friend['taskCompletionRateWeek'] = str(taskCompleteRate*100)[:4]
         if index >=0:
-            while ((now - current <= datetime.timedelta(days=30)) and now > current):
+            while ((now - current <= datetime.timedelta(days=30))):
                 tasksCompletedDeadline +=1
                 index -=1
                 if index == -1:
@@ -225,10 +255,14 @@ def getStats(email, people, social, tasks):
                 current = completionDeadlineList[index]
         totalTasksAssigned = get_total_tasks_month(tasks,friendEmail, now)
         if totalTasksAssigned == 0:
-            taskCompleteRate = 0
+            taskCompleteRate = 1
         else:
+            totalTasksAssigned = totalTasksAssigned + run
             taskCompleteRate = float(tasksCompletedDeadline/totalTasksAssigned)
-        friend['taskCompletionRateMonth'] = taskCompleteRate
+        if str(float(taskCompleteRate*100))[3] == '.':
+            friend['taskCompletionRateMonth'] = str(taskCompleteRate*100)[:3]
+        else:
+            friend['taskCompletionRateMonth'] = str(taskCompleteRate*100)[:4]
         friend['email'] = friendEmail
         friend['firstName'] = person['firstName']
         friend['lastName'] = person['lastName']
@@ -237,7 +271,6 @@ def getStats(email, people, social, tasks):
         else:
             friend['avatarColor'] = person['avatarColor']
         responseDict[friendEmail] = friend
-    print(responseDict)
     response = jsonify(responseDict)
     response.status_code=200
     return response
@@ -270,8 +303,9 @@ def remFriend(request, people):
 #Helper function to get the total number of tasks in a week
 def get_total_tasks_week(tasks, friendEmail, now):
     count = 0
-    all = tasks.find({'email':str.lower(friendEmail)},{'_id': False})
+    all = tasks.find({'childEmail':str.lower(friendEmail)},{'_id': False})
     for task in all:
+        print(task['taskName'])
         if ((now - task['taskDeadline'] <= datetime.timedelta(days=7)) and now > task['taskDeadline']):
             count += 1
     return count
@@ -279,7 +313,7 @@ def get_total_tasks_week(tasks, friendEmail, now):
 #Helper function to get the total number of tasks in a month
 def get_total_tasks_month(tasks, friendEmail, now):
     count = 0
-    all = tasks.find({'email':str.lower(friendEmail)},{'_id': False})
+    all = tasks.find({'childEmail':str.lower(friendEmail)},{'_id': False})
     for task in all:
         if ((now - task['taskDeadline'] <= datetime.timedelta(days=30)) and now > task['taskDeadline']):
             count += 1
