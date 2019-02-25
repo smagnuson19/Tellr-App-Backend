@@ -452,6 +452,19 @@ def getSocialStats(email):
         response.status_code = 401
         return response
 
+@app.route("/api/removefriends", methods =['POST'])
+def makeGoAway():
+    authenStatus = verifyToken(request)
+    if authenStatus[1]:
+        realEmail = fixEmail(email)
+        if request.method == 'POST':
+            return remFriend(request, people)
+    else:
+        response = jsonify([{'Error': authenStatus[0]
+        }])
+        response.status_code = 401
+        return response
+
 @app.route("/api/social/taskhistory/<email>", methods =['GET'])
 def getTaskHistory(email):
     authenStatus = verifyToken(request)

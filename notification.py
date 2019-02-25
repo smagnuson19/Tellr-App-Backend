@@ -22,7 +22,6 @@ def findNotifications(email,notifications):
                         noti['displayRed'] = False
                     send_list.append(noti)
 
-
     quicksort(send_list)
     for i in range(len(send_list)):
         dictresponse[i]=send_list[i]

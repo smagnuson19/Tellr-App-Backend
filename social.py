@@ -242,6 +242,31 @@ def getStats(email, people, social, tasks):
     response.status_code=200
     return response
 
+def remFriend(request, people):
+    request_json = request.get_json()
+    emailOne = request_json['payLoad']['email']
+    emailTwo = request_json['payLoad']['remFriend']
+    emailOne = fixEmail(emailOne)
+    emailTwo = fixEmail(emailTwo)
+    personOne = people.find_one({'email': emailOne}, {'_id': False})
+    personTwo = people.find_one({'email': emailTwo}, {'_id': False})
+    friendListOne = personOne['friends']
+    friendListTwo = personTwo['friends']
+    if emailOne == emailTwo:
+        response = jsonify([{'Error': 'You cannot remove yourself. That would be no fun!'
+        }])
+        response.status_code = 301
+        return response
+    if emailOne in friendListTwo and emailTwo in friendListOne:
+        friendListOne.remove(emailTwo)
+        friendListTwo.remove(emailOne)
+    people.update_one({'email': emailOne}, {"$set":{'friends': friendListOne}},upsert = False)
+    people.update_one({'email': emailTwo}, {"$set":{'friends': friendListTwo}},upsert = False)
+    response = jsonify([{
+    }])
+    response.status_code = 200
+    return response
+
 #Helper function to get the total number of tasks in a week
 def get_total_tasks_week(tasks, friendEmail, now):
     count = 0
