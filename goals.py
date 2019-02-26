@@ -218,11 +218,11 @@ def approveGoal(request, goals, people, notifications, mail, app, push_notificat
 
 #Function that allows children to redeem money from their balance
 def redeemMon(request, people, notifications, push_notifications):
-    request_json = request_json.get_json()
+    request_json = request.get_json()
     child = people.find_one({'email': fixEmail(request_json['payLoad']['email'])})
     balanceDeduct = request_json['payLoad']['amount']
     currentBalance = child['balance']
-    newBalance = currentBalance-balanceDeduct
+    newBalance = float(currentBalance)-float(balanceDeduct)
     people.update_one({'email': child['email']},{"$set":{'balance': newBalance}},upsert = False)
     parents = people.find({'familyName': child['familyName']})
     for parent in parents:

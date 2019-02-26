@@ -92,15 +92,16 @@ def getUserHistoryWeek(email, people):
     now = datetime.datetime.now()
     dictresponse = {}
     for i in range(len(earnings_history)):
-        i = len(earnings_history) -1
+        j = i
+        i = len(earnings_history) - i -1
         if (now - earnings_history[i][1]) < datetime.timedelta(days = 7):
-            dictresponse[i] = list(earnings_history[i])
-            dictresponse[i][1] = str(dictresponse[i][1])
+            dictresponse[j] = list(earnings_history[i])
+            dictresponse[j][1] = str(dictresponse[j][1])[:10]
         else:
             break
     response = jsonify(dictresponse)
     response.status_code = 200
-    return response
+    return dictresponse
 
 def getUserHistoryMonth(email, people):
     child = people.find_one({'email': str.lower(email)}, {'_id': False})
@@ -108,15 +109,16 @@ def getUserHistoryMonth(email, people):
     now = datetime.datetime.now()
     dictresponse = {}
     for i in range(len(earnings_history)):
-        i = len(earnings_history) -1
+        j=i
+        i = len(earnings_history)  - i -1
         if (now - earnings_history[i][1]) < datetime.timedelta(days = 31):
-            dictresponse[i] = list(earnings_history[i])
-            dictresponse[i][1] = str(dictresponse[i][1])
+            dictresponse[j] = list(earnings_history[i])
+            dictresponse[j][1] = str(dictresponse[j][1])[:10]
         else:
             break
     response = jsonify(dictresponse)
     response.status_code = 200
-    return response
+    return dictresponse
 
 def getUserHistoryYear(email, people):
     child = people.find_one({'email': str.lower(email)}, {'_id': False})
@@ -124,12 +126,28 @@ def getUserHistoryYear(email, people):
     now = datetime.datetime.now()
     dictresponse = {}
     for i in range(len(earnings_history)):
-        i = len(earnings_history) -1
+        j=i
+        i = len(earnings_history)  - i -1
         if (now - earnings_history[i][1]) < datetime.timedelta(days = 365):
-            dictresponse[i] = list(earnings_history[i])
-            dictresponse[i][1] = str(dictresponse[i][1])
+            dictresponse[j] = list(earnings_history[i])
+            dictresponse[j][1] = str(dictresponse[j][1])[:10]
         else:
             break
+    response = jsonify(dictresponse)
+    response.status_code = 200
+    return dictresponse
+
+def getAnalyticsAll(email, people):
+    d1 = getAnalyticsWeek(email, people)
+    d2 = getAnalyticsMonth(email, people)
+    d3 = getAnalyticsYear(email, people)
+    d1['balanceGraph'] = getUserHistoryWeek(email, people)
+    d2['balanceGraph'] = getUserHistoryMonth(email, people)
+    d3['balanceGraph'] = getUserHistoryYear(email, people)
+    dictresponse = {}
+    dictresponse[0] = d1
+    dictresponse[1] = d2
+    dictresponse[2] = d3
     response = jsonify(dictresponse)
     response.status_code = 200
     return response
@@ -144,28 +162,65 @@ def getAnalyticsWeek(email, people):
     task_earned = 0
     goal_used = 0
     redemptions = 0
+    allowance = 0
     to_operate = ""
+    numAllowances = 0
+    pos = []
+    neg = []
+    first = True
     for i in range(len(earnings_history)):
-        i = len(earnings_history) -1
+        i = len(earnings_history) - i -1
         if to_operate == 'TASK':
             task_earned += currentBalance - earnings_history[i][0]
         elif to_operate == 'GOAL':
             goal_used +=  earnings_history[i][0] - currentBalance
         elif to_operate == 'RED':
             moneyReeemed += earnings_history[i][0] - currentBalance
+        elif to_operate == 'UP':
+            allowance += currentBalance - earnings_history[i][0]
 
         if (now - earnings_history[i][1]) < datetime.timedelta(days = 7):
             if earnings_history[i][2] == 'TASK':
                 tasksCompleted += 1
                 to_operate = 'TASK'
+                if not first:
+                    if (currentBalance - earnings_history[i][0]) > 0:
+                        pos.insert(0, (currentBalance - earnings_history[i][0], earnings_history[i][1]))
+                    else:
+                        neg.insert(0, (currentBalance - earnings_history[i][0], earnings_history[i][1]))
+                first = False
                 currentBalance = earnings_history[i][0]
             if earnings_history[i][2] == 'GOAL':
                 goalsRedeemed += 1
                 to_operate = 'GOAL'
+                if not first:
+                    if (currentBalance - earnings_history[i][0]) > 0:
+                        pos.insert(0, (currentBalance - earnings_history[i][0], earnings_history[i][1]))
+                    else:
+                        neg.insert(0, (currentBalance - earnings_history[i][0], earnings_history[i][1]))
+                first = False
                 currentBalance = earnings_history[i][0]
+
             if earnings_history[i][2] == 'RED':
                 redemptions += 1
-                to_operate = moneyReeemed
+                to_operate = 'RED'
+                if not first:
+                    if (currentBalance - earnings_history[i][0]) > 0:
+                        pos.insert(0, (currentBalance - earnings_history[i][0], earnings_history[i][1]))
+                    else:
+                        neg.insert(0, (currentBalance - earnings_history[i][0], earnings_history[i][1]))
+                first = False
+                currentBalance = earnings_history[i][0]
+
+            if earnings_history[i][2] == 'UP':
+                numAllowances += 1
+                to_operate = 'UP'
+                if not first:
+                    if (currentBalance - earnings_history[i][0]) > 0:
+                        pos.insert(0, (currentBalance - earnings_history[i][0], earnings_history[i][1]))
+                    else:
+                        neg.insert(0, (currentBalance - earnings_history[i][0], earnings_history[i][1]))
+                first = False
                 currentBalance = earnings_history[i][0]
         else:
             break
@@ -177,13 +232,44 @@ def getAnalyticsWeek(email, people):
     dictresponse['task_earned'] = task_earned
     dictresponse['goal_used'] = goal_used
     dictresponse['redemptions'] = redemptions
-    dictresponse['avgTask'] = float(task_earned/tasksCompleted)
-    dictresponse['avgGoal'] = float(goal_used/goalsRedeemed)
-    dictresponse['net'] = task_earned - moneyReeemed - goal_used
-    dictresponse['rate'] = net
+    if tasksCompleted == 0:
+        dictresponse['avgTask'] = 0
+    else:
+        dictresponse['avgTask'] = float(task_earned/tasksCompleted)
+    if goalsRedeemed == 0:
+        dictresponse['avgGoal'] = 0
+    else:
+        dictresponse['avgGoal'] = float(goal_used/goalsRedeemed)
+    dictresponse['net'] = task_earned - moneyReeemed - goal_used + allowance
+    dictresponse['rate'] = dictresponse['net']
+    dictresponse['allowance'] = allowance
+    dictresponse['numAllowances'] = numAllowances
+
+    pind = 0
+    nind = 0
+    retPos = []
+    retNeg = []
+    pmax = len(pos)-1
+    nmax = len(neg)-1
+
+    for i in range(7):
+        i = 5.5-i
+        tempSumPos = 0
+        tempSumNeg = 0
+        while pind <= pmax and (now-pos[pind][1]) > datetime.timedelta(days = i):
+            tempSumPos = tempSumPos + pos[pind][0]
+            pind += 1
+        retPos.insert(0, tempSumPos)
+        while nind <= nmax and (now - neg[nind][1] > datetime.timedelta(days = i)):
+            tempSumNeg = tempSumNeg + neg[nind][0]
+            nind += 1
+        retNeg.insert(0, tempSumNeg)
+
+    dictresponse['retPos'] = retPos
+    dictresponse['retNeg'] = retNeg
     response = jsonify(dictresponse)
     response.status_code = 200
-    return response
+    return dictresponse
 
 def getAnalyticsMonth(email, people):
     child = people.find_one({'email': str.lower(email)}, {'_id': False})
@@ -195,28 +281,64 @@ def getAnalyticsMonth(email, people):
     task_earned = 0
     goal_used = 0
     redemptions = 0
+    allowance = 0
     to_operate = ""
+    numAllowances = 0
+    pos = []
+    neg = []
+    first = True
+
     for i in range(len(earnings_history)):
-        i = len(earnings_history) -1
+        i = len(earnings_history) - i -1
         if to_operate == 'TASK':
             task_earned += currentBalance - earnings_history[i][0]
         elif to_operate == 'GOAL':
             goal_used +=  earnings_history[i][0] - currentBalance
         elif to_operate == 'RED':
             moneyReeemed += earnings_history[i][0] - currentBalance
+        elif to_operate == 'UP':
+            allowance += currentBalance - earnings_history[i][0]
 
         if (now - earnings_history[i][1]) < datetime.timedelta(days = 31):
             if earnings_history[i][2] == 'TASK':
                 tasksCompleted += 1
                 to_operate = 'TASK'
+                if not first:
+                    if (currentBalance - earnings_history[i][0]) > 0:
+                        pos.insert(0, (currentBalance - earnings_history[i][0], earnings_history[i][1]))
+                    else:
+                        neg.insert(0, (currentBalance - earnings_history[i][0], earnings_history[i][1]))
+                first = False
                 currentBalance = earnings_history[i][0]
             if earnings_history[i][2] == 'GOAL':
                 goalsRedeemed += 1
                 to_operate = 'GOAL'
+                if not first:
+                    if (currentBalance - earnings_history[i][0]) > 0:
+                        pos.insert(0, (currentBalance - earnings_history[i][0], earnings_history[i][1]))
+                    else:
+                        neg.insert(0, (currentBalance - earnings_history[i][0], earnings_history[i][1]))
+                first = False
                 currentBalance = earnings_history[i][0]
             if earnings_history[i][2] == 'RED':
                 redemptions += 1
-                to_operate = moneyReeemed
+                to_operate = 'RED'
+                if not first:
+                    if (currentBalance - earnings_history[i][0]) > 0:
+                        pos.insert(0, (currentBalance - earnings_history[i][0], earnings_history[i][1]))
+                    else:
+                        neg.insert(0, (currentBalance - earnings_history[i][0], earnings_history[i][1]))
+                first = False
+                currentBalance = earnings_history[i][0]
+            if earnings_history[i][2] == 'UP':
+                numAllowances += 1
+                to_operate = 'UP'
+                if not first:
+                    if (currentBalance - earnings_history[i][0]) > 0:
+                        pos.insert(0, (currentBalance - earnings_history[i][0], earnings_history[i][1]))
+                    else:
+                        neg.insert(0, (currentBalance - earnings_history[i][0], earnings_history[i][1]))
+                first = False
                 currentBalance = earnings_history[i][0]
         else:
             break
@@ -228,13 +350,46 @@ def getAnalyticsMonth(email, people):
     dictresponse['task_earned'] = task_earned
     dictresponse['goal_used'] = goal_used
     dictresponse['redemptions'] = redemptions
-    dictresponse['avgTask'] = float(task_earned/tasksCompleted)
-    dictresponse['avgGoal'] = float(goal_used/goalsRedeemed)
-    dictresponse['net'] = task_earned - moneyReeemed - goal_used
-    dictresponse['rate'] = float(net*7/31)
+    if tasksCompleted == 0:
+        dictresponse['avgTask'] = 0
+    else:
+        dictresponse['avgTask'] = float(task_earned/tasksCompleted)
+    if goalsRedeemed == 0:
+        dictresponse['avgGoal'] = 0
+    else:
+        dictresponse['avgGoal'] = float(goal_used/goalsRedeemed)
+    dictresponse['net'] = task_earned - moneyReeemed - goal_used +allowance
+    dictresponse['rate'] = float(dictresponse['net']*7/31)
+    dictresponse['allowance'] = allowance
+    dictresponse['numAllowances'] = numAllowances
+
+    pind = 0
+    nind = 0
+    retPos = []
+    retNeg = []
+    for i in range(8):
+        i = 7-i
+        days = i*3.8-.5
+        tempSumPos = 0
+        tempSumNeg = 0
+        pmax = len(pos)-1
+        nmax = len(neg)-1
+
+        while pind <= pmax and (now-pos[pind][1]) > datetime.timedelta(days = days):
+            tempSumPos = tempSumPos + pos[pind][0]
+            pind += 1
+        retPos.insert(0, tempSumPos)
+        while nind <= nmax and (now - neg[nind][1] > datetime.timedelta(days = days)):
+            tempSumNeg = tempSumNeg + neg[nind][0]
+            nind += 1
+
+        retNeg.insert(0, tempSumNeg)
+    dictresponse['retPos'] = retPos
+    dictresponse['retNeg'] = retNeg
+
     response = jsonify(dictresponse)
     response.status_code = 200
-    return response
+    return dictresponse
 
 def getAnalyticsYear(email, people):
     child = people.find_one({'email': str.lower(email)}, {'_id': False})
@@ -246,28 +401,64 @@ def getAnalyticsYear(email, people):
     task_earned = 0
     goal_used = 0
     redemptions = 0
+    allowance = 0
     to_operate = ""
+    numAllowances = 0
+    pos = []
+    neg = []
+    first = True
+
     for i in range(len(earnings_history)):
-        i = len(earnings_history) -1
+        i = len(earnings_history) - i - 1
         if to_operate == 'TASK':
             task_earned += currentBalance - earnings_history[i][0]
         elif to_operate == 'GOAL':
             goal_used +=  earnings_history[i][0] - currentBalance
         elif to_operate == 'RED':
             moneyReeemed += earnings_history[i][0] - currentBalance
+        elif to_operate == 'UP':
+            allowance += currentBalance - earnings_history[i][0]
 
         if (now - earnings_history[i][1]) < datetime.timedelta(days = 365):
             if earnings_history[i][2] == 'TASK':
                 tasksCompleted += 1
                 to_operate = 'TASK'
+                if not first:
+                    if (currentBalance - earnings_history[i][0]) > 0:
+                        pos.insert(0, (currentBalance - earnings_history[i][0], earnings_history[i][1]))
+                    else:
+                        neg.insert(0, (currentBalance - earnings_history[i][0], earnings_history[i][1]))
+                first = False
                 currentBalance = earnings_history[i][0]
             if earnings_history[i][2] == 'GOAL':
                 goalsRedeemed += 1
                 to_operate = 'GOAL'
+                if not first:
+                    if (currentBalance - earnings_history[i][0]) > 0:
+                        pos.insert(0, (currentBalance - earnings_history[i][0], earnings_history[i][1]))
+                    else:
+                        neg.insert(0, (currentBalance - earnings_history[i][0], earnings_history[i][1]))
+                first = False
                 currentBalance = earnings_history[i][0]
             if earnings_history[i][2] == 'RED':
                 redemptions += 1
-                to_operate = moneyReeemed
+                to_operate = 'RED'
+                if not first:
+                    if (currentBalance - earnings_history[i][0]) > 0:
+                        pos.insert(0, (currentBalance - earnings_history[i][0], earnings_history[i][1]))
+                    else:
+                        neg.insert(0, (currentBalance - earnings_history[i][0], earnings_history[i][1]))
+                first = False
+                currentBalance = earnings_history[i][0]
+            if earnings_history[i][2] == 'UP':
+                numAllowances += 1
+                to_operate = 'UP'
+                if not first:
+                    if (currentBalance - earnings_history[i][0]) > 0:
+                        pos.insert(0, (currentBalance - earnings_history[i][0], earnings_history[i][1]))
+                    else:
+                        neg.insert(0, (currentBalance - earnings_history[i][0], earnings_history[i][1]))
+                first = False
                 currentBalance = earnings_history[i][0]
         else:
             break
@@ -279,13 +470,44 @@ def getAnalyticsYear(email, people):
     dictresponse['task_earned'] = task_earned
     dictresponse['goal_used'] = goal_used
     dictresponse['redemptions'] = redemptions
-    dictresponse['avgTask'] = float(task_earned/tasksCompleted)
-    dictresponse['avgGoal'] = float(goal_used/goalsRedeemed)
-    dictresponse['net'] = task_earned - moneyReeemed - goal_used
-    dictresponse['rate'] = float(net*7/365)
+    if tasksCompleted == 0:
+        dictresponse['avgTask'] = 0
+    else:
+        dictresponse['avgTask'] = float(task_earned/tasksCompleted)
+    if goalsRedeemed == 0:
+        dictresponse['avgGoal'] = 0
+    else:
+        dictresponse['avgGoal'] = float(goal_used/goalsRedeemed)
+    dictresponse['net'] = task_earned - moneyReeemed - goal_used +allowance
+    dictresponse['rate'] = float(dictresponse['net']*7/365)
+    dictresponse['allowance'] = allowance
+    dictresponse['numAllowances'] = numAllowances
+
+    pind = 0
+    nind = 0
+    retPos = []
+    retNeg = []
+    for i in range(6):
+        i = 5-i
+        days = i*61-1
+        tempSumPos = 0
+        tempSumNeg = 0
+        pmax = len(pos)-1
+        nmax = len(neg)-1
+        while pind <= pmax and (now-pos[pind][1]) > datetime.timedelta(days = days):
+            tempSumPos = tempSumPos + pos[pind][0]
+            pind += 1
+        retPos.insert(0, tempSumPos)
+        while nind <= nmax and (now - neg[nind][1]) > datetime.timedelta(days = days):
+            tempSumNeg = tempSumNeg + neg[nind][0]
+            nind += 1
+        retNeg.insert(0, tempSumNeg)
+    dictresponse['retPos'] = retPos
+    dictresponse['retNeg'] = retNeg
+
     response = jsonify(dictresponse)
     response.status_code = 200
-    return response
+    return dictresponse
 
 #Function that updates balance
 def upBalance(request,people,notifications, mail, app):

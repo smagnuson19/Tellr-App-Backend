@@ -57,12 +57,10 @@ def socialAccept(request, people, social, notifications, push_notifications):
     accepter = people.find_one({'email': accepterEmail}, {'_id': False})
     senderFriends = deepcopy(sender['friends'])
     accepterFriends = deepcopy(accepter['friends'])
-    print(senderFriends)
-    print(accepterFriends)
+
     updatedSList = senderFriends + [accepterEmail]
     updatedAList = accepterFriends + [senderEmail]
-    print(updatedSList)
-    print(updatedAList)
+
     people.update_one({'email': senderEmail}, {"$set":{'friends': updatedSList}}, upsert = False)
     people.update_one({'email': accepterEmail}, {"$set":{'friends': updatedAList}}, upsert = False)
 
@@ -132,7 +130,7 @@ def get_completed_task_number_graph(email, social, people, goals):
         responseDict[timeD] = str(100*float(retnum))[:3]
     else:
         responseDict[timeD] = str(100*float(retnum))[:4]
-    print(responseDict)
+
     response = jsonify([responseDict
         ])
     response.status_code = 200
@@ -168,7 +166,6 @@ def quicksort_time(the_list, p = 0, r = None):
 #Function for getting social statistics for leaderboard
 def getStats(email, people, social, tasks):
     user = people.find_one({'email': email}, {'_id': False})
-    print(user)
     friendsList = user['friends']
     responseDict = {}
     now = datetime.datetime.now()
@@ -305,7 +302,6 @@ def get_total_tasks_week(tasks, friendEmail, now):
     count = 0
     all = tasks.find({'childEmail':str.lower(friendEmail)},{'_id': False})
     for task in all:
-        print(task['taskName'])
         if ((now - task['taskDeadline'] <= datetime.timedelta(days=7)) and now > task['taskDeadline']):
             count += 1
     return count

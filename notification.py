@@ -25,7 +25,6 @@ def findNotifications(email,notifications):
     quicksort(send_list)
     for i in range(len(send_list)):
         dictresponse[i]=send_list[i]
-    print(dictresponse)
     response = jsonify(dictresponse)
     response.status_code=200
     return response
