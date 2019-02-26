@@ -126,7 +126,7 @@ def get_completed_task_number_graph(email, social, people, goals):
         retnum = child['balance']/float(maxVal)
     if retnum > 1:
         retnum = 1
-    if str(float(100*float(retnum)))[3] == '.':
+    if len(str(float(100*float(retnum)))) > 3 and str(float(100*float(retnum)))[3] == '.':
         responseDict[timeD] = str(100*float(retnum))[:3]
     else:
         responseDict[timeD] = str(100*float(retnum))[:4]
