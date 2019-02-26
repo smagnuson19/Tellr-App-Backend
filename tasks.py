@@ -31,10 +31,8 @@ def postTask(request,tasks, people, notifications, mail, app, push_notifications
 
     #Store deadline as a datetime object (convert from string)
     date_time_str = request_json['payLoad']['taskDeadline']
-    print(date_time_str)
     datelist = date_time_str.split()
     now = datetime.datetime.now()
-    print(datelist)
     realstr = datelist[0][:3] + " "+ datelist[1][:-3] + " " + str(now.year) +  " "  + datelist[2]
     date_time_obj = datetime.datetime.strptime(realstr, '%b %d %Y %I:%M%p')
     now = datetime.datetime.now()
@@ -154,8 +152,6 @@ def completeTask(request, tasks, notifications, people, mail, app):
                 'read': False,
                 'displayRed': display
             }
-            print(new_notification)
-            print(task)
             notifications.insert_one(new_notification)
             current_priority = parent['notCounter']
             people.update_one({'email': parent['email']}, {"$set":{'notCounter': current_priority+1}},upsert = False)
