@@ -25,7 +25,7 @@ def postTask(request,tasks, people, notifications, mail, app, push_notifications
         }])
         response.status_code = 401
         return response
-    send_notification(fixEmail(str.lower(request_json['payLoad']['senderEmail'])), 'It works!', 'heading', push_notifications)
+    
     child = people.find_one({'email':fixEmail(request_json['payLoad']['childEmail'])},{'_id': False})
     stringName = child['firstName']+ ' '+ child['lastName']
 

@@ -8,6 +8,7 @@ from notification import *
 from handleEmail import *
 from authenticate import *
 from social import *
+from push import *
 import string
 from push import *
 from flask_mail import Mail, Message
@@ -34,6 +35,7 @@ MONGO_URL = 'mongodb://heroku_sxklq0jf:fvegd2q34of2qn0j5jivm9b51b@ds227243.mlab.
 onesignal_client = onesignal_sdk.Client(user_auth_key="MjhmY2U2ZWMtN2YyNy00MWRlLWI3ZmYtNGZmMDljMWM5MjM0",
                                         app={"app_auth_key": "MmVhODM2YjEtZjM4Mi00MzNjLWIxNmUtNjAwYzM2ZWYxNDZi", "app_id": "4e80c299-4fec-4279-bde3-3cdffbb24e1d"})
 
+send_notification('d', 'It works!', 'heading', 'push_notifications')
 client1 = MongoClient(MONGO_URL)
 db = client1.heroku_sxklq0jf
 credentials = db.credentials
