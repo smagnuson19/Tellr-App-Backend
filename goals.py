@@ -28,7 +28,8 @@ def postGoals(request, goals, people, notifications, mail, app):
         'description': request_json['payLoad']['description'],
         'image': request_json['payLoad']['image'],
         'approved': 0,
-        'redeemed': False
+        'redeemed': False,
+        'dateRedeemed': None
     }
     child = people.find_one({'email':new_goal['email']})
     parents = people.find({'familyName': child['familyName']})
@@ -76,6 +77,7 @@ def finishGoal(request, people, goals, notifications, mail, app, social):
             redeemedGoal = goal
             break
     goals.update_one({'_id': redeemedGoal['_id']}, {"$set":{'redeemed': True}},upsert = False)
+    goals.update_one({'_id': redeemedGoal['_id']}, {"$set":{'dateRedeemed': datetime.datetime.strftime(task['taskDeadline'], '%b %d %Y %I:%M%p')}},upsert = False)
     balanceDeduct = redeemedGoal['value']
     currentBalance = child['balance']
     newBalance = currentBalance-balanceDeduct
