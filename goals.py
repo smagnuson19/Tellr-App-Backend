@@ -77,7 +77,7 @@ def finishGoal(request, people, goals, notifications, mail, app, social):
             redeemedGoal = goal
             break
     goals.update_one({'_id': redeemedGoal['_id']}, {"$set":{'redeemed': True}},upsert = False)
-    goals.update_one({'_id': redeemedGoal['_id']}, {"$set":{'dateRedeemed': datetime.datetime.strftime(task['taskDeadline'], '%b %d %Y %I:%M%p')}},upsert = False)
+    goals.update_one({'_id': redeemedGoal['_id']}, {"$set":{'dateRedeemed': datetime.datetime.strftime(datetime.datetime.now(), '%b %d %Y %I:%M%p')}},upsert = False)
     balanceDeduct = redeemedGoal['value']
     currentBalance = child['balance']
     newBalance = currentBalance-balanceDeduct
