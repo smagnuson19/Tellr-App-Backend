@@ -105,11 +105,11 @@ def completeTasks():
         return response
 
 @app.route("/api/tasks/seecompleted/week/<email>", methods = ['GET'])
-def seeCompletedTasksWeek():
+def seeCompletedTasksWeek(email):
     authenStatus = verifyToken(request)
     if authenStatus[1]:
         if request.method == 'GET':
-            return getCompletedTasksWeek(request, tasks)
+            return getCompletedTasksWeek(fixEmail(email), tasks)
     else:
         response = jsonify([{'Error': authenStatus[0]
         }])
@@ -117,11 +117,11 @@ def seeCompletedTasksWeek():
         return response
 
 @app.route("/api/tasks/seecompleted/month/<email>", methods = ['GET'])
-def seeCompletedTasksMonth():
+def seeCompletedTasksMonth(email):
     authenStatus = verifyToken(request)
     if authenStatus[1]:
         if request.method == 'GET':
-            return getCompletedTasksMonth(request, tasks)
+            return getCompletedTasksMonth(fixEmail(email), tasks)
     else:
         response = jsonify([{'Error': authenStatus[0]
         }])
@@ -129,11 +129,11 @@ def seeCompletedTasksMonth():
         return response
 
 @app.route("/api/tasks/seecompleted/year/<email>", methods = ['GET'])
-def seeCompletedTasksYear():
+def seeCompletedTasksYear(email):
     authenStatus = verifyToken(request)
     if authenStatus[1]:
         if request.method == 'GET':
-            return getCompletedTasksYear(request, tasks)
+            return getCompletedTasksYear(fixEmail(email), tasks)
     else:
         response = jsonify([{'Error': authenStatus[0]
         }])
