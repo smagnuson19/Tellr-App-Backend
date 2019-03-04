@@ -6,7 +6,9 @@ from flask import Flask, request, jsonify
 import json
 import datetime
 from push import *
-SECRET = "secret"
+import os
+# SECRET = "secret"
+SECRET = os.environ['SECRET']
 
 #Function for secure login and token generation
 def authenticateUser(request, credentials, push_notifications):

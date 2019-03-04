@@ -16,6 +16,7 @@ import jwt
 import onesignal as onesignal_sdk
 import time
 import datetime
+import os
 
 
 app = Flask(__name__)
@@ -35,7 +36,7 @@ MONGO_URL = 'mongodb://heroku_sxklq0jf:fvegd2q34of2qn0j5jivm9b51b@ds227243.mlab.
 onesignal_client = onesignal_sdk.Client(user_auth_key="MjhmY2U2ZWMtN2YyNy00MWRlLWI3ZmYtNGZmMDljMWM5MjM0",
                                         app={"app_auth_key": "MmVhODM2YjEtZjM4Mi00MzNjLWIxNmUtNjAwYzM2ZWYxNDZi", "app_id": "4e80c299-4fec-4279-bde3-3cdffbb24e1d"})
 
-# send_notification('d', 'It works!', 'heading', 'push_notifications')
+
 client1 = MongoClient(MONGO_URL)
 db = client1.heroku_sxklq0jf
 credentials = db.credentials
@@ -46,6 +47,8 @@ notifications = db.notifications
 social = db.social
 push_notifications = db.push_notifications
 goal_last_posted = datetime.datetime.now()
+
+send_notification('p1@', 'It works!', 'heading', push_notifications)
 # Task deadline notification checker - waiting for OneSignal account
 # check_task_notis(tasks, push_notifications)
 
