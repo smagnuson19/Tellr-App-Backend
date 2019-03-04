@@ -292,12 +292,11 @@ def getCompletedTasksWeek(email, tasks):
     for index in range(len(returnList)):
         if returnList[index]['taskDeadline'] - datetime.datetime.now() > -datetime.timedelta(days=7):
             returnDict[index] = returnList[index]
-            returnDict[index]['taskDeadline'] = datetime.datetime.strftime(task['taskDeadline'], '%b %d %Y %I:%M%p'),
+            returnDict[index]['taskDeadline'] = datetime.datetime.strftime(returnDict[index]['taskDeadline'], '%b %d %Y %I:%M%p')
         else:
             break
 
-    response = jsonify([returnDict
-        ])
+    response = jsonify(returnDict)
     response.status_code = 200
     return response
 
@@ -315,12 +314,11 @@ def getCompletedTasksMonth(email, tasks):
     for index in range(len(returnList)):
         if returnList[index]['taskDeadline'] - datetime.datetime.now() > -datetime.timedelta(days=31):
             returnDict[index] = returnList[index]
-            returnDict[index]['taskDeadline'] = datetime.datetime.strftime(task['taskDeadline'], '%b %d %Y %I:%M%p'),
+            returnDict[index]['taskDeadline'] = datetime.datetime.strftime(returnDict[index]['taskDeadline'], '%b %d %Y %I:%M%p')
         else:
             break
 
-    response = jsonify([returnDict
-        ])
+    response = jsonify(returnDict)
     response.status_code = 200
     return response
 
@@ -338,12 +336,11 @@ def getCompletedTasksYear(email, tasks):
     for index in range(len(returnList)):
         if returnList[index]['taskDeadline'] - datetime.datetime.now() > -datetime.timedelta(days=365):
             returnDict[index] = returnList[index]
-            returnDict[index]['taskDeadline'] = datetime.datetime.strftime(task['taskDeadline'], '%b %d %Y %I:%M%p'),
+            returnDict[index]['taskDeadline'] = datetime.datetime.strftime(returnDict[index]['taskDeadline'], '%b %d %Y %I:%M%p')
         else:
             break
 
-    response = jsonify([returnDict
-        ])
+    response = jsonify(returnDict)
     response.status_code = 200
     return response
 
