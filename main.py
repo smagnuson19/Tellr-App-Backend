@@ -162,6 +162,20 @@ def add_users():
         response.status_code = 401
         return response
 
+@app.route("/api/color/<email>", methods =['GET', 'POST'])
+def colors(email):
+    authenStatus = verifyToken(request)
+    if authenStatus[1]:
+        if request.method == 'GET':
+            return get_color(request, people, fixEmail(email))
+        elif request.method == 'POST':
+            return post_color(request, people, fixEmail(email))
+    else:
+        response = jsonify([{'Error': authenStatus[0]
+        }])
+        response.status_code = 401
+        return response
+
 #Passed Testing
 @app.route("/api/users/<email>", methods =['GET'])
 def get_user(email):

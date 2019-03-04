@@ -581,3 +581,25 @@ def delOne(request, people, credentials):
     response.status_code=200
 
     return response
+
+def get_color(request, people, email):
+    person = people.find_one({'email': email}, {'_id': False})
+    if 'color' not in person:
+        color = 0
+    else:
+        color = person['color']
+    response = jsonify([{'color': color
+    }])
+    response.status_code=200
+    return response
+
+def post_color(request, people, email):
+    person = people.find_one({'email': email}, {'_id': False})
+    if 'color' not in person:
+        print('Early accounts do not have color attribute')
+    else:
+        people.update_one({'email': email}, {"$set":{'color': request.get_json()['payLoad']['color']}},upsert = False)
+    response = jsonify([{
+    }])
+    response.status_code=200
+    return response

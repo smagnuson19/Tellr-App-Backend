@@ -78,7 +78,8 @@ def authAddUser(request, people, credentials, social, push_notifications):
                 'notCounter': 0,
                 'friends': [str.lower(request_json['payLoad']['email'])],
                 'earnings': [(0, datetime.datetime.now(), 'BEGIN')],
-                'avatarColor': request_json['payLoad']['avatarColor']
+                'avatarColor': request_json['payLoad']['avatarColor'],
+                'color': 0
             }
 
             #Store password as a hash within credentials database
