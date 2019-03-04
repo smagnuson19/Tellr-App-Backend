@@ -101,12 +101,36 @@ def completeTasks():
         response.status_code = 401
         return response
 
-@app.route("/api/tasks/seecompleted/<email>", methods = ['GET'])
-def seeCompletedTasks():
+@app.route("/api/tasks/seecompleted/week/<email>", methods = ['GET'])
+def seeCompletedTasksWeek():
     authenStatus = verifyToken(request)
     if authenStatus[1]:
         if request.method == 'GET':
-            return getCompletedTasks(request, tasks)
+            return getCompletedTasksWeek(request, tasks)
+    else:
+        response = jsonify([{'Error': authenStatus[0]
+        }])
+        response.status_code = 401
+        return response
+
+@app.route("/api/tasks/seecompleted/month/<email>", methods = ['GET'])
+def seeCompletedTasksMonth():
+    authenStatus = verifyToken(request)
+    if authenStatus[1]:
+        if request.method == 'GET':
+            return getCompletedTasksMonth(request, tasks)
+    else:
+        response = jsonify([{'Error': authenStatus[0]
+        }])
+        response.status_code = 401
+        return response
+
+@app.route("/api/tasks/seecompleted/year/<email>", methods = ['GET'])
+def seeCompletedTasksYear():
+    authenStatus = verifyToken(request)
+    if authenStatus[1]:
+        if request.method == 'GET':
+            return getCompletedTasksYear(request, tasks)
     else:
         response = jsonify([{'Error': authenStatus[0]
         }])
