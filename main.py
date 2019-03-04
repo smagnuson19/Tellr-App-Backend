@@ -231,7 +231,7 @@ def getTimedHistory(email):
 @app.route("/api/auth/login", methods =['POST'])
 def authenticate():
     if request.method == 'POST':
-        return authenticateUser(request, credentials)
+        return authenticateUser(request, credentials, push_notifications)
 
 @app.route("/api/analytics/<email>/<timeframe>", methods = ['GET'])
 def analyze(email, timeframe):
@@ -256,6 +256,11 @@ def analyze(email, timeframe):
 def authregister():
     if request.method == 'POST':
         return authAddUser(request, people, credentials, social, push_notifications)
+
+@app.route("/api/auth/logout", methods =['POST'])
+def authlogout():
+    if request.method == 'POST':
+        return authLogout(request, push_notifications)
 
 @app.route("/api/auth/changepassword", methods =['POST'])
 def changePassword():
