@@ -205,7 +205,7 @@ def verifyToken(request):
         return("Invalid Token", False)
 
     now =datetime.datetime.now()
-    if (now - datetime.datetime.strptime(decoded['iad'], "%Y-%m-%d %H:%M:%S")) > datetime.timedelta(days=180):
+    if (now - datetime.datetime.strptime(decoded['iad'], "%Y-%m-%d %H:%M:%S")) > datetime.timedelta(days=30):
         return("Expired Token", False)
 
     else:
