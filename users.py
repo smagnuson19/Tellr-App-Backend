@@ -610,8 +610,10 @@ def get_color(request, people, email):
         color = 0
     else:
         color = person['color']
-    response = jsonify([{'color': color
-    }])
+        
+    responseDict = {}
+    responseDict['color'] = color
+    response = jsonify(responseDict)
     response.status_code=200
     return response
 
