@@ -25,7 +25,7 @@ def socialAdd(request, people, social, notifications):
             }])
             response.status_code = 301
             return response
-            
+
     #Notification sent to friend being added
     new_notification = {
         'email': friendEmail,
@@ -247,10 +247,11 @@ def getStats(email, people, social, tasks):
             #Send rate as float
             totalTasksAssigned = totalTasksAssigned + run
             taskCompleteRate = float(tasksCompletedDeadline/totalTasksAssigned)
-        if str(float(taskCompleteRate*100))[3] == '.':
-            friend['taskCompletionRateWeek'] = str(taskCompleteRate*100)[:3]
-        else:
-            friend['taskCompletionRateWeek'] = str(taskCompleteRate*100)[:4]
+        if len(str(taskCompleteRate)) > 3:
+            if str(float(taskCompleteRate*100))[3] == '.':
+                friend['taskCompletionRateWeek'] = str(taskCompleteRate*100)[:3]
+            else:
+                friend['taskCompletionRateWeek'] = str(taskCompleteRate*100)[:4]
         if index >=0:
             while ((now - current <= datetime.timedelta(days=30))):
                 tasksCompletedDeadline +=1
@@ -264,10 +265,11 @@ def getStats(email, people, social, tasks):
         else:
             totalTasksAssigned = totalTasksAssigned + run
             taskCompleteRate = float(tasksCompletedDeadline/totalTasksAssigned)
-        if str(float(taskCompleteRate*100))[3] == '.':
-            friend['taskCompletionRateMonth'] = str(taskCompleteRate*100)[:3]
-        else:
-            friend['taskCompletionRateMonth'] = str(taskCompleteRate*100)[:4]
+        if len(str(taskCompleteRate)) > 3:
+            if str(float(taskCompleteRate*100))[3] == '.':
+                friend['taskCompletionRateMonth'] = str(taskCompleteRate*100)[:3]
+            else:
+                friend['taskCompletionRateMonth'] = str(taskCompleteRate*100)[:4]
         friend['email'] = friendEmail
         friend['firstName'] = person['firstName']
         friend['lastName'] = person['lastName']
