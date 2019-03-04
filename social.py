@@ -18,6 +18,14 @@ def socialAdd(request, people, social, notifications):
         response.status_code = 401
         return response
 
+    posnots = notifications.find({'email': friendEmail}, {'_id': False})
+    for nott in posnots:
+        if nott['description'] == 'Social Add' and nott['senderEmail'] == userEmail and nott['read'] == False:
+            response = jsonify([{'Success': False, 'Error': "Request already sent"
+            }])
+            response.status_code = 301
+            return response
+            
     #Notification sent to friend being added
     new_notification = {
         'email': friendEmail,
