@@ -109,15 +109,19 @@ def get_completed_task_number_graph(email, social, people, goals):
     completedList = socialObject['tasksCompleted']
     quicksort_time(completedList)
     timeD = 0
-    index = 0
+    index = len(completedList)-1
     now = datetime.datetime.now()
-    maxIndex = len(completedList)
+    gridMax = 0
     while timeD <= 31:
         tdeltamin = datetime.timedelta(days = timeD)
         tdeltamax = datetime.timedelta(days = timeD + 1)
-        while index < maxIndex and (now - completedList[index]) >= tdeltamin and (now - completedList[index]) <= tdeltamax:
-            index += 1
+        tempgridMax = 0
+        while index >= 0 and (now - completedList[index]) >= tdeltamin and (now - completedList[index]) <= tdeltamax:
+            index -= 1
             responseDict[timeD] += 1
+            tempgridMax += 1
+        if tempgridMax > gridMax:
+            gridMax = tempgridMax
         timeD += 1
 
     allGoals = goals.find({'email': email}, {'_id': False})
@@ -138,7 +142,9 @@ def get_completed_task_number_graph(email, social, people, goals):
         responseDict[timeD] = str(100*float(retnum))[:3]
     else:
         responseDict[timeD] = str(100*float(retnum))[:4]
-
+    responseDict[timeD +1] = gridMax
+    print(child['firstName'])
+    print(responseDict)
     response = jsonify([responseDict
         ])
     response.status_code = 200
@@ -274,6 +280,7 @@ def getStats(email, people, social, tasks):
                 friend['taskCompletionRateMonth'] = str(taskCompleteRate*100)[:4]
         else:
             friend['taskCompletionRateMonth'] = str(taskCompleteRate*100)
+        friend['taskCompletionRateWeek'] = friend['taskCompletionRateMonth']
         friend['email'] = friendEmail
         friend['firstName'] = person['firstName']
         friend['lastName'] = person['lastName']

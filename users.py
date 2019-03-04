@@ -82,6 +82,7 @@ def getUserHistory(email, people):
     for i in range(len(earnings_history)):
         dictresponse[i] = list(earnings_history[i])
         dictresponse[i][1] = str(dictresponse[i][1])[:10]
+    dictresponse[len(earnings_history)] = [dictresponse[len(earnings_history)-1][0], str(datetime.datetime.now())[:10], 'NOW']
     response = jsonify(dictresponse)
     response.status_code = 200
     return response
@@ -91,59 +92,80 @@ def getUserHistoryWeek(email, people):
     earnings_history = child['earnings']
     now = datetime.datetime.now()
     dictresponse = {}
+    maxGrid = 0
     for i in range(len(earnings_history)):
-        j = i
+        j = i + 1
         i = len(earnings_history) - i -1
         if (now - earnings_history[i][1]) < datetime.timedelta(days = 7):
             dictresponse[j] = list(earnings_history[i])
             dictresponse[j][1] = str(dictresponse[j][1])[:10]
+            if dictresponse[j][0] > maxGrid:
+                maxGrid = int(dictresponse[j][0])
         else:
             break
+    dictresponse[0] = [child['balance'], str(datetime.datetime.now())[:10], 'NOW']
+    if j == 1:
+        dictresponse[1] = [child['balance'], str(datetime.datetime.now()-datetime.timedelta(days=7))[:10], 'NOW']
+    print(dictresponse)
     response = jsonify(dictresponse)
     response.status_code = 200
-    return dictresponse
+    return (dictresponse, maxGrid)
 
 def getUserHistoryMonth(email, people):
     child = people.find_one({'email': str.lower(email)}, {'_id': False})
     earnings_history = child['earnings']
     now = datetime.datetime.now()
     dictresponse = {}
+    maxGrid = 0
     for i in range(len(earnings_history)):
-        j=i
+        j=i +1
         i = len(earnings_history)  - i -1
         if (now - earnings_history[i][1]) < datetime.timedelta(days = 31):
             dictresponse[j] = list(earnings_history[i])
             dictresponse[j][1] = str(dictresponse[j][1])[:10]
+            if dictresponse[j][0] > maxGrid:
+                maxGrid = int(dictresponse[j][0])
         else:
             break
+    dictresponse[0] = [child['balance'], str(datetime.datetime.now())[:10], 'NOW']
+    if j == 1:
+        dictresponse[1] = [child['balance'], str(datetime.datetime.now()-datetime.timedelta(days=30))[:10], 'NOW']
+    print(dictresponse)
     response = jsonify(dictresponse)
     response.status_code = 200
-    return dictresponse
+    return (dictresponse, maxGrid)
 
 def getUserHistoryYear(email, people):
     child = people.find_one({'email': str.lower(email)}, {'_id': False})
     earnings_history = child['earnings']
     now = datetime.datetime.now()
     dictresponse = {}
+    maxGrid = 0
     for i in range(len(earnings_history)):
-        j=i
+        j=i + 1
         i = len(earnings_history)  - i -1
         if (now - earnings_history[i][1]) < datetime.timedelta(days = 365):
             dictresponse[j] = list(earnings_history[i])
             dictresponse[j][1] = str(dictresponse[j][1])[:10]
+            if dictresponse[j][0] > maxGrid:
+                maxGrid = int(dictresponse[j][0])
         else:
             break
+    dictresponse[0] = [child['balance'], str(datetime.datetime.now())[:10], 'NOW']
+    if j == 1:
+        dictresponse[1] = [child['balance'], str(datetime.datetime.now()-datetime.timedelta(days=365))[:10], 'NOW']
+    print(dictresponse)
     response = jsonify(dictresponse)
     response.status_code = 200
-    return dictresponse
+    return (dictresponse, maxGrid)
 
 def getAnalyticsAll(email, people):
     d1 = getAnalyticsWeek(email, people)
     d2 = getAnalyticsMonth(email, people)
     d3 = getAnalyticsYear(email, people)
-    d1['balanceGraph'] = getUserHistoryWeek(email, people)
-    d2['balanceGraph'] = getUserHistoryMonth(email, people)
-    d3['balanceGraph'] = getUserHistoryYear(email, people)
+    (d1['balanceGraph'], d1['max']) = getUserHistoryWeek(email, people)
+    (d2['balanceGraph'], d2['max']) = getUserHistoryMonth(email, people)
+    (d3['balanceGraph'], d3['max']) = getUserHistoryYear(email, people)
     dictresponse = {}
     dictresponse[0] = d1
     dictresponse[1] = d2
