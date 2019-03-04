@@ -9,12 +9,12 @@ from push import *
 SECRET = "secret"
 
 #Function for secure login and token generation
-def authenticateUser(request, credentials):
+def authenticateUser(request, credentials, push_notifications):
     request_json = request.get_json()
     email = fixEmail(request_json['payLoad']['email'])
     pw = request_json['payLoad']['password']
     user = credentials.find_one({'email': email}, {'_id': False})
-
+    print(request_json)
     #If we did get a user, raise an error
     if user == None:
         response = jsonify([{
@@ -35,7 +35,7 @@ def authenticateUser(request, credentials):
             }
             # Generate token with date and encode it with secret
             token = jwt.encode(tokendict, SECRET, algorithm='HS256')
-
+            push_notifications.update_one({'email': email}, {"$set":{'loggedIn': True}},upsert = False)
             response = jsonify([{
             'Success': True,
             'Token': token.decode('utf-8')
@@ -51,6 +51,10 @@ def authenticateUser(request, credentials):
 
     return response
 
+
+def authLogout(request, push_notifications):
+    request_json = request.get_json()
+    push_notifications.update_one({'email': fixEmail(request_json['payLoad']['email'])}, {"$set":{'loggedIn': False}},upsert = False)
 #Function for securely adding user login credentials during account creation
 def authAddUser(request, people, credentials, social, push_notifications):
     if request.method == 'POST':
@@ -104,7 +108,12 @@ def authAddUser(request, people, credentials, social, push_notifications):
             }
 
 
-            red = add_device(str.lower(request_json['payLoad']['email']), 'type', request_json['payLoad']['accountType'], push_notifications)
+            push_entry = {
+                'email': str.lower(request_json['payLoad']['email']),
+                'pushID': request_json['payLoad']['oneSignalID'],
+                'loggedIn': True
+            }
+
             if not red[0]:
                 retrivedError = (str(red[1])[5:-5])
                 response = jsonify([{
@@ -112,12 +121,12 @@ def authAddUser(request, people, credentials, social, push_notifications):
                     'Error': retrivedError
                 }])
                 response.status_code = 402
-                print("abot to returne")
                 return response
 
             people.insert_one(new_person)
             credentials.insert_one(creds)
             result3= social.insert_one(socialEntry)
+            push_notifications.insert_one(push_entry)
             #Encode a token and send it
             token = jwt.encode(tokendict, SECRET, algorithm='HS256')
             response = jsonify([{
@@ -194,7 +203,7 @@ def verifyToken(request):
         return("Invalid Token", False)
 
     now =datetime.datetime.now()
-    if (now - datetime.datetime.strptime(decoded['iad'], "%Y-%m-%d %H:%M:%S")) > datetime.timedelta(days=3):
+    if (now - datetime.datetime.strptime(decoded['iad'], "%Y-%m-%d %H:%M:%S")) > datetime.timedelta(days=180):
         return("Expired Token", False)
 
     else:
