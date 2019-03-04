@@ -247,11 +247,13 @@ def getStats(email, people, social, tasks):
             #Send rate as float
             totalTasksAssigned = totalTasksAssigned + run
             taskCompleteRate = float(tasksCompletedDeadline/totalTasksAssigned)
-        if len(str(taskCompleteRate)) > 3:
+        if len(str(float(taskCompleteRate*100))) > 3:
             if str(float(taskCompleteRate*100))[3] == '.':
                 friend['taskCompletionRateWeek'] = str(taskCompleteRate*100)[:3]
             else:
                 friend['taskCompletionRateWeek'] = str(taskCompleteRate*100)[:4]
+        else:
+            friend['taskCompletionRateWeek'] = str(taskCompleteRate*100)
         if index >=0:
             while ((now - current <= datetime.timedelta(days=30))):
                 tasksCompletedDeadline +=1
@@ -265,11 +267,13 @@ def getStats(email, people, social, tasks):
         else:
             totalTasksAssigned = totalTasksAssigned + run
             taskCompleteRate = float(tasksCompletedDeadline/totalTasksAssigned)
-        if len(str(taskCompleteRate)) > 3:
+        if len(str(float(taskCompleteRate*100))) > 3:
             if str(float(taskCompleteRate*100))[3] == '.':
                 friend['taskCompletionRateMonth'] = str(taskCompleteRate*100)[:3]
             else:
                 friend['taskCompletionRateMonth'] = str(taskCompleteRate*100)[:4]
+        else:
+            friend['taskCompletionRateMonth'] = str(taskCompleteRate*100)
         friend['email'] = friendEmail
         friend['firstName'] = person['firstName']
         friend['lastName'] = person['lastName']
