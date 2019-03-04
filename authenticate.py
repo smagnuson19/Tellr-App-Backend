@@ -35,7 +35,9 @@ def authenticateUser(request, credentials, push_notifications):
             }
             # Generate token with date and encode it with secret
             token = jwt.encode(tokendict, SECRET, algorithm='HS256')
-            push_notifications.update_one({'email': email}, {"$set":{'loggedIn': True}},upsert = False)
+            testObj = push_notifications.find_one({'email': email})
+            if testObj != None:
+                push_notifications.update_one({'email': email}, {"$set":{'loggedIn': True}},upsert = False)
             response = jsonify([{
             'Success': True,
             'Token': token.decode('utf-8')
