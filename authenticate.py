@@ -116,15 +116,6 @@ def authAddUser(request, people, credentials, social, push_notifications):
                 'loggedIn': True
             }
 
-            if not red[0]:
-                retrivedError = (str(red[1])[5:-5])
-                response = jsonify([{
-                    'Success': False,
-                    'Error': retrivedError
-                }])
-                response.status_code = 402
-                return response
-
             people.insert_one(new_person)
             credentials.insert_one(creds)
             result3= social.insert_one(socialEntry)
