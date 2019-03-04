@@ -51,7 +51,7 @@ goal_last_posted = datetime.datetime.now()
 send_notification('p1@', 'It works!', 'heading', push_notifications)
 # Task deadline notification checker - waiting for OneSignal account
 # check_task_notis(tasks, push_notifications)
-getCompletedTasksMonth('epitts@gmail.com', tasks)
+
 #Passed
 @app.route("/api/childtasks/<email>", methods =['GET'])
 def childtask_handler(email):
