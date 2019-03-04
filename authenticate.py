@@ -59,6 +59,11 @@ def authenticateUser(request, credentials, push_notifications):
 def authLogout(request, push_notifications):
     request_json = request.get_json()
     push_notifications.update_one({'email': fixEmail(request_json['payLoad']['email'])}, {"$set":{'loggedIn': False}},upsert = False)
+    response = jsonify([{
+    }])
+    response.status_code = 200
+    return response
+    
 #Function for securely adding user login credentials during account creation
 def authAddUser(request, people, credentials, social, push_notifications):
     if request.method == 'POST':
