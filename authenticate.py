@@ -35,9 +35,9 @@ def authenticateUser(request, credentials, push_notifications):
             }
             # Generate token with date and encode it with secret
             token = jwt.encode(tokendict, SECRET, algorithm='HS256')
-            # testObj = push_notifications.find_one({'email': email})
-            # if testObj != None:
-            #     push_notifications.update_one({'email': email}, {"$set":{'loggedIn': True}},upsert = False)
+            testObj = push_notifications.find_one({'email': email})
+            if testObj != None:
+                push_notifications.update_one({'email': email}, {"$set":{'loggedIn': True}},upsert = False)
             response = jsonify([{
             'Success': True,
             'Token': token.decode('utf-8')
@@ -115,15 +115,6 @@ def authAddUser(request, people, credentials, social, push_notifications):
                 'pushID': request_json['payLoad']['oneSignalID'],
                 'loggedIn': True
             }
-
-            if not red[0]:
-                retrivedError = (str(red[1])[5:-5])
-                response = jsonify([{
-                    'Success': False,
-                    'Error': retrivedError
-                }])
-                response.status_code = 402
-                return response
 
             people.insert_one(new_person)
             credentials.insert_one(creds)
