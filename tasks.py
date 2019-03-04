@@ -278,11 +278,11 @@ def verifyTask(request, tasks, notifications, people, mail, app, social, push_no
         response.status_code = 200
         return response
 
-def getCompletedTasksWeek(request, tasks):
+def getCompletedTasksWeek(email, tasks):
     request_json = request.get_json()
     counter = 0
     returnList = []
-    tasksList = tasks.find({'childEmail': fixEmail(request_json['payLoad']['email'])}, {'_id': False})
+    tasksList = tasks.find({'childEmail': email}, {'_id': False})
 
     for task in tasksList:
         if task['verified'] == True:
@@ -302,11 +302,11 @@ def getCompletedTasksWeek(request, tasks):
     response.status_code = 200
     return response
 
-def getCompletedTasksMonth(request, tasks):
+def getCompletedTasksMonth(email, tasks):
     request_json = request.get_json()
     counter = 0
     returnList = []
-    tasksList = tasks.find({'childEmail': fixEmail(request_json['payLoad']['email'])}, {'_id': False})
+    tasksList = tasks.find({'childEmail': email}, {'_id': False})
 
     for task in tasksList:
         if task['verified'] == True:
@@ -326,11 +326,11 @@ def getCompletedTasksMonth(request, tasks):
     response.status_code = 200
     return response
 
-def getCompletedTasksYear(request, tasks):
+def getCompletedTasksYear(email, tasks):
     request_json = request.get_json()
     counter = 0
     returnList = []
-    tasksList = tasks.find({'childEmail': fixEmail(request_json['payLoad']['email'])}, {'_id': False})
+    tasksList = tasks.find({'childEmail': email}, {'_id': False})
 
     for task in tasksList:
         if task['verified'] == True:
