@@ -25,7 +25,7 @@ def postTask(request,tasks, people, notifications, mail, app, push_notifications
         }])
         response.status_code = 401
         return response
-    
+
     child = people.find_one({'email':fixEmail(request_json['payLoad']['childEmail'])},{'_id': False})
     stringName = child['firstName']+ ' '+ child['lastName']
 
@@ -278,7 +278,7 @@ def verifyTask(request, tasks, notifications, people, mail, app, social, push_no
         response.status_code = 200
         return response
 
-def getCompletedTasks(request, tasks):
+def getCompletedTasksWeek(request, tasks):
     request_json = request.get_json()
     counter = 0
     returnList = []
@@ -291,13 +291,64 @@ def getCompletedTasks(request, tasks):
     quicksort_time(returnList)
     returnDict = {}
     for index in range(len(returnList)):
-        returnDict[index] = returnList[index]
+        if returnList[index]['taskDeadline'] - datetime.datetime.now() > -datetime.timedelta(days=7):
+            returnDict[index] = returnList[index]
+            returnDict[index]['taskDeadline'] = datetime.datetime.strftime(task['taskDeadline'], '%b %d %Y %I:%M%p'),
+        else:
+            break
 
     response = jsonify([returnDict
         ])
     response.status_code = 200
     return response
 
+def getCompletedTasksMonth(request, tasks):
+    request_json = request.get_json()
+    counter = 0
+    returnList = []
+    tasksList = tasks.find({'childEmail': fixEmail(request_json['payLoad']['email'])}, {'_id': False})
+
+    for task in tasksList:
+        if task['verified'] == True:
+            returnList.append(task)
+
+    quicksort_time(returnList)
+    returnDict = {}
+    for index in range(len(returnList)):
+        if returnList[index]['taskDeadline'] - datetime.datetime.now() > -datetime.timedelta(days=31):
+            returnDict[index] = returnList[index]
+            returnDict[index]['taskDeadline'] = datetime.datetime.strftime(task['taskDeadline'], '%b %d %Y %I:%M%p'),
+        else:
+            break
+
+    response = jsonify([returnDict
+        ])
+    response.status_code = 200
+    return response
+
+def getCompletedTasksYear(request, tasks):
+    request_json = request.get_json()
+    counter = 0
+    returnList = []
+    tasksList = tasks.find({'childEmail': fixEmail(request_json['payLoad']['email'])}, {'_id': False})
+
+    for task in tasksList:
+        if task['verified'] == True:
+            returnList.append(task)
+
+    quicksort_time(returnList)
+    returnDict = {}
+    for index in range(len(returnList)):
+        if returnList[index]['taskDeadline'] - datetime.datetime.now() > -datetime.timedelta(days=365):
+            returnDict[index] = returnList[index]
+            returnDict[index]['taskDeadline'] = datetime.datetime.strftime(task['taskDeadline'], '%b %d %Y %I:%M%p'),
+        else:
+            break
+
+    response = jsonify([returnDict
+        ])
+    response.status_code = 200
+    return response
 
 def partition(the_list, p, r):
     i = p - 1              # i demarcates the end of the sublist containing values <= pivot.
