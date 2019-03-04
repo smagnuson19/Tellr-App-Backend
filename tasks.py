@@ -279,7 +279,6 @@ def verifyTask(request, tasks, notifications, people, mail, app, social, push_no
         return response
 
 def getCompletedTasksWeek(email, tasks):
-    request_json = request.get_json()
     counter = 0
     returnList = []
     tasksList = tasks.find({'childEmail': email}, {'_id': False})
@@ -303,7 +302,6 @@ def getCompletedTasksWeek(email, tasks):
     return response
 
 def getCompletedTasksMonth(email, tasks):
-    request_json = request.get_json()
     counter = 0
     returnList = []
     tasksList = tasks.find({'childEmail': email}, {'_id': False})
@@ -327,7 +325,6 @@ def getCompletedTasksMonth(email, tasks):
     return response
 
 def getCompletedTasksYear(email, tasks):
-    request_json = request.get_json()
     counter = 0
     returnList = []
     tasksList = tasks.find({'childEmail': email}, {'_id': False})
