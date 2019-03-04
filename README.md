@@ -411,7 +411,14 @@ Allows password change, also uses flask email which can be janky. Send me a post
   newPassword
 }`
 
-where password is the old password and newPassword is the password you want to change it to. 
+where password is the old password and newPassword is the password you want to change it to.
+
+##### /api/color/\<email\>
+Methods: POST, GET
+
+Get returns the a dictionary with one key: color. Default is set to 0 and any legacy accounts will always have 0 as its color.
+
+Post expects a dictionary named payLoad with one key: color. Value is any int you want the backend to store and return in subsequent GET calls. 
 
 ##### /api/notifications/\<email\>
 Methods: GET
