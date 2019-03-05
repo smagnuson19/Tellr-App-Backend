@@ -293,7 +293,8 @@ def getCompletedTasksWeek(email, tasks):
     for index in range(len(returnList)):
         if returnList[index]['taskDeadline'] - datetime.datetime.now() > -datetime.timedelta(days=7):
             returnDict[index] = returnList[index]
-            returnDict[index]['taskDeadline'] = datetime.datetime.strftime(returnDict[index]['taskDeadline'], '%b %d %Y %I:%M%p')
+            returnDict[index]['taskDeadline'] = datetime.datetime.strftime(returnDict[index]['taskDeadline'], '%b %d %Y')
+            returnDict[index]['timeCompleted'] = datetime.datetime.strftime(returnDict[index]['timeCompleted'], '%b %d %Y')
         else:
             break
 
@@ -316,7 +317,7 @@ def getCompletedTasksMonth(email, tasks):
         if returnList[index]['taskDeadline'] - datetime.datetime.now() > -datetime.timedelta(days=31):
             returnDict[index] = returnList[index]
             returnDict[index]['taskDeadline'] = datetime.datetime.strftime(returnDict[index]['taskDeadline'], '%b %d %Y')
-            returnDict[index]['timeCompleted'] = datetime.datetime.strftime(returnDict[index]['timeCompleted'], '%b %d %Y'),
+            returnDict[index]['timeCompleted'] = datetime.datetime.strftime(returnDict[index]['timeCompleted'], '%b %d %Y')
         else:
             break
 
@@ -338,7 +339,8 @@ def getCompletedTasksYear(email, tasks):
     for index in range(len(returnList)):
         if returnList[index]['taskDeadline'] - datetime.datetime.now() > -datetime.timedelta(days=365):
             returnDict[index] = returnList[index]
-            returnDict[index]['taskDeadline'] = datetime.datetime.strftime(returnDict[index]['taskDeadline'], '%b %d %Y %I:%M%p')
+            returnDict[index]['taskDeadline'] = datetime.datetime.strftime(returnDict[index]['taskDeadline'], '%b %d %Y')
+            returnDict[index]['timeCompleted'] = datetime.datetime.strftime(returnDict[index]['timeCompleted'], '%b %d %Y')
         else:
             break
 
