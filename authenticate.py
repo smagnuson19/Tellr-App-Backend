@@ -110,7 +110,7 @@ def authAddUser(request, people, credentials, social, push_notifications):
             #Store password as a hash within credentials database
             password = request_json['payLoad']['password']
             hash = bcrypt.hashpw(password.encode('utf-8'),bcrypt.gensalt())
-            FPWstring = request['payLoad']['familyPassword']
+            FPWstring = request_json['payLoad']['familyPassword']
             FPWhash = bcrypt.hashpw(FPWstring.encode('utf-8'), bcrypt.gensalt())
             creds = {
                 'email': str.lower(request_json['payLoad']['email']),
