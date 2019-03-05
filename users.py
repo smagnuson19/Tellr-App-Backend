@@ -651,3 +651,15 @@ def getAllAnalytics(email, people):
     response = jsonify(returnDict)
     response.status_code = 200
     return response
+
+def otherParents(email, people):
+    parentObj = people.find_one({'email':email},{'_id': False})
+    possParents = people.find({'familyName': parentObj['familyName']},{'_id': False})
+    returnDict = {}
+    i = 0
+    for chil in possParents:
+        if chil['accountType'] == 'Parent':
+            returnDict[i] = chil['firstName'] + " " + chil['lastName']
+    response = jsonify(returnDict)
+    response.status_code = 200
+    return response

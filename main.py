@@ -489,6 +489,18 @@ def addFriend():
         response.status_code = 401
         return response
 
+@app.route("/api/otherparents/<email>", methods =['GET'])
+def getOtherParents(email):
+    authenStatus = verifyToken(request)
+    if authenStatus[1]:
+        if request.method == 'GET':
+            return otherParents(fixEmail(email), people)
+    else:
+        response = jsonify([{'Error': authenStatus[0]
+        }])
+        response.status_code = 401
+        return response
+
 @app.route("/api/acceptfriends", methods =['POST'])
 def acceptFriend():
     authenStatus = verifyToken(request)
