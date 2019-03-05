@@ -155,6 +155,7 @@ def completeTask(request, tasks, notifications, people, mail, app):
             notifications.insert_one(new_notification)
             current_priority = parent['notCounter']
             people.update_one({'email': parent['email']}, {"$set":{'notCounter': current_priority+1}},upsert = False)
+
     #
     # mstring = "Your child has completed the task: " + actualT['taskName'] + ". Please visit tellrApp to see details and to verify!"
     # for char in task['senderEmail']:
@@ -314,7 +315,8 @@ def getCompletedTasksMonth(email, tasks):
     for index in range(len(returnList)):
         if returnList[index]['taskDeadline'] - datetime.datetime.now() > -datetime.timedelta(days=31):
             returnDict[index] = returnList[index]
-            returnDict[index]['taskDeadline'] = datetime.datetime.strftime(returnDict[index]['taskDeadline'], '%b %d %Y %I:%M%p')
+            returnDict[index]['taskDeadline'] = datetime.datetime.strftime(returnDict[index]['taskDeadline'], '%b %d %Y')
+            returnDict[index]['timeCompleted'] = datetime.datetime.strftime(returnDict[index]['timeCompleted'], '%b %d %Y'),
         else:
             break
 
