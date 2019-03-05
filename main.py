@@ -236,6 +236,18 @@ def authenticate():
     if request.method == 'POST':
         return authenticateUser(request, credentials, push_notifications)
 
+@app.route("/api/parentanalytics/<email>", methods = ['GET'])
+def analyzeParent(email):
+    authenStatus = verifyToken(request)
+    if authenStatus[1]:
+        if request.method == 'GET':
+            return getAllAnalytics(fixEmail(email), people)
+    else:
+        response = jsonify([{'Error': authenStatus[0]
+        }])
+        response.status_code = 401
+        return response
+
 @app.route("/api/analytics/<email>/<timeframe>", methods = ['GET'])
 def analyze(email, timeframe):
     authenStatus = verifyToken(request)

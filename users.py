@@ -81,8 +81,8 @@ def getUserHistory(email, people):
     dictresponse = {}
     for i in range(len(earnings_history)):
         dictresponse[i] = list(earnings_history[i])
-        dictresponse[i][1] = str(dictresponse[i][1])[:10]
-    dictresponse[len(earnings_history)] = [dictresponse[len(earnings_history)-1][0], str(datetime.datetime.now())[:10], 'NOW']
+        dictresponse[i][1] = str(dictresponse[i][1])
+    dictresponse[len(earnings_history)] = [dictresponse[len(earnings_history)-1][0], str(datetime.datetime.now()), 'NOW']
     response = jsonify(dictresponse)
     response.status_code = 200
     return response
@@ -98,14 +98,14 @@ def getUserHistoryWeek(email, people):
         i = len(earnings_history) - i -1
         if (now - earnings_history[i][1]) < datetime.timedelta(days = 7):
             dictresponse[j] = list(earnings_history[i])
-            dictresponse[j][1] = str(dictresponse[j][1])[:10]
+            dictresponse[j][1] = str(dictresponse[j][1])
             if dictresponse[j][0] > maxGrid:
                 maxGrid = int(dictresponse[j][0])
         else:
             break
-    dictresponse[0] = [child['balance'], str(datetime.datetime.now())[:10], 'NOW']
+    dictresponse[0] = [child['balance'], str(datetime.datetime.now()), 'NOW']
     if j == 1:
-        dictresponse[1] = [child['balance'], str(datetime.datetime.now()-datetime.timedelta(days=7))[:10], 'NOW']
+        dictresponse[1] = [child['balance'], str(datetime.datetime.now()-datetime.timedelta(days=7)), 'NOW']
     print(dictresponse)
     response = jsonify(dictresponse)
     response.status_code = 200
@@ -122,14 +122,14 @@ def getUserHistoryMonth(email, people):
         i = len(earnings_history)  - i -1
         if (now - earnings_history[i][1]) < datetime.timedelta(days = 31):
             dictresponse[j] = list(earnings_history[i])
-            dictresponse[j][1] = str(dictresponse[j][1])[:10]
+            dictresponse[j][1] = str(dictresponse[j][1])
             if dictresponse[j][0] > maxGrid:
                 maxGrid = int(dictresponse[j][0])
         else:
             break
-    dictresponse[0] = [child['balance'], str(datetime.datetime.now())[:10], 'NOW']
+    dictresponse[0] = [child['balance'], str(datetime.datetime.now()), 'NOW']
     if j == 1:
-        dictresponse[1] = [child['balance'], str(datetime.datetime.now()-datetime.timedelta(days=30))[:10], 'NOW']
+        dictresponse[1] = [child['balance'], str(datetime.datetime.now()-datetime.timedelta(days=30)), 'NOW']
     print(dictresponse)
     response = jsonify(dictresponse)
     response.status_code = 200
@@ -146,18 +146,31 @@ def getUserHistoryYear(email, people):
         i = len(earnings_history)  - i -1
         if (now - earnings_history[i][1]) < datetime.timedelta(days = 365):
             dictresponse[j] = list(earnings_history[i])
-            dictresponse[j][1] = str(dictresponse[j][1])[:10]
+            dictresponse[j][1] = str(dictresponse[j][1])
             if dictresponse[j][0] > maxGrid:
                 maxGrid = int(dictresponse[j][0])
         else:
             break
-    dictresponse[0] = [child['balance'], str(datetime.datetime.now())[:10], 'NOW']
+    dictresponse[0] = [child['balance'], str(datetime.datetime.now()), 'NOW']
     if j == 1:
-        dictresponse[1] = [child['balance'], str(datetime.datetime.now()-datetime.timedelta(days=365))[:10], 'NOW']
+        dictresponse[1] = [child['balance'], str(datetime.datetime.now()-datetime.timedelta(days=365)), 'NOW']
     print(dictresponse)
     response = jsonify(dictresponse)
     response.status_code = 200
     return (dictresponse, maxGrid)
+
+def getAnalyticsAllHelper(email, people):
+    d1 = getAnalyticsWeek(email, people)
+    d2 = getAnalyticsMonth(email, people)
+    d3 = getAnalyticsYear(email, people)
+    (d1['balanceGraph'], d1['max']) = getUserHistoryWeek(email, people)
+    (d2['balanceGraph'], d2['max']) = getUserHistoryMonth(email, people)
+    (d3['balanceGraph'], d3['max']) = getUserHistoryYear(email, people)
+    dictresponse = {}
+    dictresponse[0] = d1
+    dictresponse[1] = d2
+    dictresponse[2] = d3
+    return dictresponse
 
 def getAnalyticsAll(email, people):
     d1 = getAnalyticsWeek(email, people)
@@ -610,7 +623,7 @@ def get_color(request, people, email):
         color = 0
     else:
         color = person['color']
-        
+
     responseDict = {}
     responseDict['color'] = color
     response = jsonify(responseDict)
@@ -626,4 +639,15 @@ def post_color(request, people, email):
     response = jsonify([{
     }])
     response.status_code=200
+    return response
+
+def getAllAnalytics(email, people):
+    parentObj = people.find_one({'email':email},{'_id': False})
+    posschild = people.find({'familyName': parentObj['familyName']},{'_id': False})
+    returnDict = {}
+    for chil in posschild:
+        if chil['accountType'] == 'Child':
+            returnDict[chil['email']] = getAnalyticsAllHelper(chil['email'], people)
+    response = jsonify(returnDict)
+    response.status_code = 200
     return response
