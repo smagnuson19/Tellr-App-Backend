@@ -63,7 +63,7 @@ def authLogout(request, push_notifications):
     }])
     response.status_code = 200
     return response
-    
+
 #Function for securely adding user login credentials during account creation
 def authAddUser(request, people, credentials, social, push_notifications):
     if request.method == 'POST':
@@ -80,6 +80,18 @@ def authAddUser(request, people, credentials, social, push_notifications):
 
         #If not in databse, add to user and credentials database and return a 200 status code
         else:
+            test_person1 = people.find_one({'familyName':str.lower(request_json['payLoad']['familyName'])},{'_id': False})
+            if not test_person1 == None:
+                givenFPW = request_json['payLoad']['familyPassword']
+                credObj = credentials.find_one({'email': test_person1['email']},{'_id': False})
+                if not bcrypt.checkpw(givenFPW.encode('utf-8'), credObj['familyPassword']):
+                    response = jsonify([{
+                    'Success': False,
+                    'Error' : 'Wrong Family Password',
+                    }])
+                    response.status_code = 401
+                    response.detail = "Wrong Family Password"
+                    return response
             #Add a new person to the people database
             new_person = {
                 'firstName': request_json['payLoad']['firstName'],
@@ -98,9 +110,12 @@ def authAddUser(request, people, credentials, social, push_notifications):
             #Store password as a hash within credentials database
             password = request_json['payLoad']['password']
             hash = bcrypt.hashpw(password.encode('utf-8'),bcrypt.gensalt())
+            FPWstring = request['payLoad']['familyPassword']
+            FPWhash = bcrypt.hashpw(FPWstring.encode('utf-8'), bcrypt.gensalt())
             creds = {
                 'email': str.lower(request_json['payLoad']['email']),
-                'password': hash
+                'password': hash,
+                'familyPassword': FPWhash
             }
 
             date = datetime.datetime.now()
