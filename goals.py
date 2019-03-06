@@ -232,12 +232,18 @@ def redeemMon(request, people, notifications, push_notifications):
             realParent = parent
             break
 
+
+
+    notificationDescription = str(child['firstName']) + "'s new balance is $" + str(newBalance)
+    notificationName = child['firstName'] + ' is requesting $' + str(balanceDeduct)
+
+
     new_notification = {
         'email': realParent['email'],
         'accountType': 'Parent',
         'notificationType': 'Redemption',
-        'notificationName': balanceDeduct,
-        'description': newBalance,
+        'notificationName': notificationName,
+        'description': notificationDescription,
         'senderName': child['firstName'],
         'senderEmail': child['email'],
         'priority': realParent['notCounter'],
