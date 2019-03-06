@@ -119,7 +119,7 @@ def getTasksChild(email, tasks):
     return response
 
 #Handle when children complete tasks
-def completeTask(request, tasks, notifications, people, mail, app):
+def completeTask(request, tasks, notifications, people, mail, app, push_notifications):
     request_json = request.get_json()
     child = people.find_one({'email':fixEmail(request_json['payLoad']['email'])})
     stringName = child['firstName']
@@ -165,7 +165,7 @@ def completeTask(request, tasks, notifications, people, mail, app):
     #             msg.body = mstring
     #             mail.send(msg)
 
-            notString = notification['senderName'] + 'has just completed the task ' + new_notification['notificationName'] + '. Log in to Tellr to verify!'
+            notString = new_notification['senderName'] + 'has just completed the task ' + new_notification['notificationName'] + '. Log in to Tellr to verify!'
 
             # Waiting for OneSignal account to test
             send_notification(new_notification['email'], notString, 'Task Completed!', push_notifications)

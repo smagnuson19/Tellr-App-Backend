@@ -96,7 +96,7 @@ def completeTasks():
     authenStatus = verifyToken(request)
     if authenStatus[1]:
         if request.method == 'POST':
-            return completeTask(request, tasks, notifications, people, mail, app)
+            return completeTask(request, tasks, notifications, people, mail, app, push_notifications)
     else:
         response = jsonify([{'Error': authenStatus[0]
         }])
