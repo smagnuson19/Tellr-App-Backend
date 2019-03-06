@@ -6,7 +6,7 @@ from copy import deepcopy
 from push import *
 
 #Function for adding a friend in social leaderboard
-def socialAdd(request, people, social, notifications):
+def socialAdd(request, people, social, notifications, push_notifications):
     request_json = request.get_json()
     userEmail = fixEmail(request_json['payLoad']['email'])
     user = people.find_one({'email': userEmail}, {'_id': False})
