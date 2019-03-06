@@ -99,9 +99,7 @@ def postTask(request,tasks, people, notifications, mail, app, push_notifications
     #             mail.send(msg)
     notString = 'A new task ' + new_task['taskName'] + ' has been created!'
 
-    # Waiting for OneSignal account to test
-    # send_notification(client, child['email'], notString, 'New Task Created!', push_notifications)
-
+    send_notification(child['email'], notString, 'New Task Created!', push_notifications)
     response = jsonify([{
     }])
     response.status_code = 200
