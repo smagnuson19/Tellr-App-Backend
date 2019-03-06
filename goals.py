@@ -19,7 +19,7 @@ def getGoals(email, goals):
     return response
 
 # Function for posting and storing goals created by children
-def postGoals(request, goals, people, notifications, mail, app):
+def postGoals(request, goals, people, notifications, mail, app, push_notifications):
     request_json = request.get_json()
     new_goal = {
         'name': request_json['payLoad']['name'],
@@ -73,7 +73,7 @@ def postGoals(request, goals, people, notifications, mail, app):
     return response
 
 # Function that allows children to redeem goals and updates balance and notifies parents accordingly
-def finishGoal(request, people, goals, notifications, mail, app, social):
+def finishGoal(request, people, goals, notifications, mail, app, social, push_notifications):
     request_json = request.get_json()
     child = people.find_one({'email': fixEmail(request_json['payLoad']['email'])})
     goalList = goals.find({'email': fixEmail(request_json['payLoad']['email'])})

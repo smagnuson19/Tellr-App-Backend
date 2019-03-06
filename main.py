@@ -354,7 +354,7 @@ def makeGoals():
     authenStatus = verifyToken(request)
     if authenStatus[1]:
         if request.method == 'POST':
-            return postGoals(request, goals, people, notifications, mail, app)
+            return postGoals(request, goals, people, notifications, mail, app, push_notifications)
     else:
         response = jsonify([{'Error': authenStatus[0]
         }])
@@ -420,7 +420,7 @@ def redeemGoal():
     authenStatus = verifyToken(request)
     if authenStatus[1]:
         if request.method == 'POST':
-            return finishGoal(request,people, goals, notifications, mail, app, social)
+            return finishGoal(request,people, goals, notifications, mail, app, social, push_notifications)
     else:
         response = jsonify([{'Error': authenStatus[0]
         }])
