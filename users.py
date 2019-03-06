@@ -275,8 +275,8 @@ def getAnalyticsWeek(email, people):
         dictresponse['avgGoal'] = 0
     else:
         dictresponse['avgGoal'] = round(float(goal_used/goalsRedeemed))
-    dictresponse['net'] = task_earned - moneyReeemed - goal_used + allowance
-    dictresponse['rate'] = dictresponse['net']
+    dictresponse['net'] = round(task_earned - moneyReeemed - goal_used + allowance)
+    dictresponse['rate'] = round(dictresponse['net'])
     dictresponse['allowance'] = allowance
     dictresponse['numAllowances'] = numAllowances
 
@@ -393,7 +393,7 @@ def getAnalyticsMonth(email, people):
         dictresponse['avgGoal'] = 0
     else:
         dictresponse['avgGoal'] = round(float(goal_used/goalsRedeemed))
-    dictresponse['net'] = task_earned - moneyReeemed - goal_used +allowance
+    dictresponse['net'] = round(task_earned - moneyReeemed - goal_used +allowance)
     dictresponse['rate'] = round(float(dictresponse['net']*7/31))
     dictresponse['allowance'] = allowance
     dictresponse['numAllowances'] = numAllowances
@@ -513,7 +513,7 @@ def getAnalyticsYear(email, people):
         dictresponse['avgGoal'] = 0
     else:
         dictresponse['avgGoal'] = round(float(goal_used/goalsRedeemed))
-    dictresponse['net'] = task_earned - moneyReeemed - goal_used +allowance
+    dictresponse['net'] = round(task_earned - moneyReeemed - goal_used +allowance)
     dictresponse['rate'] = round(float(dictresponse['net']*7/365))
     dictresponse['allowance'] = allowance
     dictresponse['numAllowances'] = numAllowances
