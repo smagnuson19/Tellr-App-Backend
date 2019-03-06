@@ -103,7 +103,6 @@ def finishGoal(request, people, goals, notifications, mail, app, social):
         'priority': realParent['notCounter'],
         'value': redeemedGoal['value'],
         'read': False
-        'dateRedeemed': redeemedGoal['dateRedeemed'],
     }
     notifications.insert_one(new_notification1)
     current_priority = realParent['notCounter']
