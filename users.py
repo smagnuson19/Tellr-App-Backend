@@ -103,9 +103,9 @@ def getUserHistoryWeek(email, people):
                 maxGrid = int(dictresponse[j][0])
         else:
             break
-    dictresponse[0] = [child['balance'], str(datetime.datetime.now())[:10]
+    dictresponse[0] = [child['balance'], str(datetime.datetime.now())[:10], 'NOW']
     if j == 1:
-        dictresponse[1] = [child['balance'], str(datetime.datetime.now()-datetime.timedelta(days=7))[:10], 'NOW']
+        dictresponse[1] = [child['balance'], str(datetime.datetime.now()-datetime.timedelta(days=7))[:10] + str(datetime.datetime.now()-datetime.timedelta(days=7))[11:16], 'NOW']
     print(dictresponse)
     response = jsonify(dictresponse)
     response.status_code = 200
