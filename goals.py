@@ -88,25 +88,28 @@ def finishGoal(request, people, goals, notifications, mail, app, social):
     people.update_one({'email': child['email']},{"$set":{'earnings': earnings_history}},upsert = False)
 
     parents = people.find({'familyName': child['familyName']})
+    parent_list = []
     for parent in parents:
         if parent['accountType']=='Parent':
-            realParent = parent
-            break
-    new_notification1 = {
-        'email': realParent['email'],
-        'accountType': 'Parent',
-        'notificationType': 'goalComplete',
-        'notificationName': redeemedGoal['name'],
-        'description': redeemedGoal['description'],
-        'senderName': child['firstName'],
-        'senderEmail': child['email'],
-        'priority': realParent['notCounter'],
-        'value': redeemedGoal['value'],
-        'read': False
-    }
-    notifications.insert_one(new_notification1)
-    current_priority = realParent['notCounter']
-    people.update_one({'email': realParent['email']}, {"$set":{'notCounter': current_priority+1}},upsert = False)
+            parent_list.append(parent)
+
+    for realParent in parent_list:
+        new_notification1 = {
+            'email': realParent['email'],
+            'accountType': 'Parent',
+            'notificationType': 'goalComplete',
+            'notificationName': redeemedGoal['name'],
+            'description': redeemedGoal['description'],
+            'senderName': child['firstName'],
+            'senderEmail': child['email'],
+            'priority': realParent['notCounter'],
+            'value': redeemedGoal['value'],
+            'read': False
+        }
+        notifications.insert_one(new_notification1)
+        current_priority = realParent['notCounter']
+        people.update_one({'email': realParent['email']}, {"$set":{'notCounter': current_priority+1}},upsert = False)
+
     new_notification2 = {
         'email': child['email'],
         'accountType': 'Child',

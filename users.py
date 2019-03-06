@@ -661,6 +661,8 @@ def otherParents(email, people):
         if chil['accountType'] == 'Parent' and chil['email'] != fixEmail(email):
             returnDict[i] = chil['firstName'] + " " + chil['lastName']
             i+=1
+    if i == 0:
+        returnDict[0] = 'Currently No Other Parents on this Account'
     response = jsonify(returnDict)
     response.status_code = 200
     return response
