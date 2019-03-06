@@ -658,8 +658,9 @@ def otherParents(email, people):
     returnDict = {}
     i = 0
     for chil in possParents:
-        if chil['accountType'] == 'Parent':
+        if chil['accountType'] == 'Parent' and chil['email'] != fixEmail(email):
             returnDict[i] = chil['firstName'] + " " + chil['lastName']
+            i+=1
     response = jsonify(returnDict)
     response.status_code = 200
     return response
