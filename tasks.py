@@ -233,7 +233,7 @@ def verifyTask(request, tasks, notifications, people, mail, app, social, push_no
         #             msg.body = mstring
         #             mail.send(msg)
 
-        notString = 'Completion of your task ' + payLoad['taskName'] + ' has verified! Your balance has been updated.'
+        notString = 'Completion of your task ' + new_notification['notificationName'] + ' has verified! Your balance has been updated.'
 
         # Waiting for OneSignal account to test
         send_notification(child['email'], notString, 'Task Completion Verified!', push_notifications)
