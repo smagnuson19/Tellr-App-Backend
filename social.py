@@ -47,7 +47,7 @@ def socialAdd(request, people, social, notifications):
     notString = new_notification['notificationName'] + ' has invited you to connect on Tellr!'
 
     # Waiting for OneSignal account to test
-    # send_notification(new_notification['friendEmail'], notString, 'Task Completion Verified!', push_notifications)
+    send_notification(new_notification['email'], notString, 'Friend Request', push_notifications)
 
     response = jsonify([{
     }])
@@ -93,7 +93,7 @@ def socialAccept(request, people, social, notifications, push_notifications):
     notString = new_notification['notificationName'] + ' has accepted your friend request on Tellr!'
 
     # Waiting for OneSignal account to test
-    # send_notification(new_notification['friendEmail'], notString, 'Task Completion Verified!', push_notifications)
+    send_notification(new_notification['email'], notString, 'Friend Request Accepted!', push_notifications)
     response = jsonify([{
     }])
     response.status_code = 200

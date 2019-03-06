@@ -165,6 +165,11 @@ def completeTask(request, tasks, notifications, people, mail, app):
     #             msg.body = mstring
     #             mail.send(msg)
 
+            notString = notification['senderName'] + 'has just completed the task ' + new_notification['notificationName'] + '. Log in to Tellr to verify!'
+
+            # Waiting for OneSignal account to test
+            send_notification(new_notification['email'], notString, 'Task Completed!', push_notifications)
+
     response = jsonify([{
     }])
     response.status_code = 200
@@ -228,10 +233,10 @@ def verifyTask(request, tasks, notifications, people, mail, app, social, push_no
         #             msg.body = mstring
         #             mail.send(msg)
 
-        # notString = 'Completion of your task ' + payLoad['taskName'] + ' has verified! Your balance has been updated.'
+        notString = 'Completion of your task ' + payLoad['taskName'] + ' has verified! Your balance has been updated.'
 
         # Waiting for OneSignal account to test
-        # send_notification(client, child['email'], notString, 'Task Completion Verified!', push_notifications)
+        send_notification(child['email'], notString, 'Task Completion Verified!', push_notifications)
 
         response = jsonify([{
         }])
