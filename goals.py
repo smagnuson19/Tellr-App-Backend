@@ -103,6 +103,7 @@ def finishGoal(request, people, goals, notifications, mail, app, social):
         'priority': realParent['notCounter'],
         'value': redeemedGoal['value'],
         'read': False
+        'dateRedeemed': redeemedGoal['dateRedeemed'],
     }
     notifications.insert_one(new_notification1)
     current_priority = realParent['notCounter']
@@ -235,8 +236,8 @@ def redeemMon(request, people, notifications, push_notifications):
 
 
     notificationDescription = str(child['firstName']) + "'s new balance is $" + str(newBalance)
-    notificationName = child['firstName'] + ' is requesting $' + str(balanceDeduct)
-
+    # notificationName = child['firstName'] + ' is requesting $' + str(balanceDeduct)
+    notificationName = Cash Payout!
 
     new_notification = {
         'email': realParent['email'],
