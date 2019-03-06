@@ -124,7 +124,7 @@ def getTasksChild(email, tasks):
 def completeTask(request, tasks, notifications, people, mail, app):
     request_json = request.get_json()
     child = people.find_one({'email':fixEmail(request_json['payLoad']['email'])})
-    stringName = child['firstName']+ ' '+ child['lastName']
+    stringName = child['firstName']
     tasksList = tasks.find({'childEmail':fixEmail(str.lower(request_json['payLoad']['email']))})
     now = datetime.datetime.now()
     for task in tasksList:
