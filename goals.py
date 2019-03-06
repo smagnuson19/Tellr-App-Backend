@@ -234,8 +234,8 @@ def redeemMon(request, people, notifications, push_notifications):
 
 
 
-    notificationDescription = str(child['firstName']) + "'s new balace is $" + str(newBalance)
-    notificationName = child['firstName'] + ' is requesting' + str(balanceDeduct)
+    notificationDescription = str(child['firstName']) + "'s new balance is $" + str(newBalance)
+    notificationName = child['firstName'] + ' is requesting $' + str(balanceDeduct)
 
 
     new_notification = {
