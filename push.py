@@ -8,13 +8,13 @@ onesignal_client = onesignal_sdk.Client(user_auth_key="MjhmY2U2ZWMtN2YyNy00MWRlL
 #General fucntion for sending different types of notifications to user with given email through OneSignal
 def send_notification(email, notification, heading, push_notifications):
     user = push_notifications.find_one({'email': email})
+    if not user['loggedIn']:
+        return False
     id = user['pushID']
-    print(id)
     new_notification = onesignal_sdk.Notification(contents= {"en": notification})
     new_notification.set_parameter("headings", {"en": heading})
-    new_notification.set_parameter("!include_external_user_ids", [id])
+    new_notification.set_target_devices([id])
     response = onesignal_client.send_notification(new_notification)
-    print(response.json())
     if response.status_code == 200:
         return True
     return False
