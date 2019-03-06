@@ -53,6 +53,11 @@ def postGoals(request, goals, people, notifications, mail, app):
     current_priority = realParent['notCounter']
     people.update_one({'email': realParent['email']}, {"$set":{'notCounter': current_priority+1}},upsert = False)
     result = goals.insert_one(new_goal)
+
+    notString = new_notification['senderName'] + ' has created a new goal'+ new_notification['notificationName'] + ". Log in to Tellr to view!"
+
+    # Waiting for OneSignal account to test
+    send_notification(new_notification['email'], notString, 'Goal Created', push_notifications)
     # mstring = "Your child " + child['firstName'] + " has created a new goal: " + new_goal['name'] + ". Visit your tellrApp to learn more and to approve or send back their choice."
     # for char in realParent['email']:
     #     if char == "@":
@@ -153,7 +158,10 @@ def finishGoal(request, people, goals, notifications, mail, app, social):
     #             mail.send(msg)
     notifications.insert_one(new_notification3)
     people.update_one({'email': child['email']}, {"$set":{'notCounter': current_priority1+2}},upsert = False)
+    notString = new_notification1['senderName'] + ' has completed their goal'+ new_notification1['notificationName'] + ". Log in to Tellr to view!"
 
+    # Waiting for OneSignal account to test
+    send_notification(new_notification1['email'], notString, 'Goal Completed', push_notifications)
     response = jsonify([{
     }])
     response.status_code = 200

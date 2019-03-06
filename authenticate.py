@@ -40,6 +40,8 @@ def authenticateUser(request, credentials, push_notifications):
             testObj = push_notifications.find_one({'email': email})
             if testObj != None:
                 push_notifications.update_one({'email': email}, {"$set":{'loggedIn': True}},upsert = False)
+                if 'oneSignalID' in request_json['payLoad']:
+                    push_notifications.update_one({'email': email}, {"$set":{'pushID': request_json['payLoad']['oneSignalID']}},upsert = False)
             response = jsonify([{
             'Success': True,
             'Token': token.decode('utf-8')
@@ -139,6 +141,7 @@ def authAddUser(request, people, credentials, social, push_notifications):
                 'loggedIn': True
             }
 
+            all_people = people.find({'familyName':str.lower(request_json['payLoad']['familyName'])},{'_id': False})
             people.insert_one(new_person)
             credentials.insert_one(creds)
             result3= social.insert_one(socialEntry)
@@ -149,6 +152,13 @@ def authAddUser(request, people, credentials, social, push_notifications):
             'Success': True,
             'Token': token.decode('utf-8')
             }])
+
+            notString = new_person['firstName'] + " has just joined your Tellr family!"
+
+            # Waiting for OneSignal account to test
+            if all_people != None:
+                for single in all_people:
+                    send_notification(single['email'], notString, 'New Family Member Joined!', push_notifications)
 
             response.status_code = 200
             return response
