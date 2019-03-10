@@ -23,7 +23,7 @@ def postGoals(request, goals, people, notifications, mail, app, push_notificatio
     request_json = request.get_json()
     new_goal = {
         'name': request_json['payLoad']['name'],
-        'value': float(round(request_json['payLoad']['value'],2)),
+        'value': round(float(request_json['payLoad']['value']),2),
         'email': fixEmail(request_json['payLoad']['email']),
         'description': request_json['payLoad']['description'],
         'image': request_json['payLoad']['image'],
