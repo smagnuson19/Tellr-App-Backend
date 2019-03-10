@@ -23,7 +23,7 @@ def postGoals(request, goals, people, notifications, mail, app, push_notificatio
     request_json = request.get_json()
     new_goal = {
         'name': request_json['payLoad']['name'],
-        'value': float(request_json['payLoad']['value']),
+        'value': float(round(request_json['payLoad']['value'],2)),
         'email': fixEmail(request_json['payLoad']['email']),
         'description': request_json['payLoad']['description'],
         'image': request_json['payLoad']['image'],
@@ -245,8 +245,8 @@ def redeemMon(request, people, notifications, push_notifications):
 
 
 
-    notificationDescription = str(child['firstName']) + "'s new balance is $" + str(newBalance)
-    notificationName = child['firstName'] + ' is requesting $' + str(balanceDeduct)
+    notificationDescription = str(child['firstName']) + "'s new balance is $" + str(round(newBalance,2))
+    notificationName = child['firstName'] + ' is requesting $' + str(round(balanceDeduct,2))
 
     new_notification = {
         'email': realParent['email'],

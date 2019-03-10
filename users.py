@@ -69,6 +69,7 @@ def findChildren(email, people):
         for child in childrenList:
             if child['accountType']=='Child':
                 dictresponse[i]=child
+                dictresponse[i]['balance'] = round(dictresponse[i]['balance'],2)
                 i = i+1
         print(dictresponse)
         response = jsonify(dictresponse)
