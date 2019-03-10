@@ -26,7 +26,7 @@ Install Homebrew, npm, node, yarn
 6. `export SECRET='secret'`
 7. `python main.py`
 
-### Setup of Local MongoDB
+### Setup of Local MongoDB (Optional)
 
 1. `brew install mongodb`
 2. `mkdir -p /data/db`
@@ -35,7 +35,7 @@ Install Homebrew, npm, node, yarn
 
 ## Deployment
 
-To run locally with a _local_ database, (default port 27017), run:
+To run locally with a _local_ database (requires the setup of a local MongoDB), default port 27017, run:
 
 `python main.py local`
 
@@ -49,13 +49,15 @@ MLab URI: `mongodb://heroku_sxklq0jf:fvegd2q34of2qn0j5jivm9b51b@ds227243.mlab.co
 
 Heroku API URL: `https://tellr-dartmouth.herokuapp.com/api`.
 
+Note that line 6 sets the authentication secret to the string of your choice, in this case 'secret', which is also currently used as the configuration variable on Heroku (secrets need to be the same in order to enable account login from either local or Heroku backend).
+
 ## Authors
 
 Hanting Guo, Scott Magnuson, Emily Pitts, Jed Rosen
 
-## Architecture
+## Architecture and Code Structure Overview
 
-MongoDB, Pymongo, Flask, RestAPI
+This backend uses MongoDB, Pymongo, and Flask, and follows the REST architecture style. The
 
 #### Tech Stack
 We are using React Native for our frontend and mobile app and flask for our backend.
