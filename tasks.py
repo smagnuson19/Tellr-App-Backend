@@ -46,7 +46,7 @@ def postTask(request,tasks, people, notifications, mail, app, push_notifications
     #Create new task entry and store in tasks database
     new_task = {
         'taskName': request_json['payLoad']['taskName'],
-        'reward': float(request_json['payLoad']['reward']),
+        'reward': round(float(request_json['payLoad']['reward']),2),
         'taskDeadline': date_time_obj,
         'taskDescription': request_json['payLoad']['taskDescription'],
         'childEmail': fixEmail(request_json['payLoad']['childEmail']),

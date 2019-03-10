@@ -190,6 +190,7 @@ def getAnalyticsAll(email, people):
 
 def getAnalyticsWeek(email, people):
     child = people.find_one({'email': str.lower(email)}, {'_id': False})
+    print(child)
     earnings_history = child['earnings']
     now = datetime.datetime.now()
     tasksCompleted = 0
