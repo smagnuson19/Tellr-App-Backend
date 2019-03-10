@@ -26,6 +26,8 @@ Install Homebrew, npm, node, yarn
 6. `export SECRET='secret'`
 7. `python main.py`
 
+Note that line 6 sets the authentication secret to the string of your choice, in this case 'secret', which is also currently used as the configuration variable on Heroku (secrets need to be the same both here and on Heroku in order to enable account login from either local or Heroku backend).
+
 ### Setup of Local MongoDB (Optional)
 
 1. `brew install mongodb`
@@ -49,7 +51,7 @@ MLab URI: `mongodb://heroku_sxklq0jf:fvegd2q34of2qn0j5jivm9b51b@ds227243.mlab.co
 
 Heroku API URL: `https://tellr-dartmouth.herokuapp.com/api`.
 
-Note that line 6 sets the authentication secret to the string of your choice, in this case 'secret', which is also currently used as the configuration variable on Heroku (secrets need to be the same in order to enable account login from either local or Heroku backend).
+
 
 ## Authors
 
