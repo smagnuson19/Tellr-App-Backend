@@ -143,8 +143,6 @@ def get_completed_task_number_graph(email, social, people, goals):
     else:
         responseDict[timeD] = str(100*float(retnum))[:4]
     responseDict[timeD +1] = gridMax
-    print(child['firstName'])
-    print(responseDict)
     response = jsonify([responseDict
         ])
     response.status_code = 200

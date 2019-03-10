@@ -17,7 +17,6 @@ def authenticateUser(request, credentials, push_notifications):
     email = fixEmail(request_json['payLoad']['email'])
     pw = request_json['payLoad']['password']
     user = credentials.find_one({'email': email}, {'_id': False})
-    print(request_json)
     #If we did get a user, raise an error
     if user == None:
         response = jsonify([{
@@ -71,7 +70,6 @@ def authLogout(request, push_notifications):
 def authAddUser(request, people, credentials, social, push_notifications):
     if request.method == 'POST':
         request_json = request.get_json()
-        print(request_json)
         #Check to see whether user is already in databse; if so, return empty json with 201 status
         if not people.find_one({'email':str.lower(request_json['payLoad']['email'])},{'_id': False}) == None:
             response = jsonify([{

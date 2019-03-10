@@ -6,7 +6,9 @@
 
 Organize and streamline task assignment and chores in your household while teaching your kids the value of money!
 
-![alt text](https://github.com/dartmouth-cs98/18f-tellr-frontend/blob/master/Data%20Model%20and%20Sketches/Tellr-18F-Child.png)
+![Parent](https://github.com/dartmouth-cs98/18f-tellr-frontend/blob/master/Data%20Model%20and%20Sketches/19W-Tellr-Parent.png)
+![Main](https://github.com/dartmouth-cs98/18f-tellr-frontend/blob/master/Data%20Model%20and%20Sketches/19W-Tellr-Main.png)
+![Child](https://github.com/dartmouth-cs98/18f-tellr-frontend/blob/master/Data%20Model%20and%20Sketches/Tellr-19W-Child.png)
 
 ## Setup
 
@@ -17,11 +19,12 @@ Install Homebrew, npm, node, yarn
 ### Setup of Local Python Environment
 
 1. `brew install python`
-2. `python3 -m pip install --user virtualenv`
+2. `python -m pip install --user virtualenv`
 3. `python -m virtualenv env`
 4. `source env/bin/activate`
 5. `pip install -r requirements.txt`
-6. `python main.py`
+6. `export SECRET='secret'`
+7. `python main.py`
 
 ### Setup of Local MongoDB
 
@@ -32,17 +35,19 @@ Install Homebrew, npm, node, yarn
 
 ## Deployment
 
-To run locally with a local database, (default port 27017), run:
+To run locally with a _local_ database, (default port 27017), run:
 
 `python main.py local`
 
 The online database is currently hosted on Heroku.
 
-MLab URI: `mongodb://heroku_sxklq0jf:fvegd2q34of2qn0j5jivm9b51b@ds227243.mlab.com:27243/heroku_sxklq0jf`
-
-Heroku API URL: `https://tellr-dartmouth.herokuapp.com/api`. To run the backend locally with the Heroku server, run:
+To run the backend locally on the online database, run:
 
 `python main.py`
+
+MLab URI: `mongodb://heroku_sxklq0jf:fvegd2q34of2qn0j5jivm9b51b@ds227243.mlab.com:27243/heroku_sxklq0jf`
+
+Heroku API URL: `https://tellr-dartmouth.herokuapp.com/api`.
 
 ## Authors
 
@@ -57,7 +62,7 @@ We are using React Native for our frontend and mobile app and flask for our back
 
 #### Data Objects and Methods
 
-The following are the data objects for each GET and POST request.
+The following are the data objects and endpoints for each GET and POST request currently in use by the app.
 
 ##### /api/childtasks/\<email\>
 Methods: GET

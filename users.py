@@ -71,7 +71,6 @@ def findChildren(email, people):
                 dictresponse[i]=child
                 dictresponse[i]['balance'] = round(dictresponse[i]['balance'],2)
                 i = i+1
-        print(dictresponse)
         response = jsonify(dictresponse)
         response.status_code = 200
     return response
@@ -83,10 +82,8 @@ def getUserHistory(email, people):
     for i in range(len(earnings_history)):
         dictresponse[i] = list(earnings_history[i])
         dictresponse[i][1] = str(dictresponse[i][1])[:10] + "T" + str(dictresponse[i][1])[11:19]
-        print(dictresponse[i][1])
     dictresponse[len(earnings_history)] = [dictresponse[len(earnings_history)-1][0], str(datetime.datetime.now()+datetime.timedelta(hours=5))[:10] + "T" + str(datetime.datetime.now()+datetime.timedelta(hours=5))[11:19], 'NOW']
     response = jsonify(dictresponse)
-    print(dictresponse)
     response.status_code = 200
     return response
 
@@ -109,7 +106,6 @@ def getUserHistoryWeek(email, people):
     dictresponse[0] = [child['balance'], str(datetime.datetime.now()+datetime.timedelta(hours=5))[:10] + "T" + str(datetime.datetime.now()+datetime.timedelta(hours=5))[11:19], 'NOW']
     if j == 1:
         dictresponse[1] = [child['balance'], str(datetime.datetime.now()-datetime.timedelta(days=7))[:10] + "T" +  str(datetime.datetime.now()-datetime.timedelta(days=7))[11:19], 'NOW']
-    print(dictresponse)
     response = jsonify(dictresponse)
     response.status_code = 200
     return (dictresponse, maxGrid)
@@ -133,7 +129,6 @@ def getUserHistoryMonth(email, people):
     dictresponse[0] = [child['balance'], str(datetime.datetime.now()+datetime.timedelta(hours=5))[:10] + "T" + str(datetime.datetime.now()+datetime.timedelta(hours=5))[11:19], 'NOW']
     if j == 1:
         dictresponse[1] = [child['balance'], str(datetime.datetime.now()-datetime.timedelta(days=30))[:10] + "T" +  str(datetime.datetime.now()-datetime.timedelta(days=30))[11:19], 'NOW']
-    print(dictresponse)
     response = jsonify(dictresponse)
     response.status_code = 200
     return (dictresponse, maxGrid)
@@ -157,7 +152,6 @@ def getUserHistoryYear(email, people):
     dictresponse[0] = [child['balance'], str(datetime.datetime.now()+datetime.timedelta(hours=5))[:10] + "T" + str(datetime.datetime.now()+datetime.timedelta(hours=5))[11:19], 'NOW']
     if j == 1:
         dictresponse[1] = [child['balance'], str(datetime.datetime.now()-datetime.timedelta(days=365))[:10] + "T" +  str(datetime.datetime.now()-datetime.timedelta(days=365))[11:19], 'NOW']
-    print(dictresponse)
     response = jsonify(dictresponse)
     response.status_code = 200
     return (dictresponse, maxGrid)
@@ -192,7 +186,6 @@ def getAnalyticsAll(email, people):
 
 def getAnalyticsWeek(email, people):
     child = people.find_one({'email': str.lower(email)}, {'_id': False})
-    print(child)
     earnings_history = child['earnings']
     now = datetime.datetime.now()
     tasksCompleted = 0
@@ -599,7 +592,7 @@ def upBalance(request,people,notifications, mail, app):
 #Function for deleting all users of a given family name
 def delAllUser(request,people, credentials):
     person = people.find_one({'email': (request.get_json()['payLoad']['email'])}, {'_id': False})
-    if person.accountType == 'Parent':
+    if person['accountType'] == 'Parent':
         for member in people.find({'familyName': person['familyName']}):
             credentials.delete_one({ "email": member['email'] })
             people.delete_one({ "email": member['email'] })

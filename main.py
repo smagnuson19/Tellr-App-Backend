@@ -59,10 +59,6 @@ goals = db.goals
 notifications = db.notifications
 social = db.social
 push_notifications = db.push_notifications
-goal_last_posted = datetime.datetime.now()
-
-# Task deadline notification checker - waiting for OneSignal account
-# check_task_notis(tasks, push_notifications)
 
 #Passed
 @app.route("/api/childtasks/<email>", methods =['GET'])
@@ -469,7 +465,7 @@ def deleteAllUsers():
     authenStatus = verifyToken(request)
     if authenStatus[1]:
         if request.method == 'POST':
-            return deleteAllUser(request, people, credentials)
+            return delAllUser(request, people, credentials)
     else:
         response = jsonify([{'Error': authenStatus[0]
         }])
@@ -480,7 +476,6 @@ def deleteAllUsers():
 def deleteOne():
     authenStatus = verifyToken(request)
     if authenStatus[1]:
-        print(request.get_json())
         if request.method == 'POST':
             return delOne(request, people, credentials)
     else:
@@ -567,7 +562,6 @@ def getTaskHistory(email):
 def main():
     if request.method == 'POST':
         request_json = request.get_json()
-        print(request_json)
         response = jsonify([{
         }])
         response.status_code = 200
