@@ -4,53 +4,6 @@ from flask_mail import Mail, Message
 from push import *
 import datetime
 
-#Adding a user to the database
-def add_user(request, people, credentials, social, push_notifications):
-    if request.method == 'POST':
-        request_json = request.get_json()
-        #Check to see whether user is already in databse; if so, return empty json with 201 status
-        if not people.find_one({'email':str.lower(request_json['payLoad']['email'])},{'_id': False}) == None:
-            response = jsonify([{
-            'Success': False,
-            'Error': 'Email already exists'
-            }])
-            response.status_code = 401
-            return response
-
-        #If not in databse, add to user and credentials database and return a 200 status code
-        else:
-            new_person = {
-                'firstName': request_json['payLoad']['firstName'],
-                'lastName': request_json['payLoad']['lastName'],
-                'email': str.lower(request_json['payLoad']['email']),
-                'password': request_json['payLoad']['password'],
-                'familyName': str.lower(request_json['payLoad']['familyName']),
-                'accountType': request_json['payLoad']['accountType'],
-                'balance': 0.0,
-                'notCounter': 0,
-                'friends': [str.lower(request_json['payLoad']['email'])]
-            }
-            result1 = people.insert_one(new_person)
-            creds = {
-                'email': str.lower(request_json['payLoad']['email']),
-                'password': request_json['payLoad']['password']
-            }
-            result2= credentials.insert_one(creds)
-
-            socialEntry = {
-                'email': str.lower(request_json['payLoad']['email']),
-                'tasksCompleted': [],
-                'goalsCompleted': [],
-                'completionRate': []
-            }
-
-
-            result3= social.insert_one(socialEntry)
-            response = jsonify([{'Success': True,
-            }])
-            response.status_code = 200
-            return response
-
 #Function that returns dictionary of all children of parent with given email
 def findChildren(email, people):
     #First find the parent
@@ -663,3 +616,52 @@ def otherParents(email, people):
     response = jsonify(returnDict)
     response.status_code = 200
     return response
+
+
+#Adding a user to the database
+#Deprecated; using auth add now instead
+# def add_user(request, people, credentials, social, push_notifications):
+#     if request.method == 'POST':
+#         request_json = request.get_json()
+#         #Check to see whether user is already in databse; if so, return empty json with 201 status
+#         if not people.find_one({'email':str.lower(request_json['payLoad']['email'])},{'_id': False}) == None:
+#             response = jsonify([{
+#             'Success': False,
+#             'Error': 'Email already exists'
+#             }])
+#             response.status_code = 401
+#             return response
+#
+#         #If not in databse, add to user and credentials database and return a 200 status code
+#         else:
+#             new_person = {
+#                 'firstName': request_json['payLoad']['firstName'],
+#                 'lastName': request_json['payLoad']['lastName'],
+#                 'email': str.lower(request_json['payLoad']['email']),
+#                 'password': request_json['payLoad']['password'],
+#                 'familyName': str.lower(request_json['payLoad']['familyName']),
+#                 'accountType': request_json['payLoad']['accountType'],
+#                 'balance': 0.0,
+#                 'notCounter': 0,
+#                 'friends': [str.lower(request_json['payLoad']['email'])]
+#             }
+#             result1 = people.insert_one(new_person)
+#             creds = {
+#                 'email': str.lower(request_json['payLoad']['email']),
+#                 'password': request_json['payLoad']['password']
+#             }
+#             result2= credentials.insert_one(creds)
+#
+#             socialEntry = {
+#                 'email': str.lower(request_json['payLoad']['email']),
+#                 'tasksCompleted': [],
+#                 'goalsCompleted': [],
+#                 'completionRate': []
+#             }
+#
+#
+#             result3= social.insert_one(socialEntry)
+#             response = jsonify([{'Success': True,
+#             }])
+#             response.status_code = 200
+#             return response

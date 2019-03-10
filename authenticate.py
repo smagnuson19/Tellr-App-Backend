@@ -8,7 +8,7 @@ import json
 import datetime
 from push import *
 import os
-# SECRET = "secret"
+
 SECRET = os.environ['SECRET']
 
 #Function for secure login and token generation
