@@ -82,9 +82,11 @@ def getUserHistory(email, people):
     dictresponse = {}
     for i in range(len(earnings_history)):
         dictresponse[i] = list(earnings_history[i])
-        dictresponse[i][1] = str(dictresponse[i][1])[:10]
-    dictresponse[len(earnings_history)] = [dictresponse[len(earnings_history)-1][0], str(datetime.datetime.now())[:10], 'NOW']
+        dictresponse[i][1] = str(dictresponse[i][1])[:10] + "T" + str(dictresponse[i][1])[11:19]
+        print(dictresponse[i][1])
+    dictresponse[len(earnings_history)] = [dictresponse[len(earnings_history)-1][0], str(datetime.datetime.now()+datetime.timedelta(hours=5))[:10] + "T" + str(datetime.datetime.now()+datetime.timedelta(hours=5))[11:19], 'NOW']
     response = jsonify(dictresponse)
+    print(dictresponse)
     response.status_code = 200
     return response
 
@@ -99,14 +101,14 @@ def getUserHistoryWeek(email, people):
         i = len(earnings_history) - i -1
         if (now - earnings_history[i][1]) < datetime.timedelta(days = 7):
             dictresponse[j] = list(earnings_history[i])
-            dictresponse[j][1] = str(dictresponse[j][1])[:10]
+            dictresponse[j][1] = str(dictresponse[j][1])[:10] + "T" + str(dictresponse[j][1])[11:19]
             if dictresponse[j][0] > maxGrid:
                 maxGrid = int(dictresponse[j][0])
         else:
             break
-    dictresponse[0] = [child['balance'], str(datetime.datetime.now())[:10], 'NOW']
+    dictresponse[0] = [child['balance'], str(datetime.datetime.now()+datetime.timedelta(hours=5))[:10] + "T" + str(datetime.datetime.now()+datetime.timedelta(hours=5))[11:19], 'NOW']
     if j == 1:
-        dictresponse[1] = [child['balance'], str(datetime.datetime.now()-datetime.timedelta(days=7))[:10] + str(datetime.datetime.now()-datetime.timedelta(days=7))[11:16], 'NOW']
+        dictresponse[1] = [child['balance'], str(datetime.datetime.now()-datetime.timedelta(days=7))[:10] + "T" +  str(datetime.datetime.now()-datetime.timedelta(days=7))[11:19], 'NOW']
     print(dictresponse)
     response = jsonify(dictresponse)
     response.status_code = 200
@@ -123,14 +125,14 @@ def getUserHistoryMonth(email, people):
         i = len(earnings_history)  - i -1
         if (now - earnings_history[i][1]) < datetime.timedelta(days = 31):
             dictresponse[j] = list(earnings_history[i])
-            dictresponse[j][1] = str(dictresponse[j][1])[:10]
+            dictresponse[j][1] = str(dictresponse[j][1])[:10] + "T" + str(dictresponse[j][1])[11:19]
             if dictresponse[j][0] > maxGrid:
                 maxGrid = int(dictresponse[j][0])
         else:
             break
-    dictresponse[0] = [child['balance'], str(datetime.datetime.now())[:10], 'NOW']
+    dictresponse[0] = [child['balance'], str(datetime.datetime.now()+datetime.timedelta(hours=5))[:10] + "T" + str(datetime.datetime.now()+datetime.timedelta(hours=5))[11:19], 'NOW']
     if j == 1:
-        dictresponse[1] = [child['balance'], str(datetime.datetime.now()-datetime.timedelta(days=30))[:10], 'NOW']
+        dictresponse[1] = [child['balance'], str(datetime.datetime.now()-datetime.timedelta(days=30))[:10] + "T" +  str(datetime.datetime.now()-datetime.timedelta(days=30))[11:19], 'NOW']
     print(dictresponse)
     response = jsonify(dictresponse)
     response.status_code = 200
@@ -147,14 +149,14 @@ def getUserHistoryYear(email, people):
         i = len(earnings_history)  - i -1
         if (now - earnings_history[i][1]) < datetime.timedelta(days = 365):
             dictresponse[j] = list(earnings_history[i])
-            dictresponse[j][1] = str(dictresponse[j][1])[:10]
+            dictresponse[j][1] = str(dictresponse[j][1])[:10] + "T" + str(dictresponse[j][1])[11:19]
             if dictresponse[j][0] > maxGrid:
                 maxGrid = int(dictresponse[j][0])
         else:
             break
-    dictresponse[0] = [child['balance'], str(datetime.datetime.now())[:10], 'NOW']
+    dictresponse[0] = [child['balance'], str(datetime.datetime.now()+datetime.timedelta(hours=5))[:10] + "T" + str(datetime.datetime.now()+datetime.timedelta(hours=5))[11:19], 'NOW']
     if j == 1:
-        dictresponse[1] = [child['balance'], str(datetime.datetime.now()-datetime.timedelta(days=365))[:10], 'NOW']
+        dictresponse[1] = [child['balance'], str(datetime.datetime.now()-datetime.timedelta(days=365))[:10] + "T" +  str(datetime.datetime.now()-datetime.timedelta(days=365))[11:19], 'NOW']
     print(dictresponse)
     response = jsonify(dictresponse)
     response.status_code = 200
