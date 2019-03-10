@@ -1,3 +1,7 @@
+# Backend Server for Tellr App, Using Pymongo and Flask following the REST API framework
+# Hanting Guo, Emily Pitts, Scott Magnuson, and Jed Rosen
+# Main function that listens for all relevant calls
+
 from pymongo import MongoClient
 from flask import Flask, request, jsonify
 from users import *
@@ -17,9 +21,11 @@ import onesignal as onesignal_sdk
 import time
 import datetime
 import os
-
+import sys
 
 app = Flask(__name__)
+
+# Gmail Server for Password Resets
 app.config.update(
     MAIL_SERVER='smtp.gmail.com',
     MAIL_PORT=587,
@@ -29,14 +35,21 @@ app.config.update(
     )
 mail = Mail(app)
 
+#Global Variables used in Configuration
+if len(sys.argv) == 2 and sys.argv[1] == 'local':
+    MONGO_URL = "mongodb://localhost:27017"
+else:
+    MONGO_URL = 'mongodb://heroku_sxklq0jf:fvegd2q34of2qn0j5jivm9b51b@ds227243.mlab.com:27243/heroku_sxklq0jf'
 
-MONGO_URL = 'mongodb://heroku_sxklq0jf:fvegd2q34of2qn0j5jivm9b51b@ds227243.mlab.com:27243/heroku_sxklq0jf'
-# if MONGO_URL == None:
-# MONGO_URL = "mongodb://localhost:27017"
+ONE_SIG_USER_AUTH_KEY = "MjhmY2U2ZWMtN2YyNy00MWRlLWI3ZmYtNGZmMDljMWM5MjM0"
+ONE_SIG_APP_AUTH_KEY = "MmVhODM2YjEtZjM4Mi00MzNjLWIxNmUtNjAwYzM2ZWYxNDZi"
+ONE_SIG_APP_ID = "4e80c299-4fec-4279-bde3-3cdffbb24e1d"
 
-onesignal_client = onesignal_sdk.Client(user_auth_key="MjhmY2U2ZWMtN2YyNy00MWRlLWI3ZmYtNGZmMDljMWM5MjM0",
-                                        app={"app_auth_key": "MmVhODM2YjEtZjM4Mi00MzNjLWIxNmUtNjAwYzM2ZWYxNDZi", "app_id": "4e80c299-4fec-4279-bde3-3cdffbb24e1d"})
+# Initiate OneSignal
+onesignal_client = onesignal_sdk.Client(user_auth_key=ONE_SIG_USER_AUTH_KEY,
+                                        app={"app_auth_key": ONE_SIG_APP_AUTH_KEY, "app_id": ONE_SIG_APP_ID})
 
+# Assign variables to collections - see README for a description of each collection
 client1 = MongoClient(MONGO_URL)
 db = client1.heroku_sxklq0jf
 credentials = db.credentials
@@ -186,12 +199,12 @@ def get_user(email):
         realEmail=fixEmail(email)
         if request.method == 'GET':
             user = people.find_one({'email': realEmail},{'_id': False})
-            print(user)
         if user == None:
             response = jsonify([{
             }])
             response.status_code = 202
         else:
+            user['balance'] = round(user['balance'], 2)
             response = jsonify(user)
             response.status_code = 200
         return response
