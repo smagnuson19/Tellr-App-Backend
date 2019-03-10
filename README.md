@@ -32,15 +32,17 @@ Install Homebrew, npm, node, yarn
 
 ## Deployment
 
-To run locally (default port 27017), run:
+To run locally with a local database, (default port 27017), run:
 
-`python main.py`
+`python main.py local`
 
 The online database is currently hosted on Heroku.
 
 MLab URI: `mongodb://heroku_sxklq0jf:fvegd2q34of2qn0j5jivm9b51b@ds227243.mlab.com:27243/heroku_sxklq0jf`
 
-Heroku API URL (for front end): `https://tellr-dartmouth.herokuapp.com/api`
+Heroku API URL: `https://tellr-dartmouth.herokuapp.com/api`. To run the backend locally with the Heroku server, run:
+
+`python main.py`
 
 ## Authors
 
@@ -418,7 +420,7 @@ Methods: POST, GET
 
 Get returns the a dictionary with one key: color. Default is set to 0 and any legacy accounts will always have 0 as its color.
 
-Post expects a dictionary named payLoad with one key: color. Value is any int you want the backend to store and return in subsequent GET calls. 
+Post expects a dictionary named payLoad with one key: color. Value is any int you want the backend to store and return in subsequent GET calls.
 
 ##### /api/notifications/\<email\>
 Methods: GET
