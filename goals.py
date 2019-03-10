@@ -54,7 +54,7 @@ def postGoals(request, goals, people, notifications, mail, app, push_notificatio
     people.update_one({'email': realParent['email']}, {"$set":{'notCounter': current_priority+1}},upsert = False)
     result = goals.insert_one(new_goal)
 
-    notString = new_notification['senderName'] + ' has created a new goal'+ new_notification['notificationName'] + ". Log in to Tellr to view!"
+    notString = new_notification['senderName'] + ' has created a new goal '+ new_notification['notificationName'] + ". Log in to Tellr to view!"
 
     # Waiting for OneSignal account to test
     send_notification(new_notification['email'], notString, 'Goal Created', push_notifications)
