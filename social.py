@@ -235,8 +235,8 @@ def getStats(email, people, social, tasks):
         tasksCompletedDeadline = 0
         #For completion rate, find the total number of tasks assigned in past month/week,
         #then the number of those that are completed
+        run = 0
         if index >=0:
-            run = 0
             current = completionDeadlineList[index]
             while ((now - current <= datetime.timedelta(days=7))):
                 if now > current:
