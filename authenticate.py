@@ -3,6 +3,7 @@ import bcrypt
 import random
 from handleEmail import *
 from flask import Flask, request, jsonify
+from flask_mail import Mail, Message
 import json
 import datetime
 from push import *
@@ -206,7 +207,10 @@ def forgotPassword(request, credentials, mail, app):
                         sender="teller.notifications@gmail.com",
                         recipients=[email])
                     msg.body = mstring
-                    mail.send(msg)
+                    try:
+                        mail.send(msg)
+                    except:
+                        print("invalid email")
         response = jsonify([{'Success': True}])
         response.status_code = 200
         return response
