@@ -25,14 +25,23 @@ import sys
 
 app = Flask(__name__)
 
+EMAIL_MAIL_SERVER = 'smtp.gmail.com'
+EMAIL_PORT = 587
+EMAIL_USERNAME = 'tellr.notifications@gmail.com'
+EMAIL_PASSWORD = 'tellr12345'
+ONE_SIG_USER_AUTH_KEY = "MjhmY2U2ZWMtN2YyNy00MWRlLWI3ZmYtNGZmMDljMWM5MjM0"
+ONE_SIG_APP_AUTH_KEY = "MmVhODM2YjEtZjM4Mi00MzNjLWIxNmUtNjAwYzM2ZWYxNDZi"
+ONE_SIG_APP_ID = "4e80c299-4fec-4279-bde3-3cdffbb24e1d"
+
 # Gmail Server for Password Resets
 app.config.update(
-    MAIL_SERVER='smtp.gmail.com',
-    MAIL_PORT=587,
+    MAIL_SERVER= EMAIL_MAIL_SERVER,
+    MAIL_PORT= EMAIL_PORT,
     MAIL_USE_TLS=True,
-    MAIL_USERNAME = 'tellr.notifications@gmail.com',
-    MAIL_PASSWORD = 'tellr12345'
+    MAIL_USERNAME = EMAIL_USERNAME,
+    MAIL_PASSWORD = EMAIL_PASSWORD
     )
+
 mail = Mail(app)
 
 #Global Variables used in Configuration
@@ -40,10 +49,6 @@ if len(sys.argv) == 2 and sys.argv[1] == 'local':
     MONGO_URL = "mongodb://localhost:27017"
 else:
     MONGO_URL = 'mongodb://heroku_sxklq0jf:fvegd2q34of2qn0j5jivm9b51b@ds227243.mlab.com:27243/heroku_sxklq0jf'
-
-ONE_SIG_USER_AUTH_KEY = "MjhmY2U2ZWMtN2YyNy00MWRlLWI3ZmYtNGZmMDljMWM5MjM0"
-ONE_SIG_APP_AUTH_KEY = "MmVhODM2YjEtZjM4Mi00MzNjLWIxNmUtNjAwYzM2ZWYxNDZi"
-ONE_SIG_APP_ID = "4e80c299-4fec-4279-bde3-3cdffbb24e1d"
 
 # Initiate OneSignal
 onesignal_client = onesignal_sdk.Client(user_auth_key=ONE_SIG_USER_AUTH_KEY,
@@ -161,17 +166,17 @@ def verifyTasks():
         response.status_code = 401
         return response
 
-#Passed Testing
-@app.route("/api/users", methods =['POST'])
-def add_users():
-    authenStatus = verifyToken(request)
-    if authenStatus[1]:
-        return add_user(request, people, credentials, social)
-    else:
-        response = jsonify([{'Error': authenStatus[0]
-        }])
-        response.status_code = 401
-        return response
+#Deprecated; using auth add now instead
+# @app.route("/api/users", methods =['POST'])
+# def add_users():
+#     authenStatus = verifyToken(request)
+#     if authenStatus[1]:
+#         return add_user(request, people, credentials, social)
+#     else:
+#         response = jsonify([{'Error': authenStatus[0]
+#         }])
+#         response.status_code = 401
+#         return response
 
 @app.route("/api/color/<email>", methods =['GET', 'POST'])
 def colors(email):

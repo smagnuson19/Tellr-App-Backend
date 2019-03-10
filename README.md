@@ -57,7 +57,31 @@ Hanting Guo, Scott Magnuson, Emily Pitts, Jed Rosen
 
 ## Architecture and Code Structure Overview
 
-This backend uses MongoDB, Pymongo, and Flask, and follows the REST architecture style. The
+This backend uses MongoDB, Pymongo, and Flask, and follows the REST architecture style. Each file is named according to the primary area of functionality it is responsible for. The structure and functions of the main files are outlined below:
+
+###### main.py
+`main.py` houses all the API endpoints for the backend and processes all POST and GET requests and calls the relevant function(s) associated with those requests. `main.py` also constructs the MongoDB instance and relevant collections used by each function call. Additionally, all global variables are also housed at the top of `main.py`, which contain information on database location and login credentials for the email and push notification servers. Each API endpoint in `main.py` also calls the token verification function in `authenticate.py` to ensure that all requests are authentic. If a token is invalid or expired, `main.py` immediately sends back a 401 response without calling any other functions.
+
+###### authenticate.py
+`authenticate.py` handles all authentication-related functions, including account creation, login, password change, forgotten passwords, logouts, and token verification. It writes to the user database (called `people`) during account creation and the credentials database during password-related functions. `authenticate.py` uses the bcrypt library to cryptographically store passwords, and the jwt library to decrypt and encrypt tokens. Finally, `authenticate.py` is also responsible for updating the device ID of any logged in/ logged out users for the purpose of push notifications.
+
+###### goals.py
+`goals.py` handles all goal-related functions, including goal creation, goal verification, goal redemption, money redemption, and fetch-goal functions. These functions write to the goals database as well as the user database to update user balances in the case of redemptions, and also updates earnings history accordingly for analytics. Additionally, `goals.py` also uses the datetime library to record when a goal was redeemed, and generates notifications for the relevant users upon certain actions that are written to the notifications database.
+
+###### notification.py
+`notifications.py` is a smaller file that searches through the notifications database for all unread notifications for a given user. It then sorts the notifications based on priority before returning a dictionary of all notifications to the requester.
+
+###### push.py
+`push.py` is also a smaller file that implements the one-signal push notification framework. It uses the push IDs and login status written and updated in `authenticate.py` to determine which device a user is currently logged into (if any - this is found in the push_notifications database collection). It then contains a helper function `send_notification` which is called by many other files when a push notification should be sent to a user.
+
+###### social.py
+`social.py` handles all social-related functions including friend requests, friend removals, and fetching social-related stats. The former two functions update the user collection people for their relevant actions, while the fetch stats functions processes a list of tasks completed by the user as well as a list of all total tasks to generate graph-ready statistics and data.
+
+###### tasks.py
+`tasks.py` handles all task-related functions, including task creation, completion, verification, and fetches. This file mainly works with the tasks collection but also updates the user database in order to update user balances and analytical stats. Tasks also generates notifications that are written into the notification database, and uses the datetime library in the creation and sorting of tasks.
+
+###### users.py
+`users.py` is a large file that contains all relevant functions and calculations needed for the analytics implementation of the app. Using multiple entries from the `people` database collection, `users.py` calculates earnings, spend, balance history, and other statistics and formats/returns them in graph-ready dictionaries. `users.py` is also responsible for some ancillary functions such as fetching children names and other parents. 
 
 #### Tech Stack
 We are using React Native for our frontend and mobile app and flask for our backend.
