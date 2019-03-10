@@ -1,6 +1,6 @@
 # Teller Backend
 
-### Most of functionality doccumentation on [Frontend](https://github.com/dartmouth-cs98/18f-tellr-frontend) readme like specified in scaffolding assignment
+### Most of app functionality documentation can be found on [Frontend](https://github.com/dartmouth-cs98/18f-tellr-frontend). This README will focus on Backend functionality and construction.
 
 # Tellr
 
@@ -81,7 +81,7 @@ This backend uses MongoDB, Pymongo, and Flask, and follows the REST architecture
 `tasks.py` handles all task-related functions, including task creation, completion, verification, and fetches. This file mainly works with the tasks collection but also updates the user database in order to update user balances and analytical stats. Tasks also generates notifications that are written into the notification database, and uses the datetime library in the creation and sorting of tasks.
 
 ###### users.py
-`users.py` is a large file that contains all relevant functions and calculations needed for the analytics implementation of the app. Using multiple entries from the `people` database collection, `users.py` calculates earnings, spend, balance history, and other statistics and formats/returns them in graph-ready dictionaries. `users.py` is also responsible for some ancillary functions such as fetching children names and other parents. 
+`users.py` is a large file that contains all relevant functions and calculations needed for the analytics implementation of the app. Using multiple entries from the `people` database collection, `users.py` calculates earnings, spend, balance history, and other statistics and formats/returns them in graph-ready dictionaries. `users.py` is also responsible for some ancillary functions such as fetching children names and other parents.
 
 #### Tech Stack
 We are using React Native for our frontend and mobile app and flask for our backend.
