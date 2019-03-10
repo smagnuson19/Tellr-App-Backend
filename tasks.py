@@ -111,9 +111,9 @@ def getTasksChild(email, tasks):
     dictresponse = {}
     i = 0
     for task in tasksList:
-        task['taskDeadline'] = str(task['taskDeadline'])
+        task['taskDeadline'] = datetime.datetime.strftime(task['taskDeadline'], '%b %d %Y')
         if task['timeCompleted'] != None:
-            task['timeCompleted'] = str(task['timeCompleted'])[:10]
+            task['timeCompleted'] = datetime.datetime.strftime(task['timeCompleted'], '%b %d %Y')
         dictresponse[i]=task
         i = i+1
     response = jsonify(dictresponse)
