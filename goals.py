@@ -14,7 +14,6 @@ def getGoals(email, goals):
             dictresponse[i]=goal
             i = i+1
     response = jsonify(dictresponse)
-    print(dictresponse)
     response.status_code = 200
     return response
 
@@ -204,7 +203,6 @@ def approveGoal(request, goals, people, notifications, mail, app, push_notificat
         'value': realGoal['value'],
         'read': False
     }
-    print(new_notification1)
     notifications.insert_one(new_notification1)
     current_priority = child['notCounter']
     people.update_one({'email': child['email']}, {"$set":{'notCounter': current_priority+1}},upsert = False)
@@ -289,7 +287,6 @@ def getIncompleteGoals(email, goals):
             dictresponse[i]=goal
             i = i+1
     response = jsonify(dictresponse)
-    print(dictresponse)
     response.status_code = 200
     return response
 
@@ -302,6 +299,5 @@ def getCompleteGoals(email, goals):
             dictresponse[i]=goal
             i = i+1
     response = jsonify(dictresponse)
-    print(dictresponse)
     response.status_code = 200
     return response

@@ -9,20 +9,17 @@ def handleCredentials(email, password, credentials):
         'Error' : 'Incorrect username and password combo',
         }])
         response.status_code = 401
-        print('Nope')
     else:
         if user['password'] == password:
             response = jsonify([{
             'Success': True,
             }])
-            print('Success')
             response.status_code = 200
         else:
             response = jsonify([{
             'Success': False,
             'Error' : 'Incorrect password',
             }])
-            print('Nope')
             response.status_code = 401
 
     return response
